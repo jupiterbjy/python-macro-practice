@@ -1,0 +1,7 @@
+@1 Created at  : 2019.6.12 8:58:11
+@2 Last Access : 2019.6.12 8:58:11
+# Macro Data Starts
+./CoreImage/Eq_roll.png 2 5 1
+./CoreImage/Eq_roll_normal.png 2 5 1
+./CoreImage/Eq_roll_free.png 2 5 1
+./CoreImage/Eq_roll_ok.png 2 5 1
