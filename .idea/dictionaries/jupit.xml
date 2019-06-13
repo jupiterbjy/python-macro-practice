@@ -1,3 +1,9 @@
 <component name="ProjectDictionaryState">
-  <dictionary name="jupit" />
+  <dictionary name="jupit">
+    <words>
+      <w>colorama</w>
+      <w>imgsrch</w>
+      <w>pyautogui</w>
+    </words>
+  </dictionary>
 </component>

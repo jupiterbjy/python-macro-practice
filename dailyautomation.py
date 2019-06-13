@@ -4,9 +4,11 @@ import pyautogui
 import keyboard
 import time
 import imgsrch
-import GenerateMacroStep
 import sys
 import cv2
+
+import GenerateMacroStep
+import CustomAction
 
 killkey = 'f2'
 
@@ -92,8 +94,12 @@ def ImgSearchArea(image, index, pre_delay=2, timeout=5):
     time.sleep(pre_delay)
     time_a = time.time()
 
+    symbol = ['|', '/', '-', '\\']
+    sym = 0
+
     while pos[0] == -1:
-        print(image + " not found, waiting")
+        print('looking for', image, symbol[sym % 4], end="\r")
+        sym = sym + 1
         time.sleep(0.5)
 
         if time.time() - time_a > timeout:
@@ -105,7 +111,10 @@ def ImgSearchArea(image, index, pre_delay=2, timeout=5):
         else:
             pos = imgsrch.imagesearcharea(image, Pos1.X, Pos1.Y, Pos2.X, Pos2.Y)
 
-    print('found at', pos)
+    if pos[0] != -1:
+        print('found at', pos)
+    else:
+        print('image not found')
     return pos
 
 
@@ -132,10 +141,77 @@ def PreStart_INFORM():
 '''
 
 
-def main():
-    GetWindowPoint_INFORM()
-    GetWindowPoint(killkey)
+def MacroMainSequence(file):
 
+    # Reads Macro Sequence File and process it
+    # line starts with & means start of sub-sequence, which all operation is wrapped with.
+    # Any failure inside it skips sub-sequence as latter part of it become useless.
+    # spl[0] = image / [1] = operation mode / [2] = pre_delay / [3] = max waiting time
+    # Operation Mode 0: Search only / 1: Search and Click / 2: 1 with failure acceptance
+    #                3: Custom Action written in CustomAction.py
+
+    for i in range(len(file)):
+
+        if '@' in file[i] or '#' in file[i]:
+            continue
+
+        # Sub-Sequence Start
+
+        elif '&' in file[i]:
+            seq_line = file[i].split()
+            print("Sub-Sequence", seq_line[1], "Start")
+            del seq_line
+
+            # Line process Start
+
+            while True:
+
+                i = i + 1
+
+                if '&' in file[i]:
+                    break
+                elif '#' in file[i]:
+                    continue
+
+                spl = file[i].split()
+
+                print(spl)
+
+                try:
+
+                    if len(spl) < 4:
+                        pos = ImgSearchArea(spl[0], i)
+                    else:
+                        pos = ImgSearchArea(spl[0], i, int(spl[2]), int(spl[3]))
+
+                except cv2.error:
+                    print('At Line', i, spl[0], 'does not exist!!')
+                    print('Script shutdown in 10 seconds.')
+                    time.sleep(10)
+                    sys.exit()
+
+                # Operation Mode Start
+
+                else:
+
+                    if pos[0] == -1:
+
+                        if spl[0] == '0' or spl[0] == '1':
+                            break
+
+                        elif spl[0] == '2':
+                            continue
+
+                        else:
+                            print('wrong index is given in file.')
+
+                    else:
+
+                        if spl[0] == '1':
+                            pyautogui.click(pos)
+
+
+def GetFileInfo():
     print('Input Macro file name with .txt extension.')
     print('Leave it blank and press enter to auto-load macro1.txt')
 
@@ -144,35 +220,23 @@ def main():
         file_name = 'macro1.txt'
 
     global lines
+
     with open(file_name, 'r', encoding='utf-8') as f:
         lines = sum(1 for _ in f)
 
-    f_lines = GenerateMacroStep.FileAvailable(file_name)
+    return file_name
 
-    for i in range(len(f_lines)):
-        if '@' in f_lines[i] or '#' in f_lines[i]:
-            continue
-        else:
 
-            if '&' in f_lines[i]:
-                seq_line = f_lines[i].split()
-                print("Sequence", seq_line[1], "Start")
+def main():
+    GetWindowPoint_INFORM()
+    GetWindowPoint(killkey)
 
-            spl = f_lines[i].split()
-            try:
-                print(spl)
+    seq_file = GenerateMacroStep.FileAvailable(GetFileInfo())
 
-                if spl[3] == '1':
-                    pyautogui.click(ImgSearchArea(spl[0], int(spl[1]), int(spl[2]), i))
+    MacroMainSequence(seq_file)
 
-                else:
-                    ImgSearchArea(spl[0], int(spl[1]), int(spl[2]), i)
 
-            except cv2.error:
-                print('At Line', i, spl[0], 'does not exist!!')
-                print('Script shutdown in 10 seconds.')
-                time.sleep(10)
-                sys.exit()
+
 
 
 # ---------------------------------------------------------------

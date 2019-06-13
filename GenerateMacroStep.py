@@ -33,8 +33,8 @@ def FileAvailable(name):
 
     while True:
         try:
-            f = open(name, 'r', encoding='utf-8')
-            lines = f.readlines()
+            with open(name, 'r', encoding='utf-8') as f:
+                lines = f.readlines()
 
         except FileNotFoundError:
             with open(name, 'w', encoding='utf-8') as f:
@@ -59,7 +59,6 @@ def FileAvailable(name):
                 print('File contains barely nothing!')
                 print('Check if you chose correct file, or remove it!')
                 print('Script shutdown in 10 seconds.')
-                f.close()
 
                 time.sleep(10)
                 sys.exit()
@@ -73,7 +72,11 @@ def FileAvailable(name):
                     print(lines[0], lines[1], sep='')
 
                     lines[1] = '@2 Last Access : %s' % TStr()
-                    f.close()
+
+                    with open(name, 'w', encoding='utf-8') as f2:
+                        for line in lines:
+                            f2.write("%s\n" % line)
+
                     return lines
 
                 else:
@@ -86,7 +89,6 @@ def FileAvailable(name):
                     file_integrity = False
 
                     num_lines = sum(1 for _ in f)
-                    f.close()
 
                     for i in range(num_lines):
                         print(symbol[i % 3])
