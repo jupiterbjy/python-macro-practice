@@ -135,6 +135,7 @@ def MainSequence(coord_1, coord_2, file):
                     else:
 
                         if spl[0] == '1':
+                            print('click on', pos)
                             pyautogui.moveTo(pos)
                             pyautogui.click()
 

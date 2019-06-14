@@ -1,7 +1,17 @@
 @1 Created at  : 2019.6.12 8:58:11
-@2 Last Access : 2019.6.12 8:58:11
+@2 Last Access : 2019.6.14 15:20:11
 # Macro Data Starts
-./CoreImage/Eq_roll.png 2 5 1
-./CoreImage/Eq_roll_normal.png 2 5 1
-./CoreImage/Eq_roll_free.png 2 5 1
-./CoreImage/Eq_roll_ok.png 2 5 1
+
+& EqupimentRoll
+./CoreImage/Eq_roll.png 1
+./CoreImage/Eq_roll_normal.png 1 2 5
+./CoreImage/Eq_roll_free.png 1 2 5
+./CoreImage/Eq_roll_ok.png 1 2 5
+
+& Dungeon
+./CoreImage/Quest.png 1
+./CoreImage/Dungeon.png 1
+./CoreImage/VeryHard.png 1
+./CoreImage/OK_dun.png 1 5
+./CoreImage/f1.png 1
+./CoreImage/Challenege.png 1

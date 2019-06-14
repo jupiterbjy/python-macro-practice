@@ -2,120 +2,117 @@ import time
 import sys
 
 
-class MacroStep:
-    def __init__(self, index, imagename, priordelay, option):
-        self.Index = index
-        self.imgName = imagename
-        self.pDelay = priordelay
-        self.Option = option
-
-
 def TStr():
-    now = time.gmtime(time.time())
-    string_a = [now.tm_year, now.tm_mon, now.tm_mday]
-    string_b = [now.tm_hour, now.tm_min, now.tm_sec]
-    string_c = string_a + string_b
-    out = '{}.{}.{} {}:{}:{}'.format(*string_c)
+	now = time.gmtime(time.time())
+	string_a = [now.tm_year, now.tm_mon, now.tm_mday]
+	string_b = [now.tm_hour, now.tm_min, now.tm_sec]
+	string_c = string_a + string_b
+	out = '{}.{}.{} {}:{}:{}'.format(*string_c)
 
-    # TimeString. Did this mess to reduce horizontal length!
-    # Asterisk almost looks like pointer, wow.
-    # Actually just unpacking string, how boring.
+	# TimeString. Did this mess to reduce horizontal length!
+	# Asterisk almost looks like pointer, wow.
+	# Actually just unpacking string, how boring.
 
-    return out
+	return out
 
 
-def FileAvailable(name):
-    global new_file
-    global macro_s_point
+def ScriptKill(delay):
+	print('Script shutdown in', delay, 'seconds.')
 
-    macro_s_point = 0
-    new_file = False
+	time.sleep(delay)
+	sys.exit()
 
-    while True:
-        try:
-            with open(name, 'r', encoding='utf-8') as f:
-                lines = f.readlines()
 
-        except FileNotFoundError:
-            with open(name, 'w', encoding='utf-8') as f:
+def FileAvailable(name, mode):
+	if mode == 'open':
+		try:
+			with open(name, 'r', encoding='utf-8') as f:
+				lines = f.readlines()
 
-                print('file not found, creating template.')
+		except FileNotFoundError:
+			print('file not found! Try again!')
+			return [-1, -1]
 
-                # <Today's Grammar Class>
-                # Created in 3 hours / Created on the 13th of July
-                # Created at 2013-07-13 14:35 / Created on 2013-07-13
+		else:
+			try:
+				# Test if Sequence txt has at least 2 lines
 
-                f.write('@1 Created at  : {}\n'.format(TStr()))
-                f.write('@2 Last Access : {}\n'.format(TStr()))
-                f.write('# Macro Data Starts\n')
+				tmp = lines[1]
+				del tmp
 
-            new_file = True
+			except IndexError:
+				print('File contains barely nothing!')
+				print('Check if you chose correct file, or remove it!')
+				ScriptKill(10)
 
-        else:
-            try:
-                lines[2]
+			else:
+				if '@2' in lines[1]:
 
-            except IndexError:
-                print('File contains barely nothing!')
-                print('Check if you chose correct file, or remove it!')
-                print('Script shutdown in 10 seconds.')
+					print('file Loaded:', name)
+					print(lines[0], lines[1], sep='')
 
-                time.sleep(10)
-                sys.exit()
+					lines[1] = '@2 Last Access : %s\n' % TStr()
 
-            else:
-                if ('@1' in lines[0]) and ('@2' in lines[1]):
+					# Rewrite entire file to change a single line!
+					# How efficient!
 
-                    # if file contains those, consider it normal
+					with open(name, 'w+', encoding='utf-8') as f2:
+						for i in lines:
+							f2.write("%s" % i)
 
-                    print('file Loaded:', name)
-                    print(lines[0], lines[1], sep='')
+					return lines
 
-                    lines[1] = '@2 Last Access : %s' % TStr()
+				else:
+					print('No creation Date or Last access date is found')
+					print('Performing basic file integrity check')
 
-                    with open(name, 'w+', encoding='utf-8') as f2:
-                        for i in lines:
-                            f2.write("%s" % i)
+					global file_integrity
+					file_integrity = False
 
-                    return lines
+					num_lines = sum(1 for _ in f)
 
-                else:
-                    print('No creation Date or Last access date is found')
-                    print('Performing basic file integrity check', end='')
-                    symbol = ['.', '..', '...']
+					for i in range(num_lines):
+						if '#' in lines[i]:
+							file_integrity = True
+							break
 
-                    global file_integrity
+					if file_integrity:
+						return lines
 
-                    file_integrity = False
+					else:
+						NameError('File integrity damaged!')
+						ScriptKill(10)
 
-                    num_lines = sum(1 for _ in f)
+	elif mode == 'generate':
 
-                    for i in range(num_lines):
-                        print(symbol[i % 3])
+		# Generate file with argument, not with no file exception
+		# I find it more sensible with less mess!
 
-                        if '#' in lines[i]:
-                            macro_s_point = i
-                            file_integrity = True
-                            break
+		print('Generating Macro Sequence!')
+		print('Leaving name black will name it as macro1.txt!')
 
-                    if file_integrity:
-                        return lines
+		file_name = input('File Name: ')
+		if file_name == '':
+			file_name = 'macro1.txt'
 
-                    else:
-                        NameError('File integrity damaged!')
-                        print('Script shutdown in 10 seconds.')
-                        time.sleep(10)
-                        sys.exit()
+		# <Today's Grammar Class>
+		# Created in 3 hours / Created on the 13th of July
+		# Created at 2013-07-13 14:35 / Created on 2013-07-13
+
+		with open(file_name, 'w+', encoding='utf-8') as f:
+			f.write('@1 Created at  : {}\n'.format(TStr()))
+			f.write('@2 Last Access : {}\n'.format(TStr()))
+			f.write('# Macro Data Starts\n\n')
 
 
 '''
 def GenerateFile():
-    
-    f_lines = FileAvailable(input())
-    
-    while True:
-        print("Entry for @", macro_s_point, sep='')
-        temp = [input()]
-        
-        f_lines[macro_s_point] = 
+	
+	f_lines = FileAvailable(input())
+	
+	while True:
+		print("Entry for @", macro_s_point, sep='')
+		temp = [input()]
+	
+	f_lines[macro_s_point] = 
 '''

@@ -7,7 +7,6 @@ import time
 import MacroProcessor
 import GenerateMacroStep
 
-
 killkey = 'f2'
 
 
@@ -116,10 +115,12 @@ def GetFileInfo():
     if file_name is '':
         file_name = 'macro1.txt'
 
+    '''
     global lines
 
     with open(file_name, 'r', encoding='utf-8') as f:
-        lines = sum(1 for _ in f)
+    lines = sum(1 for _ in f)
+    '''
 
     return file_name
 
@@ -128,15 +129,11 @@ def main():
     GetWindowPoint_INFORM()
     GetWindowPoint(killkey)
 
-    seq_file = GenerateMacroStep.FileAvailable(GetFileInfo())
+    seq_file = GenerateMacroStep.FileAvailable(GetFileInfo(), 'open')
 
     MacroProcessor.MainSequence(Pos1, Pos2, seq_file)
 
 
-
-
-
 # ---------------------------------------------------------------
-
 
 main()
