@@ -73,9 +73,9 @@ def FileAvailable(name):
 
                     lines[1] = '@2 Last Access : %s' % TStr()
 
-                    with open(name, 'w', encoding='utf-8') as f2:
-                        for line in lines:
-                            f2.write("%s\n" % line)
+                    with open(name, 'w+', encoding='utf-8') as f2:
+                        for i in lines:
+                            f2.write("%s" % i)
 
                     return lines
 

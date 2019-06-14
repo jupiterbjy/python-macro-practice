@@ -3,12 +3,10 @@ from colorama import init, Fore, Style
 import pyautogui
 import keyboard
 import time
-import imgsrch
-import sys
-import cv2
 
+import MacroProcessor
 import GenerateMacroStep
-import CustomAction
+
 
 killkey = 'f2'
 
@@ -87,39 +85,8 @@ def GetWindowPoint(kill_key):
             print("Swapping Pos1 & Pos2 for imgsrch.py")
 
 
-def ImgSearchArea(image, index, pre_delay=2, timeout=5):
-    # Wrapper to skip coordination input and support timeout functionality
-
-    pos = imgsrch.imagesearcharea(image, Pos1.X, Pos1.Y, Pos2.X, Pos2.Y)
-    time.sleep(pre_delay)
-    time_a = time.time()
-
-    symbol = ['|', '/', '-', '\\']
-    sym = 0
-
-    while pos[0] == -1:
-        print('looking for', image, symbol[sym % 4], end="\r")
-        sym = sym + 1
-        time.sleep(0.5)
-
-        if time.time() - time_a > timeout:
-            print('At line', index, '- image', image, 'timeout!!')
-            print('Script shutdown in 10 seconds.')
-            time.sleep(10)
-            sys.exit()
-
-        else:
-            pos = imgsrch.imagesearcharea(image, Pos1.X, Pos1.Y, Pos2.X, Pos2.Y)
-
-    if pos[0] != -1:
-        print('found at', pos)
-    else:
-        print('image not found')
-    return pos
-
-
 def GetWindowPoint_INFORM():
-    init()                              # colorama initialization
+    init(convert=False, strip=False)                 # colorama initialization
 
     print(Fore.RED + '\n  +', Style.RESET_ALL, end='', sep='')
     print("___________________ ")
@@ -139,76 +106,6 @@ def PreStart_INFORM():
     print("Waiting for Main page")
     ImgSearchArea("./CoreImage/main.png")
 '''
-
-
-def MacroMainSequence(file):
-
-    # Reads Macro Sequence File and process it
-    # line starts with & means start of sub-sequence, which all operation is wrapped with.
-    # Any failure inside it skips sub-sequence as latter part of it become useless.
-    # spl[0] = image / [1] = operation mode / [2] = pre_delay / [3] = max waiting time
-    # Operation Mode 0: Search only / 1: Search and Click / 2: 1 with failure acceptance
-    #                3: Custom Action written in CustomAction.py
-
-    for i in range(len(file)):
-
-        if '@' in file[i] or '#' in file[i]:
-            continue
-
-        # Sub-Sequence Start
-
-        elif '&' in file[i]:
-            seq_line = file[i].split()
-            print("Sub-Sequence", seq_line[1], "Start")
-            del seq_line
-
-            # Line process Start
-
-            while True:
-
-                i = i + 1
-
-                if '&' in file[i]:
-                    break
-                elif '#' in file[i]:
-                    continue
-
-                spl = file[i].split()
-
-                print(spl)
-
-                try:
-
-                    if len(spl) < 4:
-                        pos = ImgSearchArea(spl[0], i)
-                    else:
-                        pos = ImgSearchArea(spl[0], i, int(spl[2]), int(spl[3]))
-
-                except cv2.error:
-                    print('At Line', i, spl[0], 'does not exist!!')
-                    print('Script shutdown in 10 seconds.')
-                    time.sleep(10)
-                    sys.exit()
-
-                # Operation Mode Start
-
-                else:
-
-                    if pos[0] == -1:
-
-                        if spl[0] == '0' or spl[0] == '1':
-                            break
-
-                        elif spl[0] == '2':
-                            continue
-
-                        else:
-                            print('wrong index is given in file.')
-
-                    else:
-
-                        if spl[0] == '1':
-                            pyautogui.click(pos)
 
 
 def GetFileInfo():
@@ -233,7 +130,7 @@ def main():
 
     seq_file = GenerateMacroStep.FileAvailable(GetFileInfo())
 
-    MacroMainSequence(seq_file)
+    MacroProcessor.MainSequence(Pos1, Pos2, seq_file)
 
 
 
