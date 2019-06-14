@@ -1,5 +1,6 @@
 import time
-import sys
+
+import KillProcess
 
 
 def TStr():
@@ -16,13 +17,6 @@ def TStr():
 	return out
 
 
-def ScriptKill(delay):
-	print('Script shutdown in', delay, 'seconds.')
-
-	time.sleep(delay)
-	sys.exit()
-
-
 def FileAvailable(name, mode):
 	if mode == 'open':
 		try:
@@ -34,18 +28,8 @@ def FileAvailable(name, mode):
 			return [-1, -1]
 
 		else:
+
 			try:
-				# Test if Sequence txt has at least 2 lines
-
-				tmp = lines[1]
-				del tmp
-
-			except IndexError:
-				print('File contains barely nothing!')
-				print('Check if you chose correct file, or remove it!')
-				ScriptKill(10)
-
-			else:
 				if '@2' in lines[1]:
 
 					print('file Loaded:', name)
@@ -63,30 +47,19 @@ def FileAvailable(name, mode):
 					return lines
 
 				else:
-					print('No creation Date or Last access date is found')
-					print('Performing basic file integrity check')
+					raise IndexError
 
-					global file_integrity
-					file_integrity = False
+			except IndexError:
+				print('File has Wrong Format!')
 
-					num_lines = sum(1 for _ in f)
-
-					for i in range(num_lines):
-						if '#' in lines[i]:
-							file_integrity = True
-							break
-
-					if file_integrity:
-						return lines
-
-					else:
-						NameError('File integrity damaged!')
-						ScriptKill(10)
+				KillProcess.PressKill()
 
 	elif mode == 'generate':
 
 		# Generate file with argument, not with no file exception
 		# I find it more sensible with less mess!
+
+		# INCOMPLETE, I have no time!!!
 
 		print('Generating Macro Sequence!')
 		print('Leaving name black will name it as macro1.txt!')

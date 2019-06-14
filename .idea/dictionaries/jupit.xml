@@ -2,6 +2,7 @@
   <dictionary name="jupit">
     <words>
       <w>colorama</w>
+      <w>imagesearcharea</w>
       <w>imgsrch</w>
       <w>pyautogui</w>
     </words>

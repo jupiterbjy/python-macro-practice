@@ -6,16 +6,18 @@ import time
 
 import MacroProcessor
 import GenerateMacroStep
+import KillProcess
 
-killkey = 'f2'
+halt_key = 'f2'
 
-
+'''
 class MacroStep:
     def __init__(self, index, imagename, priordelay, option):
         self.Index = index
         self.imgName = imagename
         self.pDelay = priordelay
         self.Option = option
+'''
 
 
 class Coordination:                     # Do I need __init__? idk,
@@ -97,14 +99,7 @@ def GetWindowPoint_INFORM():
     print("    ￣￣￣￣￣￣￣￣￣￣", end='', sep='')
     print(Fore.RED + '+\n', Style.RESET_ALL)
 
-    print("Press", killkey, "While pointing indicated points\n")
-
-
-'''
-def PreStart_INFORM():
-    print("Waiting for Main page")
-    ImgSearchArea("./CoreImage/main.png")
-'''
+    print("Press", halt_key, "While pointing indicated points\n")
 
 
 def GetFileInfo():
@@ -127,11 +122,14 @@ def GetFileInfo():
 
 def main():
     GetWindowPoint_INFORM()
-    GetWindowPoint(killkey)
+    GetWindowPoint(halt_key)
 
     seq_file = GenerateMacroStep.FileAvailable(GetFileInfo(), 'open')
 
     MacroProcessor.MainSequence(Pos1, Pos2, seq_file)
+
+    print('\nScript Ended.')
+    KillProcess.PressKill()
 
 
 # ---------------------------------------------------------------
