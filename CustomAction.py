@@ -1,6 +1,6 @@
 import pyautogui
 
-import ImgWrapper
+from ImgWrapper import ImgSearchArea as ImgSearchArea
 
 # Write Custom action and set Op Mode to 3 4 5 6
 # Not sure if I can import file that is importing this file.
@@ -15,6 +15,10 @@ def CustomAction1(img_result):
     # Clear out selected chara
     for _ in range(5):
         pyautogui.click(leader_pos)
+
+
+
+    ImgSearchArea()
 
 
 def CustomAction2(img_result):
