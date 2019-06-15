@@ -25,7 +25,7 @@ def FileAvailable(name, mode):
 
 		except FileNotFoundError:
 			print('file not found! Try again!')
-			return [-1, -1]
+			return -1
 
 		else:
 

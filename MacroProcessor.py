@@ -108,9 +108,9 @@ def MainSequence(coord_1, coord_2, file):
                         elif pos[1] == -1:
 
                             if spl[1] == '0' or spl[1] == '1':
-                                while True:
+                                while i < len(file):
                                     i = i + 1
-                                    if '&' in file[i]:
+                                    if '%' in file[i]:
                                         break
 
                             elif spl[1] == '2':

@@ -1,16 +1,16 @@
 @1 Created at  : 2019.6.12 8:58:11
-@2 Last Access : 2019.6.14 19:35:0
+@2 Last Access : 2019.6.15 5:19:44
 # Macro Data Starts
 
-# EqupimentRoll
+& EqupimentRoll 1
 ./CoreImage/Eq_roll.png 1 5
 ./CoreImage/Eq_roll_normal.png 1 2 5
 ./CoreImage/Eq_roll_free.png 1 2 5
 ./CoreImage/Eq_roll_ok.png 1 2 5
 ./CoreImage/Eq_result_ok.png 1 4 5
+%
 
-
-# Dungeon
+& Dungeon
 ./Dungeon/dungeon_intro.png 1 5
 ./Dungeon/dungeon_veryhard.png 1 3 5
 ./Dungeon/dungeon_OK.png 1 3 5 
@@ -37,7 +37,8 @@
 ./Dungeon/dungeon_next.png 1 10 20
 ./Dungeon/dungeon_rewardaccept.png 1 3 20
 
-& Dungeon
+# Dungeon
+
 ./Dungeon/dungeon_6F.png 1 2 5
 ./Dungeon/dungeon_challenge.png 1 3 5
 ./Dungeon/dungeon_battlestart.png 1 3 5
@@ -78,4 +79,4 @@
 #./Dungeon/dungeon_battlestart.png 1 3 5
 #./Dungeon/dungeon_next.png 1 10 20
 #./Dungeon/dungeon_rewardaccept.png 1 3 20
-&
+%

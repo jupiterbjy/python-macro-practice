@@ -3,7 +3,6 @@ from colorama import init, Fore, Style
 import pyautogui
 import keyboard
 import time
-
 import MacroProcessor
 import GenerateMacroStep
 import KillProcess
@@ -35,7 +34,7 @@ def GetMousePos(kill_key):              # similar code from pyautogui ex
 
         print(pos_string, end='')
         time.sleep(0.05)
-        print('\b' * len(pos_string), end='', flush=True)
+        print('', end='\r')
 
     return pos.X, pos.Y
 
@@ -96,7 +95,7 @@ def GetWindowPoint_INFORM():
     print("   |     N  O  X     | ")
     print("   |                 | ")
     print("   |                 | ")
-    print("    ￣￣￣￣￣￣￣￣￣￣", end='', sep='')
+    print("   ￣￣￣￣￣￣￣￣￣￣", end='', sep='')
     print(Fore.RED + '+\n', Style.RESET_ALL)
 
     print("Press", halt_key, "While pointing indicated points\n")
@@ -125,6 +124,8 @@ def main():
     GetWindowPoint(halt_key)
 
     seq_file = GenerateMacroStep.FileAvailable(GetFileInfo(), 'open')
+    while seq_file == -1:
+        seq_file = GenerateMacroStep.FileAvailable(GetFileInfo(), 'open')
 
     MacroProcessor.MainSequence(Pos1, Pos2, seq_file)
 

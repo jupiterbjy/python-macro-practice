@@ -24,7 +24,7 @@ def ImgSearchArea(pos1, pos2, image, index, pre_delay=2, timeout=5, ):
     time.sleep(pre_delay)
     time_a = time.time()
 
-    symbol = ['|', '/', '-', '\\']
+    symbol = ['|', '/', '-', '＼']
     sym = 0
 
     while pos[0] == -1:
