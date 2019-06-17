@@ -1,5 +1,6 @@
 import pyautogui
 
+import GlobalVar
 from ImgWrapper import ImgSearchArea as ImgSearchArea
 
 # Write Custom action and set Op Mode to 3 4 5 6
@@ -8,6 +9,11 @@ from ImgWrapper import ImgSearchArea as ImgSearchArea
 
 
 def CustomAction1(img_result):
+
+    def scroll_down(num):
+        for i in range(num - 1):
+            pyautogui.dragTo(a, b)
+
     print('Pricone Charactor select Function')
 
     leader_pos = [img_result[0] + 600, img_result[1] + 94]

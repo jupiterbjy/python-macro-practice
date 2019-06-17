@@ -6,31 +6,26 @@ import time
 import os
 import sys
 
+import GlobalVar
 import MacroProcessor
 import GenerateMacroStep
 import KillProcess
 
-halt_key = 'f2'
-
-
-class Coordination:                     # Do I need __init__? idk,
-    def __init__(self, x, y):           # Using list is way better but-
-        self.X = x                      # I wanted to learn class a bit
-        self.Y = y
+# TODO: add relative path with -onefile option for Pyinstaller.
 
 
 def GetMousePos(kill_key):              # similar code from pyautogui ex
 
-    pos = Coordination(0, 0)
+    pos = [0, 0]
     while not keyboard.is_pressed(kill_key):
-        pos.X, pos.Y = pyautogui.position()
-        pos_string = 'X:' + str(pos.X).rjust(4) + str(pos.Y).rjust(4)
+        pos[0], pos[1] = pyautogui.position()
+        pos_string = 'X:' + str(pos[0]).rjust(4) + str(pos[1]).rjust(4)
 
         print(pos_string, end='')
         time.sleep(0.05)
         print('', end='\r')
 
-    return pos.X, pos.Y
+    return pos[0], pos[1]
 
 
 def BreakKeyInput(input_key):               # delay until key is up
@@ -39,27 +34,23 @@ def BreakKeyInput(input_key):               # delay until key is up
 
 
 def GetWindowPoint(kill_key):
-    global Pos1, Pos2
     global trigger
 
     trigger = True
 
-    Pos1 = Coordination(0, 0)
-    Pos2 = Coordination(0, 0)
-
     while trigger:
 
-        Pos1.X, Pos1.Y = GetMousePos(kill_key)
-        print("Pos1:", Pos1.X, Pos1.Y)
+        GlobalVar.x, GlobalVar.y = GetMousePos(kill_key)
+        print("Pos1:", GlobalVar.x, GlobalVar.y)
         BreakKeyInput(kill_key)
 
-        Pos2.X, Pos2.Y = GetMousePos(kill_key)
-        print("Pos2:", Pos2.X, Pos2.Y)
+        GlobalVar.x2, GlobalVar.y2 = GetMousePos(kill_key)
+        print("Pos2:", GlobalVar.x2, GlobalVar.y2)
         BreakKeyInput(kill_key)
 
-        print("Area:", abs(Pos1.X - Pos2.X), "*", abs(Pos1.Y - Pos2.Y))
+        print("Area:", abs(GlobalVar.x - GlobalVar.x2), "*", abs(GlobalVar.y - GlobalVar.y2))
 
-        if abs(Pos1.X - Pos2.X) < 1280 or abs(Pos1.Y - Pos2.Y) < 720:
+        if abs(GlobalVar.x - GlobalVar.x2) < 1280 or abs(GlobalVar.y - GlobalVar.y2) < 720:
 
             print("\nDesignated Size is smaller than 1280*720!!")
             print("Try again!\n")
@@ -67,14 +58,14 @@ def GetWindowPoint(kill_key):
         else:
             trigger = False
 
-        if (Pos2.X - Pos1.X) < 0:       # pos1 = is right side?
-            temp = Coordination(Pos2.X, Pos2.Y)
+        if (GlobalVar.x2 - GlobalVar.x) < 0:       # pos1 = is right side?
+            temp = [GlobalVar.x2, GlobalVar.y2]
 
-            Pos2.X = Pos1.X
-            Pos2.Y = Pos1.Y
+            GlobalVar.x2 = GlobalVar.x
+            GlobalVar.y2 = GlobalVar.y
 
-            Pos1.X = temp.X
-            Pos1.Y = temp.Y
+            GlobalVar.x = temp[0]
+            GlobalVar.y = temp[1]
 
             print("Swapping Pos1 & Pos2 for imgsrch.py")
 
@@ -92,7 +83,7 @@ def GetWindowPoint_INFORM():
     print("   ￣￣￣￣￣￣￣￣￣￣", end='', sep='')
     print(Fore.RED + '+\n', Style.RESET_ALL)
 
-    print("Press", halt_key, "While pointing indicated points\n")
+    print("Press", GlobalVar.halt_key, "While pointing indicated points\n")
 
 
 def GetFileInfo():
@@ -115,13 +106,13 @@ def GetFileInfo():
 
 def main():
     GetWindowPoint_INFORM()
-    GetWindowPoint(halt_key)
+    GetWindowPoint(GlobalVar.halt_key)
 
     seq_file = GenerateMacroStep.FileAvailable(GetFileInfo(), 'open')
     while seq_file == -1:
         seq_file = GenerateMacroStep.FileAvailable(GetFileInfo(), 'open')
 
-    MacroProcessor.MainSequence(Pos1, Pos2, seq_file)
+    MacroProcessor.MainSequence(seq_file)
 
     print('\nScript Ended.')
     KillProcess.PressKill()

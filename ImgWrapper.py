@@ -2,17 +2,25 @@ from colorama import init, Fore, Style
 import time
 import imgsrch
 
-
 init(convert=False, strip=False)
 
 
-class Coordination:                     # Do I need __init__? idk,
-    def __init__(self, x, y):           # Using list is way better but-
-        self.X = x                      # I wanted to learn class a bit
-        self.Y = y
+def PosVariableAvailable():
+    global p1, p2
+
+    try:
+        import GlobalVar
+
+    except NameError:
+        p1 = [1920, 0]
+        p2 = [0, 1080]
+
+    else:
+        p1 = [GlobalVar.x, GlobalVar.y]
+        p2 = [GlobalVar.x2, GlobalVar.y2]
 
 
-def ImgSearchArea(pos1, pos2, image, index, pre_delay=2, timeout=5, ):
+def ImgSearchArea(image, index, pre_delay=2, timeout=5):
 
     # Wrapper to skip coordination input and support timeout functionality
     # Convert imagesearcharea's return - 'relative' position to Absolute one.
@@ -20,7 +28,9 @@ def ImgSearchArea(pos1, pos2, image, index, pre_delay=2, timeout=5, ):
     # Literally wrapper for wrapper! wrap-seption!
     # Split from MacroProcessor to be used in CustomAction.py
 
-    pos = imgsrch.imagesearcharea(image, pos1.X, pos1.Y, pos2.X, pos2.Y)
+    PosVariableAvailable()
+
+    pos = imgsrch.imagesearcharea(image, p1[0], p1[1], p2[0], p2[1])
     time.sleep(pre_delay)
     time_a = time.time()
 
@@ -37,10 +47,10 @@ def ImgSearchArea(pos1, pos2, image, index, pre_delay=2, timeout=5, ):
             print(Fore.RED, 'At line', index, '- image', image, 'timeout!', Style.RESET_ALL)
             break
         else:
-            pos = imgsrch.imagesearcharea(image, pos1.X, pos1.Y, pos2.X, pos2.Y)
+            pos = imgsrch.imagesearcharea(image, p1[0], p1[1], p2[0], p2[1])
 
     if pos[0] != -1:
-        pos2 = [pos[0] + pos1.X, pos[1] + pos1.Y]
+        pos2 = [pos[0] + p1[0], pos[1] + p1[1]]
         print(' - found at', pos2)
         return pos2
     else:

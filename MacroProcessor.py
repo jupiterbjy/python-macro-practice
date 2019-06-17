@@ -2,6 +2,7 @@ from colorama import init, Fore, Style
 import cv2
 import pyautogui
 
+import GlobalVar
 import CustomAction
 import KillProcess
 import ImgWrapper
@@ -10,10 +11,16 @@ import ImgWrapper
 init(convert=False, strip=False)
 
 
-def MainSequence(coord_1, coord_2, file):
+def MainSequence(file):
 
+    coord_1 = [GlobalVar.x, GlobalVar.y]
+    coord_2 = [GlobalVar.x2, GlobalVar.y2]
+
+    # TODO: Add separate python file for global inter-file variable storage - like pos.
     # TODO: add target resolution line for each sequence file and work based on it
-    # TODO: Fix crash on loading float value from file - SERIOUS!!!
+
+    # Fix crash on loading float value from file - SERIOUS!!!
+    # - fixed at 06-18-2019
 
     # Reads Macro Sequence File and process it
     # line starts with & means start of sub-sequence, which all operation is wrapped with.
@@ -60,7 +67,7 @@ def MainSequence(coord_1, coord_2, file):
 
                     i = i + 1
 
-                    # TODO: Fix IndexOutOfRange After Failing Image Search
+                    # Fix IndexOutOfRange After Failing Image Search
                     # Possibly fixed
 
                     try:
@@ -83,10 +90,10 @@ def MainSequence(coord_1, coord_2, file):
                             pos = ImgWrapper.ImgSearchArea(coord_1, coord_2, [0], i)
 
                         elif len(spl) == 3:
-                            pos = ImgWrapper.ImgSearchArea(coord_1, coord_2, spl[0], i, int(spl[2]))
+                            pos = ImgWrapper.ImgSearchArea(coord_1, coord_2, spl[0], i, float(spl[2]))
 
                         else:
-                            pos = ImgWrapper.ImgSearchArea(coord_1, coord_2, spl[0], i, int(spl[2]), int(spl[3]))
+                            pos = ImgWrapper.ImgSearchArea(coord_1, coord_2, spl[0], i, float(spl[2]), float(spl[3]))
 
                     except cv2.error:
                         print('At Line', i, spl[0], 'does not exist!!')
