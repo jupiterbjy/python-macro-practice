@@ -3,20 +3,14 @@ from colorama import init, Fore, Style
 import pyautogui
 import keyboard
 import time
+import os
+import sys
+
 import MacroProcessor
 import GenerateMacroStep
 import KillProcess
 
 halt_key = 'f2'
-
-'''
-class MacroStep:
-    def __init__(self, index, imagename, priordelay, option):
-        self.Index = index
-        self.imgName = imagename
-        self.pDelay = priordelay
-        self.Option = option
-'''
 
 
 class Coordination:                     # Do I need __init__? idk,

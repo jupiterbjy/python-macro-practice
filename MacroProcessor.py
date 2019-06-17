@@ -12,6 +12,9 @@ init(convert=False, strip=False)
 
 def MainSequence(coord_1, coord_2, file):
 
+    # TODO: add target resolution line for each sequence file and work based on it
+    # TODO: Fix crash on loading float value from file - SERIOUS!!!
+
     # Reads Macro Sequence File and process it
     # line starts with & means start of sub-sequence, which all operation is wrapped with.
     # Any failure inside it skips sub-sequence as latter part of it become useless.
