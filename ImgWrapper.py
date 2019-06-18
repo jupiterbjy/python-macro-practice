@@ -4,7 +4,7 @@ import imgsrch
 
 init(convert=False, strip=False)
 
-
+'''
 def Ticker(n):
     print("~ Waiting for ", end='')
 
@@ -12,6 +12,9 @@ def Ticker(n):
         print(n-i, end='')
         time.sleep(0.98)
         print('\b'*len(str(n-i)), end='')
+
+    print('')
+'''
 
 
 def PosVariableAvailable():
@@ -41,6 +44,7 @@ def ImgSearchArea(image, index, pre_delay=2, timeout=5, no_warn=False):
 
     pos = imgsrch.imagesearcharea(image, p1[0], p1[1], p2[0], p2[1])
     time.sleep(pre_delay)
+    # Ticker(pre_delay)
     time_a = time.time()
 
     symbol = ['|', '/', '-', '＼']

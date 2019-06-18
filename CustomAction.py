@@ -1,4 +1,5 @@
 import pyautogui
+import time
 
 import ImgWrapper
 import KillProcess
@@ -10,16 +11,14 @@ import KillProcess
 
 def CustomAction1(img_result):
 
-    # TODO: Test out this custom function
-
     # ----------------------------------------------------------
     # deals with chara not existing in visible row
 
-    def ScrollDown(num):
+    def ScrollDown():
+        # TODO: Fix this function not draggin' at all.
         p_a = ImgWrapper.ImgSearchArea("./CoreImage/CharaOffset.png", "C_Action1")
         p_b = [p_a[0], p_a[1]+65]
-        for _ in range(num - 1):
-            pyautogui.dragTo(p_b, p_a)
+        pyautogui.dragTo(p_b, p_a)
 
     # ----------------------------------------------------------
     # select preset, only Preset1 Preset2 exists
@@ -33,7 +32,7 @@ def CustomAction1(img_result):
 
         out = []
         for i in tgt:
-            out.append(",".join([imgdir, i]))
+            out.append("/".join([imgdir, i]))
 
         return out
 
@@ -42,12 +41,13 @@ def CustomAction1(img_result):
 
     print('Pricone Character select Function Start')
 
-    leader_pos = [img_result[0] + 600, img_result[1] + 94]
+    leader_pos = [img_result[0] + 184, img_result[1] + 81]
 
     # Clear out selected chara
 
     for _ in range(5):
         pyautogui.click(leader_pos)
+        time.sleep(0.5)
 
     # Start Scanning for chara
 
@@ -58,24 +58,25 @@ def CustomAction1(img_result):
     while True:
         print("Row", row, "scanning")
 
-        while True:
+        for i in range(5):
             # index looks so convenient, wow.. did C had one of these?
-            a = found.index(0)
 
-            if found[a] == 0:
-                pos = ImgWrapper.ImgSearchArea(img_dir[0], "C_Action1", 1, 2, True)
+            if found[i] == 0:
+                pos = ImgWrapper.ImgSearchArea(img_dir[i], "C_Action1", 1, 2, True)
 
-                if pos[0] != -1:
+                if pos[0] == -1:
                     continue
                 else:
                     pyautogui.click(pos)
-                    found[a] = 1
+                    found[i] = 1
+            else:
+                continue
 
         if 0 in found:
 
             if row < 5:
                 row = row + 1
-                ScrollDown(1)
+                ScrollDown()
 
             else:
                 print("Could not find target character")
