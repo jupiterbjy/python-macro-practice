@@ -10,8 +10,6 @@ import MacroProcessor
 import GenerateMacroStep
 import KillProcess
 
-# TODO: add relative path with -onefile option for Pyinstaller.
-
 
 def SetWorkingDirectory(exe_dir):
     tmp = exe_dir.split('/')
