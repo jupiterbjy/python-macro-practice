@@ -5,6 +5,15 @@ import imgsrch
 init(convert=False, strip=False)
 
 
+def Ticker(n):
+    print("~ Waiting for ", end='')
+
+    for i in range(n):
+        print(n-i, end='')
+        time.sleep(0.98)
+        print('\b'*len(str(n-i)), end='')
+
+
 def PosVariableAvailable():
     global p1, p2
 
@@ -20,7 +29,7 @@ def PosVariableAvailable():
         p2 = [GlobalVar.x2, GlobalVar.y2]
 
 
-def ImgSearchArea(image, index, pre_delay=2, timeout=5):
+def ImgSearchArea(image, index, pre_delay=2, timeout=5, no_warn=False):
 
     # Wrapper to skip coordination input and support timeout functionality
     # Convert imagesearcharea's return - 'relative' position to Absolute one.
@@ -44,7 +53,8 @@ def ImgSearchArea(image, index, pre_delay=2, timeout=5):
         print('', end='\r')
 
         if time.time() - time_a > timeout:
-            print(Fore.RED, 'At line', index, '- image', image, 'timeout!', Style.RESET_ALL)
+            if not no_warn:
+                print(Fore.RED, 'At line', index, '- image', image, 'timeout!', Style.RESET_ALL)
             break
         else:
             pos = imgsrch.imagesearcharea(image, p1[0], p1[1], p2[0], p2[1])

@@ -2,7 +2,6 @@ from colorama import init, Fore, Style
 import cv2
 import pyautogui
 
-import GlobalVar
 import CustomAction
 import KillProcess
 import ImgWrapper
@@ -13,14 +12,7 @@ init(convert=False, strip=False)
 
 def MainSequence(file):
 
-    coord_1 = [GlobalVar.x, GlobalVar.y]
-    coord_2 = [GlobalVar.x2, GlobalVar.y2]
-
-    # TODO: Add separate python file for global inter-file variable storage - like pos.
     # TODO: add target resolution line for each sequence file and work based on it
-
-    # Fix crash on loading float value from file - SERIOUS!!!
-    # - fixed at 06-18-2019
 
     # Reads Macro Sequence File and process it
     # line starts with & means start of sub-sequence, which all operation is wrapped with.
@@ -87,13 +79,13 @@ def MainSequence(file):
                     try:
 
                         if len(spl) == 2:
-                            pos = ImgWrapper.ImgSearchArea(coord_1, coord_2, [0], i)
+                            pos = ImgWrapper.ImgSearchArea([0], i)
 
                         elif len(spl) == 3:
-                            pos = ImgWrapper.ImgSearchArea(coord_1, coord_2, spl[0], i, float(spl[2]))
+                            pos = ImgWrapper.ImgSearchArea(spl[0], i, float(spl[2]))
 
                         else:
-                            pos = ImgWrapper.ImgSearchArea(coord_1, coord_2, spl[0], i, float(spl[2]), float(spl[3]))
+                            pos = ImgWrapper.ImgSearchArea(spl[0], i, float(spl[2]), float(spl[3]))
 
                     except cv2.error:
                         print('At Line', i, spl[0], 'does not exist!!')
@@ -127,7 +119,7 @@ def MainSequence(file):
                                 continue
 
                             else:
-                                print(Fore.RED, 'wrong index is given in file!', Style.RESET_ALL, sep='')
+                                print(Fore.RED, 'Wrong index is given in file!', Style.RESET_ALL, sep='')
                                 KillProcess.PressKill()
                         else:
 

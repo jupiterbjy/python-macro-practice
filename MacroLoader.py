@@ -3,8 +3,6 @@ from colorama import init, Fore, Style
 import pyautogui
 import keyboard
 import time
-import os
-import sys
 
 import GlobalVar
 import MacroProcessor
@@ -12,6 +10,17 @@ import GenerateMacroStep
 import KillProcess
 
 # TODO: add relative path with -onefile option for Pyinstaller.
+
+
+def GetExecutablePath():
+    # https://github.com/pyinstaller/pyinstaller/issues/1726#issuecomment-166146333
+
+    from sys import executable
+    base_dir = executable
+
+    print(base_dir)
+
+    return base_dir
 
 
 def GetMousePos(kill_key):              # similar code from pyautogui ex
@@ -105,6 +114,7 @@ def GetFileInfo():
 
 
 def main():
+    exe_dir = GetExecutablePath()
     GetWindowPoint_INFORM()
     GetWindowPoint(GlobalVar.halt_key)
 
@@ -120,4 +130,4 @@ def main():
 
 # ---------------------------------------------------------------
 
-main()
+main()          # Looks so sad!

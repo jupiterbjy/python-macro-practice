@@ -18,4 +18,3 @@ class Coord:
     x2 = 0
     y2 = 0
 '''
-
