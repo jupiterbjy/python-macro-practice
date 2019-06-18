@@ -3,6 +3,7 @@ from colorama import init, Fore, Style
 import pyautogui
 import keyboard
 import time
+import os
 
 import GlobalVar
 import MacroProcessor
@@ -10,6 +11,13 @@ import GenerateMacroStep
 import KillProcess
 
 # TODO: add relative path with -onefile option for Pyinstaller.
+
+
+def SetWorkingDirectory(exe_dir):
+    tmp = exe_dir.split('/')
+    tmp[-1] = ''
+    path = ''.join(tmp)
+    os.chdir(path)
 
 
 def GetExecutablePath():
@@ -114,7 +122,7 @@ def GetFileInfo():
 
 
 def main():
-    exe_dir = GetExecutablePath()
+    SetWorkingDirectory(GetExecutablePath())
     GetWindowPoint_INFORM()
     GetWindowPoint(GlobalVar.halt_key)
 
