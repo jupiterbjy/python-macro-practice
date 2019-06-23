@@ -11,6 +11,17 @@ import GenerateMacroStep
 import KillProcess
 
 
+def DetectFrozen():
+    # From PyInstaller Run-Time Information
+    import sys
+    if getattr(sys, 'frozen', False):
+        # One-file
+        SetWorkingDirectory(GetExecutablePath())
+    else:
+        # .py mode
+        print("!! DEBUG MODE")
+
+
 def SetWorkingDirectory(exe_dir):
     tmp = exe_dir.split('\\')
     tmp[-1] = ''
@@ -23,8 +34,6 @@ def GetExecutablePath():
 
     from sys import executable
     base_dir = executable
-
-    print(base_dir)
 
     return base_dir
 
@@ -120,7 +129,7 @@ def GetFileInfo():
 
 
 def main():
-    SetWorkingDirectory(GetExecutablePath())
+    DetectFrozen()
     GetWindowPoint_INFORM()
     GetWindowPoint(GlobalVar.halt_key)
 

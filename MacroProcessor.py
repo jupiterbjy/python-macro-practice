@@ -12,8 +12,6 @@ init(convert=False, strip=False)
 
 def MainSequence(file):
 
-    # TODO: add target resolution line for each sequence file and work based on it
-
     # Reads Macro Sequence File and process it
     # line starts with & means start of sub-sequence, which all operation is wrapped with.
     # Any failure inside it skips sub-sequence as latter part of it become useless.
@@ -88,7 +86,8 @@ def MainSequence(file):
                             pos = ImgWrapper.ImgSearchArea(spl[0], i, float(spl[2]), float(spl[3]))
 
                     except cv2.error:
-                        print('At Line', i, spl[0], 'does not exist!!')
+                        print('!! At Line', i, spl[0], 'does not exist.')
+                        print('!! Please check if image name and directory is correct.')
                         KillProcess.PressKill()
 
                     # Operation Mode Start
@@ -124,6 +123,7 @@ def MainSequence(file):
                         else:
 
                             if spl[1] == '1':
+                                pos = ImgWrapper.RandomOffset(pos, 5)
                                 print(' - click on', pos)
                                 pyautogui.click(pos)
 

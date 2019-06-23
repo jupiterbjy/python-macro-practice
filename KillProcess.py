@@ -12,7 +12,7 @@ def PressKill(key='f2'):
         time.sleep(0.05)
 
     print('\nGoodBye!')
-    time.sleep(1)
+    time.sleep(2)
     sys.exit()
 
 
@@ -26,5 +26,5 @@ def CountKill(delay=10):
         print('\b' * len(str(delay - i)), end='', flush=True)
 
     print('\nGoodBye!')
-    time.sleep(1)
+    time.sleep(2)
     sys.exit()

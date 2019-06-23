@@ -4,17 +4,19 @@ import imgsrch
 
 init(convert=False, strip=False)
 
-'''
-def Ticker(n):
-    print("~ Waiting for ", end='')
+# Wrapper to skip coordination input and support timeout functionality
+# Convert imagesearcharea's return - 'relative' position to Absolute one.
 
-    for i in range(n):
-        print(n-i, end='')
-        time.sleep(0.98)
-        print('\b'*len(str(n-i)), end='')
+# Literally wrapper for wrapper! wrap-seption!
+# Split from MacroProcessor to be used in CustomAction.py
 
-    print('')
-'''
+
+def RandomOffset(pos, offset):
+    import random
+    x_offset = random.randrange(0, offset)
+    pos[0] = pos[0] + offset
+    pos[1] = pos[1] + offset - x_offset
+    return pos
 
 
 def PosVariableAvailable():
@@ -34,12 +36,6 @@ def PosVariableAvailable():
 
 def ImgSearchArea(image, index, pre_delay=2, timeout=5, no_warn=False):
 
-    # Wrapper to skip coordination input and support timeout functionality
-    # Convert imagesearcharea's return - 'relative' position to Absolute one.
-
-    # Literally wrapper for wrapper! wrap-seption!
-    # Split from MacroProcessor to be used in CustomAction.py
-
     PosVariableAvailable()
 
     pos = imgsrch.imagesearcharea(image, p1[0], p1[1], p2[0], p2[1])
@@ -50,10 +46,12 @@ def ImgSearchArea(image, index, pre_delay=2, timeout=5, no_warn=False):
     symbol = ['|', '/', '-', '＼']
     sym = 0
 
+    # TODO: fix 'looking for' message staying randomly after successful img search.
+
     while pos[0] == -1:
         print('looking for', Fore.YELLOW, image, Style.RESET_ALL, symbol[sym % 4], end='')
         sym = sym + 1
-        time.sleep(0.5)
+        time.sleep(0.3)
         print('', end='\r')
 
         if time.time() - time_a > timeout:

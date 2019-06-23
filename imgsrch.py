@@ -66,10 +66,10 @@ time : time taken for the mouse to move from where it was to the new position
 '''
 
 
-def click_image(image,pos,  action, timestamp, offset=5):
+def click_image(image, pos, action, timestamp, offset=5):
     img = cv2.imread(image)
     height, width, channels = img.shape
-    pyautogui.moveTo(pos[0] + r(width / 2, offset), pos[1] + r(height / 2,offset),
+    pyautogui.moveTo(pos[0] + r(width / 2, offset), pos[1] + r(height / 2, offset),
                      timestamp)
     pyautogui.click(button=action)
 

@@ -10,64 +10,93 @@ import KillProcess
 
 
 def CustomAction1(img_result):
+    print('CustomAction1')
+    CharaSelect(img_result, 2)
 
-    # ----------------------------------------------------------
-    # deals with chara not existing in visible row
 
-    def ScrollDown():
-        # TODO: Fix this function not draggin' at all.
+def CustomAction2(img_result):
+    print('CustomAction2')
+
+
+def CustomAction3(img_result):
+    print('CustomAction3')
+
+
+def CustomAction4(img_result):
+    print('CustomAction4')
+
+
+# --------------------------------------------------
+# Write Function used in Custom actions bellow here
+# -------------------------------------------------
+
+# ----------------------------------------------------------
+# deals with chara not existing in visible row
+
+def ScrollDown():
+    global p_a, p_b
+    print("Scrollin' Down")
+
+    try:
+        p_a[0]
+    except NameError:
         p_a = ImgWrapper.ImgSearchArea("./CoreImage/CharaOffset.png", "C_Action1")
-        p_b = [p_a[0], p_a[1]+65]
-        pyautogui.dragTo(p_b, p_a)
+        p_a[0] = p_a[0] - 440
+        p_a[1] = p_a[1] - 25
+        p_b = [p_a[0], p_a[1] - 65]
 
-    # ----------------------------------------------------------
-    # select preset, only Preset1 Preset2 exists
+    pyautogui.moveTo(p_a)
+    pyautogui.dragTo(p_b[0], p_b[1], 0.2)
 
-    def PresetLoader(preset):
-        tgt = ["1.png", "2.png", "3.png", "4.png", "5.png"]
-        if preset == 1:
-            imgdir = "./Preset1"
-        else:
-            imgdir = "./Preset2"
+# ----------------------------------------------------------
+# select preset, only Preset1 Preset2 exists
 
-        out = []
-        for i in tgt:
-            out.append("/".join([imgdir, i]))
 
-        return out
+def PresetLoader(preset):
+    tgt = ["1.png", "2.png", "3.png", "4.png", "5.png"]
+    if preset == 1:
+        imgdir = "./Preset1"
+    else:
+        imgdir = "./Preset2"
 
-    # ----------------------------------------------------------
-    # I really don't like PEP8's line spacing limit. It hurts visibility or mybad
+    out = []
+    for I in tgt:
+        out.append("/".join([imgdir, I]))
 
+    return out
+
+# ----------------------------------------------------------
+
+
+def CharaSelect(img_pos, preset):
     print('Pricone Character select Function Start')
 
-    leader_pos = [img_result[0] + 184, img_result[1] + 81]
+    leader_pos = [img_pos[0] + 184, img_pos[1] + 81]
 
     # Clear out selected chara
 
     for _ in range(5):
         pyautogui.click(leader_pos)
-        time.sleep(0.5)
+        time.sleep(0.1)
 
     # Start Scanning for chara
 
     found = [0, 0, 0, 0, 0]
     row = 0
-    img_dir = PresetLoader(2)
+    img_dir = PresetLoader(preset)
 
     while True:
         print("Row", row, "scanning")
 
         for i in range(5):
-            # index looks so convenient, wow.. did C had one of these?
 
             if found[i] == 0:
-                pos = ImgWrapper.ImgSearchArea(img_dir[i], "C_Action1", 1, 2, True)
+                pos = ImgWrapper.ImgSearchArea(img_dir[i], "C_Action1", 0.2, 1, True)
 
                 if pos[0] == -1:
                     continue
                 else:
-                    pyautogui.click(pos)
+                    pyautogui.click(ImgWrapper.RandomOffset(pos, 5))
                     found[i] = 1
             else:
                 continue
@@ -86,13 +115,5 @@ def CustomAction1(img_result):
             break
 
 
-def CustomAction2(img_result):
-    print('CustomAction2')
-
-
-def CustomAction3(img_result):
-    print('CustomAction3')
-
-
-def CustomAction4(img_result):
-    print('CustomAction4')
+# I really don't like PEP8's line spacing limit. It hurts visibility or mybad.
+# ----------------------------------------------------------
