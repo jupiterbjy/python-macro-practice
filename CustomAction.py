@@ -11,11 +11,12 @@ import KillProcess
 
 def CustomAction1(img_result):
     print('CustomAction1')
-    CharaSelect(img_result, 2)
+    CharaSelect(img_result, 1)
 
 
 def CustomAction2(img_result):
     print('CustomAction2')
+    CharaSelect(img_result, 2)
 
 
 def CustomAction3(img_result):
@@ -43,10 +44,10 @@ def ScrollDown():
         p_a = ImgWrapper.ImgSearchArea("./CoreImage/CharaOffset.png", "C_Action1")
         p_a[0] = p_a[0] - 440
         p_a[1] = p_a[1] - 25
-        p_b = [p_a[0], p_a[1] - 65]
+        p_b = [p_a[0], p_a[1] - 342]
 
     pyautogui.moveTo(p_a)
-    pyautogui.dragTo(p_b[0], p_b[1], 0.2)
+    pyautogui.dragTo(p_b[0], p_b[1], 0.5)
 
 # ----------------------------------------------------------
 # select preset, only Preset1 Preset2 exists
@@ -91,7 +92,7 @@ def CharaSelect(img_pos, preset):
         for i in range(5):
 
             if found[i] == 0:
-                pos = ImgWrapper.ImgSearchArea(img_dir[i], "C_Action1", 0.2, 1, True)
+                pos = ImgWrapper.ImgSearchArea(img_dir[i], "C_Action1", 0.3, 1, True)
 
                 if pos[0] == -1:
                     continue

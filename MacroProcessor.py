@@ -1,6 +1,7 @@
 from colorama import init, Fore, Style
 import cv2
 import pyautogui
+import time
 
 import CustomAction
 import KillProcess
@@ -124,6 +125,7 @@ def MainSequence(file):
 
                             if spl[1] == '1':
                                 pos = ImgWrapper.RandomOffset(pos, 5)
+                                time.sleep(0.2)
                                 print(' - click on', pos)
                                 pyautogui.click(pos)
 

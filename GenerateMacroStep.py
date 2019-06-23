@@ -33,7 +33,7 @@ def FileAvailable(name, mode):
 				if '@2' in lines[1]:
 
 					print('file Loaded:', name)
-					print(lines[0], lines[1], sep='')
+					print('\n', lines[0], lines[1], sep='')
 
 					lines[1] = '@2 Last Access : %s\n' % TStr()
 

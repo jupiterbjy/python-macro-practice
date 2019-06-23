@@ -111,7 +111,7 @@ def GetWindowPoint_INFORM():
 
 
 def GetFileInfo():
-    print('Input Macro file name with .txt extension.')
+    print('\nInput Macro file name with .txt extension.')
     print('Leave it blank and press enter to auto-load macro1.txt')
 
     file_name = input("File Name: ")
