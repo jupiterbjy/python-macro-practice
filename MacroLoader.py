@@ -12,9 +12,9 @@ import KillProcess
 
 
 def SetWorkingDirectory(exe_dir):
-    tmp = exe_dir.split('/')
+    tmp = exe_dir.split('\\')
     tmp[-1] = ''
-    path = ''.join(tmp)
+    path = '\\'.join(tmp)
     os.chdir(path)
 
 
