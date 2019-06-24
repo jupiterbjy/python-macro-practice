@@ -20,6 +20,7 @@ def CustomAction2(img_result):
 
 
 def CustomAction3(img_result):
+
     print('CustomAction3')
 
 
@@ -42,7 +43,7 @@ def ScrollDown():
         p_a[0]
     except NameError:
         p_a = ImgWrapper.ImgSearchArea("./CoreImage/CharaOffset.png", "C_Action1")
-        p_a[0] = p_a[0] - 440
+        p_a[0] = p_a[0] - 430
         p_a[1] = p_a[1] - 25
         p_b = [p_a[0], p_a[1] - 342]
 
