@@ -79,7 +79,7 @@ def CharaSelect(img_pos, preset):
 
     for _ in range(5):
         pyautogui.click(leader_pos)
-        time.sleep(0.1)
+        time.sleep(0.2)
 
     # Start Scanning for chara
 
@@ -99,6 +99,7 @@ def CharaSelect(img_pos, preset):
                     continue
                 else:
                     pyautogui.click(ImgWrapper.RandomOffset(pos, 5))
+                    time.sleep(0.2)
                     found[i] = 1
             else:
                 continue

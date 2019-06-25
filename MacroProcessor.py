@@ -7,7 +7,6 @@ import CustomAction
 import KillProcess
 import ImgWrapper
 
-
 init(convert=False, strip=False)
 
 
@@ -44,7 +43,7 @@ def MainSequence(file):
                 loop = 1
 
             while True:
-
+                last_img = ''
                 i = temp
 
                 print("Sub-Sequence", seq_line[1], "Start")
@@ -52,6 +51,11 @@ def MainSequence(file):
                 # Line process Start
 
                 while True:
+
+                    # One-Time trigger for fail-safe - when game didn't recognize click
+
+                    global failsafe
+                    failsafe = False
 
                     # Will consider trailing '%' after Line process as end of Sub-Sequence
                     # Consider '#' as comment
@@ -92,10 +96,35 @@ def MainSequence(file):
                         KillProcess.PressKill()
 
                     # Operation Mode Start
+                    # TODO: test out fail safe
 
                     else:
 
-                        if spl[1] == '3':
+                        if pos[1] == -1:
+                            if failsafe or last_img == '':
+                                if spl[1] == '0' or spl[1] == '1':
+                                    while i < len(file):
+                                        i = i + 1
+                                        if '%' in file[i]:
+                                            break
+                                elif spl[1] == '2':
+                                    continue
+
+                                else:
+                                    print(Fore.RED, 'Wrong index is given in file!', Style.RESET_ALL, sep='')
+                                    KillProcess.PressKill()
+                                    
+                            else:
+                                failsafe = True
+
+                                pos_re = ImgWrapper.ImgSearchArea(last_img, 'failsafe')
+                                if pos_re[0] != -1:
+                                    pyautogui.click(pos_re)
+                                else:
+                                    i = i - 1
+                                    continue
+
+                        elif spl[1] == '3':
                             CustomAction.CustomAction1(pos)
 
                         elif spl[1] == '4':
@@ -107,23 +136,10 @@ def MainSequence(file):
                         elif spl[1] == '6':
                             CustomAction.CustomAction4(pos)
 
-                        elif pos[1] == -1:
-
-                            if spl[1] == '0' or spl[1] == '1':
-                                while i < len(file):
-                                    i = i + 1
-                                    if '%' in file[i]:
-                                        break
-
-                            elif spl[1] == '2':
-                                continue
-
-                            else:
-                                print(Fore.RED, 'Wrong index is given in file!', Style.RESET_ALL, sep='')
-                                KillProcess.PressKill()
                         else:
 
                             if spl[1] == '1':
+                                last_img = spl[0]
                                 pos = ImgWrapper.RandomOffset(pos, 5)
                                 time.sleep(0.2)
                                 print(' - click on', pos)

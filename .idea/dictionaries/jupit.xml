@@ -2,6 +2,7 @@
   <dictionary name="jupit">
     <words>
       <w>colorama</w>
+      <w>failsafe</w>
       <w>imagesearcharea</w>
       <w>imgdir</w>
       <w>imgsrch</w>
