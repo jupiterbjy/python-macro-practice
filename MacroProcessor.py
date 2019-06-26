@@ -45,6 +45,8 @@ def MainSequence(file):
                 loop = 1
 
             while True:
+
+                global last_img
                 last_img = ''
                 i = temp
 
@@ -95,12 +97,12 @@ def MainSequence(file):
                             pos = Iw.ImgSearchArea(spl[0], float(spl[2]), float(spl[3]))
 
                     except cv2.error:
-                        print('!! At Line', i, spl[0], 'does not exist.')
+                        print(Fore.RED, '!! At Line', i, spl[0], 'does not exist.', sep='')
                         print('!! Please check if image name and directory is correct.')
                         KillProcess.PressKill()
 
                     # Operation Mode Start
-                    # TODO: test out fail safe
+                    # TODO: fix fail safe loop
 
                     else:
 
@@ -115,18 +117,20 @@ def MainSequence(file):
                                     continue
 
                                 else:
-                                    print(Fore.RED, 'Wrong index is given in file!', Style.RESET_ALL, sep='')
+                                    print(Fore.RED, 'Wrong index is given in file!', sep='')
                                     KillProcess.PressKill()
                                     
                             else:
                                 failsafe = True
 
-                                pos_re = Iw.ImgSearchArea(last_img, 'failsafe')
+                                print(Fore.RED, '!! Failsafe Triggered!', Style.RESET_ALL, sep='')
+                                pos_re = Iw.ImgSearchArea(last_img)
+                                i = i - 1
                                 if pos_re[0] != -1:
                                     pyautogui.click(pos_re)
                                 else:
-                                    i = i - 1
-                                    continue
+                                    print(Fore.RED, '!! Could not find current or previous Image!', sep='')
+                                    KillProcess.PressKill()
 
                         elif spl[1] == '3':
                             Ca.CustomAction1(pos)

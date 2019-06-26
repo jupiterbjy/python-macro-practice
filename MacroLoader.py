@@ -116,7 +116,7 @@ def GetFileInfo():
 
     file_name = input("File Name: ")
     if file_name is '':
-        file_name = 'TEST.txt'
+        file_name = 'Macro1.txt'
 
     return file_name
 

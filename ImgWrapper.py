@@ -72,21 +72,21 @@ def ImgSearchArea(image, pre_delay=2, timeout=5, no_warn=False):
     sym = 0
 
     while pos[0] == -1:
+        print('', end='\r')
         print('looking for', Fore.YELLOW, image, Style.RESET_ALL, symbol[sym % 4], end='')
         sym = sym + 1
         time.sleep(0.3)
-        print('', end='\r')
 
         if time.time() - time_a > timeout:
             if not no_warn:
-                print(Fore.RED, '\n!! Image', image, 'timeout!', Style.RESET_ALL)
+                print(Fore.RED, '\r!! Image', image, 'timeout!', Style.RESET_ALL)
             break
         else:
-            pos = ImageSearch(ScreenShotArea(p1, p2), image)
+            pos = ImageSearch(image)
 
     if pos[0] != -1:
         pos2 = [pos[0] + p1[0], pos[1] + p1[1]]
-        print(' - found at', pos2)
+        print('\r - found at', pos2)
         return pos2
     else:
         return pos

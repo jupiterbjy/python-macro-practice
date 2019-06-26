@@ -6,6 +6,7 @@ import time
 
 def PressKill(key='f2'):
     init(convert=False, strip=False)
+    print(Style.RESET_ALL, sep='', end='')
     print(Fore.CYAN, 'Press ', Fore.RED, key, Fore.CYAN, ' to kill script!', Style.RESET_ALL, sep='')
 
     while not keyboard.is_pressed(key):
@@ -18,6 +19,7 @@ def PressKill(key='f2'):
 
 def CountKill(delay=10):
     init(convert=False, strip=False)
+    print(Style.RESET_ALL, sep='', end='')
     print(Fore.CYAN, 'Script shutdown in', Style.RESET_ALL, sep='', end='')
 
     for i in range(delay):
