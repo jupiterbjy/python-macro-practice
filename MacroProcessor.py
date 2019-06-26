@@ -3,11 +3,13 @@ import cv2
 import pyautogui
 import time
 
-import CustomAction
+import CustomAction as Ca
 import KillProcess
-import ImgWrapper
+import ImgWrapper as Iw
 
 init(convert=False, strip=False)
+
+# TODO: spilt MainSequence into multiple smaller sub-modules
 
 
 def MainSequence(file):
@@ -80,15 +82,17 @@ def MainSequence(file):
                     print(Fore.LIGHTBLACK_EX, spl, Style.RESET_ALL, sep='')
 
                     try:
+                        # any way to pass array directly to function as argument?
+                        print('Line', i)
 
                         if len(spl) == 2:
-                            pos = ImgWrapper.ImgSearchArea([0], i)
+                            pos = Iw.ImgSearchArea([0])
 
                         elif len(spl) == 3:
-                            pos = ImgWrapper.ImgSearchArea(spl[0], i, float(spl[2]))
+                            pos = Iw.ImgSearchArea(spl[0], float(spl[2]))
 
                         else:
-                            pos = ImgWrapper.ImgSearchArea(spl[0], i, float(spl[2]), float(spl[3]))
+                            pos = Iw.ImgSearchArea(spl[0], float(spl[2]), float(spl[3]))
 
                     except cv2.error:
                         print('!! At Line', i, spl[0], 'does not exist.')
@@ -117,7 +121,7 @@ def MainSequence(file):
                             else:
                                 failsafe = True
 
-                                pos_re = ImgWrapper.ImgSearchArea(last_img, 'failsafe')
+                                pos_re = Iw.ImgSearchArea(last_img, 'failsafe')
                                 if pos_re[0] != -1:
                                     pyautogui.click(pos_re)
                                 else:
@@ -125,22 +129,22 @@ def MainSequence(file):
                                     continue
 
                         elif spl[1] == '3':
-                            CustomAction.CustomAction1(pos)
+                            Ca.CustomAction1(pos)
 
                         elif spl[1] == '4':
-                            CustomAction.CustomAction2(pos)
+                            Ca.CustomAction2(pos)
 
                         elif spl[1] == '5':
-                            CustomAction.CustomAction3(pos)
+                            Ca.CustomAction3(pos)
 
                         elif spl[1] == '6':
-                            CustomAction.CustomAction4(pos)
+                            Ca.CustomAction4(pos)
 
                         else:
 
                             if spl[1] == '1':
                                 last_img = spl[0]
-                                pos = ImgWrapper.RandomOffset(pos, 5)
+                                pos = Iw.RandomOffset(pos, 5)
                                 time.sleep(0.2)
                                 print(' - click on', pos)
                                 pyautogui.click(pos)

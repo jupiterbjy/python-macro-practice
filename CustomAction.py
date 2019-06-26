@@ -1,7 +1,7 @@
 import pyautogui
 import time
 
-import ImgWrapper
+import ImgWrapper as Iw
 import KillProcess
 
 # Write Custom action and set Op Mode to 3 4 5 6
@@ -37,12 +37,12 @@ def CustomAction4(img_result):
 
 def ScrollDown():
     global p_a, p_b
-    print("Scrollin' Down")
+    print("Scrolling Down")
 
     try:
         p_a[0]
     except NameError:
-        p_a = ImgWrapper.ImgSearchArea("./CoreImage/CharaOffset.png", "C_Action1")
+        p_a = Iw.ImgSearchArea("./CoreImage/CharaOffset.png")
         p_a[0] = p_a[0] - 430
         p_a[1] = p_a[1] - 25
         p_b = [p_a[0], p_a[1] - 342]
@@ -70,16 +70,21 @@ def PresetLoader(preset):
 # ----------------------------------------------------------
 
 
+def CharaClear(pos):
+    # Clear out selected chara
+
+    blanks = Iw.ScanOccurrence('./CoreImage/Blank.png')
+    print(blanks)
+    for _ in range(5-blanks):
+        time.sleep(0.2)
+        pyautogui.click(pos)
+
+
 def CharaSelect(img_pos, preset):
     print('Pricone Character select Function Start')
 
     leader_pos = [img_pos[0] + 184, img_pos[1] + 81]
-
-    # Clear out selected chara
-
-    for _ in range(5):
-        pyautogui.click(leader_pos)
-        time.sleep(0.2)
+    CharaClear(leader_pos)
 
     # Start Scanning for chara
 
@@ -93,13 +98,13 @@ def CharaSelect(img_pos, preset):
         for i in range(5):
 
             if found[i] == 0:
-                pos = ImgWrapper.ImgSearchArea(img_dir[i], "C_Action1", 0.3, 1, True)
+                pos = Iw.ImgSearchArea(img_dir[i], 0.3, 1, True)
 
                 if pos[0] == -1:
                     continue
                 else:
-                    pyautogui.click(ImgWrapper.RandomOffset(pos, 5))
-                    time.sleep(0.2)
+                    pyautogui.click(Iw.RandomOffset(pos, 5))
+                    time.sleep(0.1)
                     found[i] = 1
             else:
                 continue

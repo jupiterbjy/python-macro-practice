@@ -18,6 +18,9 @@ def TStr():
 
 
 def FileAvailable(name, mode):
+
+	# TODO: finish actual file generation step
+
 	if mode == 'open':
 		try:
 			with open(name, 'r', encoding='utf-8') as f:

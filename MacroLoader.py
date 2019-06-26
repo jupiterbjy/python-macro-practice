@@ -91,7 +91,7 @@ def GetWindowPoint(kill_key):
             GlobalVar.x = temp[0]
             GlobalVar.y = temp[1]
 
-            print("Swapping Pos1 & Pos2 for imgsrch.py")
+            print("!! Swapping Pos1 & Pos2")
 
 
 def GetWindowPoint_INFORM():
@@ -116,14 +116,7 @@ def GetFileInfo():
 
     file_name = input("File Name: ")
     if file_name is '':
-        file_name = 'macro1.txt'
-
-    '''
-    global lines
-
-    with open(file_name, 'r', encoding='utf-8') as f:
-    lines = sum(1 for _ in f)
-    '''
+        file_name = 'TEST.txt'
 
     return file_name
 
@@ -145,4 +138,4 @@ def main():
 
 # ---------------------------------------------------------------
 
-main()          # Looks so sad!
+main()          # Looks so sad! Bad programming!
