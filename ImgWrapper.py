@@ -15,7 +15,7 @@ init(convert=False, strip=False)
 
 def ScreenShotArea(pos1, pos2):
     im = p_gui.screenshot(region=(pos1[0], pos1[1], pos2[0] - pos1[0], pos2[1] - pos1[1]))
-    im.save('test.png')
+    # im.save('test.png')
     return im
 
 
@@ -71,22 +71,24 @@ def ImgSearchArea(image, pre_delay=2, timeout=5, no_warn=False):
     symbol = ['|', '/', '-', '＼']
     sym = 0
 
+    print('looking for', Fore.YELLOW, image, Style.RESET_ALL, end=' ')
+
     while pos[0] == -1:
-        print('', end='\r')
-        print('looking for', Fore.YELLOW, image, Style.RESET_ALL, symbol[sym % 4], end='')
         sym = sym + 1
         time.sleep(0.3)
+        print('', sep='', end='\b')
 
         if time.time() - time_a > timeout:
             if not no_warn:
                 print(Fore.RED, '\r!! Image', image, 'timeout!', Style.RESET_ALL)
             break
         else:
+            print(symbol[sym % 4], sep='', end='')
             pos = ImageSearch(image)
 
     if pos[0] != -1:
         pos2 = [pos[0] + p1[0], pos[1] + p1[1]]
-        print('\r - found at', pos2)
+        print('\n\r - found at', pos2)
         return pos2
     else:
         return pos
@@ -118,5 +120,5 @@ def ScanOccurrence(image, precision=0.8, threshold=0.3):
             count = count + 1
             cv2.rectangle(img, pt, (pt[0] + w, pt[1] + h), (0, 0, 255), 2)
 
-    cv2.imwrite('res.png', img)
+    cv2.imwrite('last_result.png', img)
     return count

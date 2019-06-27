@@ -50,7 +50,7 @@ def MainSequence(file):
                 last_img = ''
                 i = temp
 
-                print("Sub-Sequence", seq_line[1], "Start")
+                print("Sub-Sequence <", seq_line[1], "> Start")
 
                 # Line process Start
 
@@ -65,9 +65,6 @@ def MainSequence(file):
                     # Consider '#' as comment
 
                     i = i + 1
-
-                    # Fix IndexOutOfRange After Failing Image Search
-                    # Possibly fixed
 
                     try:
                         if '%' in file[i]:
@@ -85,7 +82,7 @@ def MainSequence(file):
 
                     try:
                         # any way to pass array directly to function as argument?
-                        print('Line', i)
+                        print(' <Line ', i, '>', sep='')
 
                         if len(spl) == 2:
                             pos = Iw.ImgSearchArea([0])
@@ -107,7 +104,10 @@ def MainSequence(file):
                     else:
 
                         if pos[1] == -1:
-                            if failsafe or last_img == '':
+                            if spl[1] == '2':
+                                print('Skipping Image')
+
+                            elif failsafe or last_img == '':
                                 if spl[1] == '0' or spl[1] == '1':
                                     while i < len(file):
                                         i = i + 1
