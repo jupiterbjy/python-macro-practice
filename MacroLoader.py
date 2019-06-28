@@ -16,11 +16,12 @@ def GetMousePos(kill_key):              # similar code from pyautogui ex
     pos = [0, 0]
     while not keyboard.is_pressed(kill_key):
         pos[0], pos[1] = pyautogui.position()
-        pos_string = 'X:' + str(pos[0]).rjust(4) + str(pos[1]).rjust(4)
+        pos_string = 'X:' + str(pos[0]).rjust(5) + '     Y:' + str(pos[1]).rjust(5)
 
         print(pos_string, end='')
         time.sleep(0.05)
         print('', end='\r')
+        # Feels like ' '*len(pos_string) is way slower, maybe not.
 
     return pos[0], pos[1]
 
@@ -38,11 +39,13 @@ def GetWindowPoint(kill_key):
     while trigger:
 
         GlobalVar.x, GlobalVar.y = GetMousePos(kill_key)
-        print("Pos1:", GlobalVar.x, GlobalVar.y)
+        p1 = "Pos1: " + str(GlobalVar.x).rjust(5) + '   ' + str(GlobalVar.y).rjust(5)
+        print(p1)
         BreakKeyInput(kill_key)
 
         GlobalVar.x2, GlobalVar.y2 = GetMousePos(kill_key)
-        print("Pos2:", GlobalVar.x2, GlobalVar.y2)
+        p2 = "Pos2: " + str(GlobalVar.x2).rjust(5) + '   ' + str(GlobalVar.y2).rjust(5)
+        print(p2)
         BreakKeyInput(kill_key)
 
         print("Area:", abs(GlobalVar.x - GlobalVar.x2), "*", abs(GlobalVar.y - GlobalVar.y2))

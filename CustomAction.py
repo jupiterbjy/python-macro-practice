@@ -45,7 +45,7 @@ def ScrollDown():
         p_a = Iw.ImgSearchArea("./CoreImage/CharaOffset.png")
         p_a[0] = p_a[0] - 430
         p_a[1] = p_a[1] - 25
-        p_b = [p_a[0], p_a[1] - 342]
+        p_b = [p_a[0], p_a[1] - 300]
 
     pyautogui.moveTo(p_a)
     pyautogui.dragTo(p_b[0], p_b[1], 0.5)
@@ -76,7 +76,7 @@ def CharaClear(pos):
     blanks = Iw.ScanOccurrence('./CoreImage/Blank.png')
     print(blanks)
     for _ in range(5-blanks):
-        time.sleep(0.2)
+        time.sleep(0.3)
         pyautogui.click(pos)
 
 
@@ -114,6 +114,7 @@ def CharaSelect(img_pos, preset):
             if row < 5:
                 row = row + 1
                 ScrollDown()
+                time.sleep(0.2)
 
             else:
                 print("Could not find target character")

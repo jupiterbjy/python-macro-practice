@@ -3,6 +3,7 @@ import time
 import pyautogui as p_gui
 import numpy as np
 import cv2
+import sys
 
 init(convert=False, strip=False)
 
@@ -64,33 +65,38 @@ def GetGlobalPos():
 
 def ImgSearchArea(image, pre_delay=2, timeout=5, no_warn=False):
 
+    # Since Changing erase method to \b now requires stdout.flush().
+
     pos = ImageSearch(image)
     time.sleep(pre_delay)
     time_a = time.time()
 
-    symbol = ['|', '/', '-', '＼']
+    # symbol = ['|', '/', '-', '＼']
+    symbol = ['.   ', '..  ', '... ', '....']
     sym = 0
 
-    print('looking for', Fore.YELLOW, image, Style.RESET_ALL, end=' ')
+    print('looking for', Fore.YELLOW, image, Style.RESET_ALL, end='   ')
+    sys.stdout.flush()
 
     while pos[0] == -1:
         sym = sym + 1
         time.sleep(0.3)
-        print('', sep='', end='\b')
 
         if time.time() - time_a > timeout:
             if not no_warn:
-                print(Fore.RED, '\r!! Image', image, 'timeout!', Style.RESET_ALL)
+                print(Fore.RED, '\n!! Image', image, 'timeout!', Style.RESET_ALL)
             break
         else:
-            print(symbol[sym % 4], sep='', end='')
+            print('\b'*len(symbol[(sym-1) % 4]) + symbol[sym % 4], sep='', end='')
+            sys.stdout.flush()
             pos = ImageSearch(image)
 
     if pos[0] != -1:
         pos2 = [pos[0] + p1[0], pos[1] + p1[1]]
-        print('\n\r - found at', pos2)
+        print('\n - found at', pos2)
         return pos2
     else:
+        print('', end='\n')
         return pos
 
 
