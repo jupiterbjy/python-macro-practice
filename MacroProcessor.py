@@ -50,7 +50,7 @@ def MainSequence(file):
                 last_img = ''
                 i = temp
 
-                print("Sub-Sequence <", seq_line[1], "> Start")
+                print("\nSub-Sequence <", seq_line[1], "> Start")
 
                 # Line process Start
 
@@ -99,13 +99,12 @@ def MainSequence(file):
                         KillProcess.PressKill()
 
                     # Operation Mode Start
-                    # TODO: fix fail safe loop
 
                     else:
 
                         if pos[1] == -1:
                             if spl[1] == '2':
-                                print('Skipping Image')
+                                print(Fore.CYAN, '>> Skipping Image', Style.RESET_ALL, sep='')
 
                             elif failsafe or last_img == '':
                                 if spl[1] == '0' or spl[1] == '1':

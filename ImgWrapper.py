@@ -85,6 +85,8 @@ def ImgSearchArea(image, pre_delay=2, timeout=5, no_warn=False):
         if time.time() - time_a > timeout:
             if not no_warn:
                 print(Fore.RED, '\n!! Image', image, 'timeout!', Style.RESET_ALL)
+            else:
+                print('')
             break
         else:
             print('\b'*len(symbol[(sym-1) % 4]) + symbol[sym % 4], sep='', end='')
@@ -96,7 +98,6 @@ def ImgSearchArea(image, pre_delay=2, timeout=5, no_warn=False):
         print('\n - found at', pos2)
         return pos2
     else:
-        print('', end='\n')
         return pos
 
 
