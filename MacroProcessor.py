@@ -30,8 +30,8 @@ def MainSequence(file):
 
         elif '&' in file[i]:
 
-            # Sub-Sequence Loop START!!
-            # Saving i value temporally
+            # Sub-Sequence Loop start
+            # Saving i value temporally to restore after loop.
 
             temp = i
 
