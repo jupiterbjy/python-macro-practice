@@ -26,7 +26,7 @@ def GetMousePos(kill_key):              # similar code from pyautogui ex
     return pos[0], pos[1]
 
 
-def BreakKeyInput(input_key):               # delay until key is up
+def BreakKeyInput(input_key):               # delay until key is up, to prevent input skipping
     while keyboard.is_pressed(input_key):
         time.sleep(0.05)
 

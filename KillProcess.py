@@ -3,6 +3,13 @@ import sys
 import keyboard
 import time
 
+'''
+PressKill() will stop process when designated key is pressed.
+
+CountKill() Counts before finishing process.
+Originally CountKill() had counter function but thought it was unnecessary and removed it. 
+'''
+
 
 def PressKill(key='f2'):
     init(convert=False, strip=False)

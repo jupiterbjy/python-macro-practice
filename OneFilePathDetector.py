@@ -1,4 +1,12 @@
 import os
+'''
+Run DetectFrozen() to set your working directory depending on 'frozen' state.
+in other words, whether used --onefile in pyinstaller or not.
+If file is running as onefile.exe, will return 1 otherwise 0.
+
+SetWorkingDirectory() will rip trailing 'filename.exe' to get a directory
+which it received from GetExecutablePath() and set as working directory.
+'''
 
 
 def DetectFrozen():
@@ -7,9 +15,10 @@ def DetectFrozen():
     if getattr(sys, 'frozen', False):
         # One-file
         SetWorkingDirectory(GetExecutablePath())
+        return 1
+
     else:
-        # .py mode
-        print("!! DEBUG MODE")
+        return 0
 
 
 def SetWorkingDirectory(exe_dir):

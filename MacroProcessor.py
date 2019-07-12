@@ -15,7 +15,7 @@ init(convert=False, strip=False)
 def MainSequence(file):
 
     # Reads Macro Sequence File and process it
-    # line starts with & means start of sub-sequence, which all operation is wrapped with.
+    # line starts with '&' means start of sub-sequence, which all operation is wrapped with.
     # Any failure inside it skips sub-sequence as latter part of it become useless.
     # spl[0] = image / [1] = operation mode / [2] = pre_delay / [3] = max waiting time
     # Operation Mode 0: Search only / 1: Search and Click / 2: 1 with failure acceptance

@@ -7,18 +7,27 @@ import sys
 
 init(convert=False, strip=False)
 
+'''
 # Wrapper to skip coordination input and support timeout functionality
 # Convert imagesearcharea's return - 'relative' position to Absolute one.
 
-# ImageSearch function is from OpenCV documentation & StackOverFlow
+# ImageSearch function is combination of OpenCV documentation & StackOverFlow's example
 # Plus drov0's github repository 'python-imagesearch'
+'''
 
+
+# ----------------------------------------------------------
+# Take a screen shot of area and relay it to Other functions.
 
 def ScreenShotArea(pos1, pos2):
     im = p_gui.screenshot(region=(pos1[0], pos1[1], pos2[0] - pos1[0], pos2[1] - pos1[1]))
     # im.save('test.png')
     return im
 
+
+# ----------------------------------------------------------
+# Search Image, and return location.
+# Will return [-1, -1] if not found.
 
 def ImageSearch(image, precision=0.8):
     GetGlobalPos()
@@ -34,6 +43,9 @@ def ImageSearch(image, precision=0.8):
     return max_loc
 
 
+# ----------------------------------------------------------
+# Adds Random offset to prevent anti-bot method, will click with maximum derivation of 'offset'
+
 def RandomOffset(pos, offset):
     import random
     x_offset = random.randrange(0, offset)
@@ -41,6 +53,10 @@ def RandomOffset(pos, offset):
     pos[1] = pos[1] + offset - x_offset
     return pos
 
+
+# ----------------------------------------------------------
+# Get Global Position of Area, if GlobalVar.py is not found, will create variable with
+# 1920 1080 Area.
 
 def GetGlobalPos():
     # See whether GlobalVar is available or not
@@ -60,8 +76,8 @@ def GetGlobalPos():
         p2 = [GlobalVar.x2, GlobalVar.y2]
 
 
-# --------------------------------------------------------------------------
-
+# ----------------------------------------------------------
+# Keeps searching Image with pre-delay and timeout(or deadline) functionality.
 
 def ImgSearchArea(image, pre_delay=2, timeout=5, no_warn=False):
 
@@ -101,7 +117,12 @@ def ImgSearchArea(image, pre_delay=2, timeout=5, no_warn=False):
         return pos
 
 
-def ScanOccurrence(image, precision=0.8, threshold=0.3):
+# ----------------------------------------------------------
+# Counts number of Occurrence of target Image.
+# Will ignore Overlapping Occurrences which has position smaller than threshold*min([h, w])
+
+
+def ScanOccurrence(image, precision=0.8, threshold=0.3, output=True):
     # threshold decides how much clipping between occurrences is accepted.
     from math import sqrt
 
@@ -125,7 +146,9 @@ def ScanOccurrence(image, precision=0.8, threshold=0.3):
             last_pt = pt
             print(pt)
             count = count + 1
-            cv2.rectangle(img, pt, (pt[0] + w, pt[1] + h), (0, 0, 255), 2)
+            if output:
+                cv2.rectangle(img, pt, (pt[0] + w, pt[1] + h), (0, 0, 255), 2)
 
-    cv2.imwrite('last_result.png', img)
+    if output:
+        cv2.imwrite('last_result.png', img)
     return count

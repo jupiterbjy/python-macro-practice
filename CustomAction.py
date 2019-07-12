@@ -4,9 +4,8 @@ import time
 import ImgWrapper as Iw
 import KillProcess
 
+
 # Write Custom action and set Op Mode to 3 4 5 6
-# Not sure if I can import file that is importing this file.
-# If it does, these can basically do everything.
 
 
 def CustomAction1(img_result):
@@ -28,12 +27,19 @@ def CustomAction4(img_result):
     print('CustomAction4')
 
 
-# --------------------------------------------------
-# Write Function used in Custom actions bellow here
-# -------------------------------------------------
+'''
+# ----------------------------------------------------------
+
+#   Write Function to be used in Custom actions below here
+
+# ----------------------------------------------------------
+'''
+
 
 # ----------------------------------------------------------
 # deals with chara not existing in visible row
+# Only hardcoded for 1280*720 for now, will make it free-scale if I have time later.
+# Nation calls me, boo.
 
 def ScrollDown():
     global p_a, p_b
@@ -51,7 +57,8 @@ def ScrollDown():
     pyautogui.dragTo(p_b[0], p_b[1], 0.5)
 
 # ----------------------------------------------------------
-# select preset, only Preset1 Preset2 exists
+# Selects preset, only Preset1 Preset2 exists
+# Appends corresponding list to 'out'. Not sure just copying list to other list works.
 
 
 def PresetLoader(preset):
@@ -68,6 +75,8 @@ def PresetLoader(preset):
     return out
 
 # ----------------------------------------------------------
+# Clears out characters if exists.
+# Will Scan blank areas and don't click more than needed.
 
 
 def CharaClear(pos):
@@ -78,6 +87,11 @@ def CharaClear(pos):
     for _ in range(5-blanks):
         time.sleep(0.3)
         pyautogui.click(pos)
+
+# ----------------------------------------------------------
+# Selects Characters Based on PresetLoader.
+# Will use list 'found' as checklist to see which image is found or not.
+# If Some images are not found from 'target_list' list, will scroll down and search again.
 
 
 def CharaSelect(img_pos, preset):
@@ -90,7 +104,7 @@ def CharaSelect(img_pos, preset):
 
     found = [0, 0, 0, 0, 0]
     row = 0
-    img_dir = PresetLoader(preset)
+    target_list = PresetLoader(preset)
 
     while True:
         print("Row", row, "scanning")
@@ -98,7 +112,7 @@ def CharaSelect(img_pos, preset):
         for i in range(5):
 
             if found[i] == 0:
-                pos = Iw.ImgSearchArea(img_dir[i], 0.3, 1, True)
+                pos = Iw.ImgSearchArea(target_list[i], 0.3, 1, True)
 
                 if pos[0] == -1:
                     continue
@@ -124,5 +138,5 @@ def CharaSelect(img_pos, preset):
             break
 
 
-# I really don't like PEP8's line spacing limit. It hurts visibility or mybad.
+# I really don't like PEP8's line spacing limit. It hurts visibility or well.. my bad.
 # ----------------------------------------------------------
