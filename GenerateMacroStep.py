@@ -56,7 +56,10 @@ def FileAvailable(name, mode):
 				print('File has Wrong Format!')
 
 				KillProcess.PressKill()
-
+    
+    
+    # Todo: finish this doomed code
+    
 	elif mode == 'generate':
 
 		# Generate file with argument, not with no file exception

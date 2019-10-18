@@ -15,6 +15,7 @@ init(convert=False, strip=False)
 # Plus drov0's github repository 'python-imagesearch'
 '''
 
+# Todo: move getwindowpoint() to ImgWrapper.py
 
 # ----------------------------------------------------------
 # Take a screen shot of area and relay it to Other functions.
@@ -120,12 +121,16 @@ def ImgSearchArea(image, pre_delay=2, timeout=5, no_warn=False):
 # ----------------------------------------------------------
 # Counts number of Occurrence of target Image.
 # Will ignore Overlapping Occurrences which has position smaller than threshold*min([h, w])
+# threshold decides how much clipping between occurrences is accepted.
 
 
 def ScanOccurrence(image, precision=0.8, threshold=0.3, output=True):
-    # threshold decides how much clipping between occurrences is accepted.
     from math import sqrt
-
+    '''
+    if 'img_id' not in globals():
+        global img_id
+        img_id = 1
+    '''
     GetGlobalPos()
 
     img = np.array(ScreenShotArea(p1, p2))
@@ -150,5 +155,7 @@ def ScanOccurrence(image, precision=0.8, threshold=0.3, output=True):
                 cv2.rectangle(img, pt, (pt[0] + w, pt[1] + h), (0, 0, 255), 2)
 
     if output:
-        cv2.imwrite('last_result.png', img)
+        cv2.imwrite('last_image.png', img)
+        #cv2.imwrite(img_id + '.png', img)
+        img_id += 1
     return count
