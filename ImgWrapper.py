@@ -16,6 +16,7 @@ init(convert=False, strip=False)
 '''
 
 # Todo: move getwindowpoint() to ImgWrapper.py
+# Todo: fix overall with better codestyle, more modular ones.
 
 # ----------------------------------------------------------
 # Take a screen shot of area and relay it to Other functions.
@@ -84,8 +85,8 @@ def ImgSearchArea(image, pre_delay=2, timeout=5, no_warn=False):
 
     # Since Changing erase method to \b now requires stdout.flush().
 
-    pos = ImageSearch(image)
     time.sleep(pre_delay)
+    pos = ImageSearch(image)
     time_a = time.time()
 
     # symbol = ['|', '/', '-', '＼']

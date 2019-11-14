@@ -50,9 +50,9 @@ def GetWindowPoint(kill_key):
 
         print("Area:", abs(GlobalVar.x - GlobalVar.x2), "*", abs(GlobalVar.y - GlobalVar.y2))
 
-        if abs(GlobalVar.x - GlobalVar.x2) < 1280 or abs(GlobalVar.y - GlobalVar.y2) < 720:
+        if abs(GlobalVar.x - GlobalVar.x2) < 50 or abs(GlobalVar.y - GlobalVar.y2) < 50:
 
-            print("\nDesignated Size is smaller than 1280*720!!")
+            print("\nDesignated Size is smaller than 50*50!!")
             print("Try again!\n")
 
         else:
