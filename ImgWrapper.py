@@ -127,11 +127,11 @@ def ImgSearchArea(image, pre_delay=2, timeout=5, no_warn=False):
 
 def ScanOccurrence(image, precision=0.8, threshold=0.3, output=True):
     from math import sqrt
-    '''
+
     if 'img_id' not in globals():
         global img_id
         img_id = 1
-    '''
+
     GetGlobalPos()
 
     img = np.array(ScreenShotArea(p1, p2))
