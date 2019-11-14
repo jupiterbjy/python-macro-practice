@@ -71,7 +71,9 @@ def GetWindowPoint(kill_key):
 
 
 def GetWindowPoint_INFORM():
-    init(convert=False, strip=False)                 # colorama initialization
+    from ANSI_table import Check_ANSI
+
+    Check_ANSI()
 
     print(Fore.RED + '\n  +', Style.RESET_ALL, end='', sep='')
     print("___________________ ")
