@@ -11,6 +11,7 @@ def Check_CMD():
 
     
 def Clear_Screen(Run = []):
+
     ''''Uses kwarg list's global-like property to store state'''
     import os
     
