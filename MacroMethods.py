@@ -30,5 +30,14 @@ class Wait(Base):
     def action(self):
         time.sleep(self.delay)
 
-        return self.action
+
+class Image(Base):
+
+    def __init__(self):
+        super().__init__()
+
+        self.methodType = 2
+        self.targetImage = None
+        self.capturedImage = None
+        self.clickOnMatch = False
 

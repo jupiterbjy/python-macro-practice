@@ -8,7 +8,7 @@ import GlobalVar
 import MacroProcessor
 import GenerateMacroStep
 import KillProcess
-from OneFilePathDetector import *
+from FrozenDetect import *
 
 
 def GetMousePos(kill_key):              # similar code from pyautogui ex
