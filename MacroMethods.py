@@ -1,28 +1,12 @@
 import time
+import functools
 import weakref
 import pyautogui as pgui
 # import shutil
 
+from ImageModule import pos, saveImg
 
-class pos:
-    # referenced vector2d_v0.py from 'Fluent Python' by Luciano.
-
-    def __init__(self, x=-1, y=-1):
-        self.x = int(x)
-        self.y = int(y)     # limiting what x could be, catching error here.
-
-    def __iter__(self):
-        return self.x, self.y
-
-    def __str__(self):
-        return str(tuple(self))
-
-    def __eq__(self, other):
-        return tuple(self) == tuple(other)
-
-    def __sub__(self, other):
-        return abs(self.x - other.x), abs(self.y - other.y)
-
+# @functools.lru_cache(maxsize=256, typed=false)
 
 class Base:
     def __init__(self):
@@ -34,7 +18,7 @@ class Base:
     def action(self):
         print('Call to Base Method')
 
-
+        
 class Wait(Base):
 
     def __init__(self):
@@ -56,7 +40,7 @@ class click(Base):
         self.target = pos()
 
     def action(self):
-        pgui.click(*pos())
+        pgui.click(*self.target)
 
 
 class Image(Base):
@@ -64,7 +48,9 @@ class Image(Base):
     __slots__ = ('methodType', 'targetImage', 'targetName', 'capturedImage'
                  'matchingArea', 'clickOnMatch', 'clickDelay', 'clickCount',
                  'loop', 'loopCount', 'loopDelay', 'clickCount')
-
+    
+    imgSaver = saveImg.save
+    
     def __init__(self):
         super().__init__()
 
@@ -82,12 +68,25 @@ class Image(Base):
         self.loop = False
         self.loopCount = 0
         self.loopDelay = 0.2
+    
+    def DumpCaptured(self, name=None):
+        imgSaver(self.capturedImage, name)
+        
+    def Dumptarget(self, name=self.targetName)
+        imgSaver(self.targetImage, name)
 
 
     def ScreenShot(self, p1, p2): # Assuming p1, p2 is 'pos' cls
         self.capturedImage = pgui.screenshot(region=(*p1, p1 - p2))
 
 
-class ImageClick
+class ImageClick(Image):
+    
+    def __init__(self):
+        self.target = pos()
+
+    def action(self):
+        pgui.click(*self.target)
+
 
 # TODO: add GOTO like macro method.

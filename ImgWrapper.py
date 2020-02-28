@@ -15,17 +15,6 @@ init(convert=False, strip=False)
 # Plus drov0's github repository 'python-imagesearch'
 '''
 
-# Todo: move getwindowpoint() to ImgWrapper.py
-# Todo: fix overall with better codestyle, more modular ones.
-
-# ----------------------------------------------------------
-# Take a screen shot of area and relay it to Other functions.
-
-def ScreenShotArea(pos1, pos2):
-    im = p_gui.screenshot(region=(pos1[0], pos1[1], pos2[0] - pos1[0], pos2[1] - pos1[1]))
-    # im.save('test.png')
-    return im
-
 
 # ----------------------------------------------------------
 # Search Image, and return location.
