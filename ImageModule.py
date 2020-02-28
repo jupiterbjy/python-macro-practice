@@ -3,6 +3,7 @@ import os
 import numpy as np
 import pyautogui as pgui
 import keyboard
+from math import sqrt
 
 
 """
@@ -101,10 +102,49 @@ def imageSearch(target, pos, xy, precision=0.85):
     img = np.array(pgui.screenshot(region=(*pos, *xy)))
     img_gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
     template = cv2.imread(image, 0)
+    img_wh = template.shape[::-1]
 
     res = cv2.matchTemplate(img_gray, template, cv2.TM_CCOEFF_NORMED)
     min_val, max_val, min_loc, max_loc = cv2.minMaxLoc(res)
     
     if max_val < precision:
-        return [-1, -1]
-    return max_loc
+        return [-1, -1], img
+    else:
+        cv2.rectangle(img, max_loc, list(x+y for x,y in zip(img_wh, max_loc)), (0, 0, 255), 2)
+        return max_loc, img
+
+
+def scanOccurrence(target, pos, xy, precision=0.8, threshold=0.3):
+    
+    # TODO: Rework these codes
+    
+    img = np.array(pgui.screenshot(region=(*pos, *xy)))
+    img_gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+    template = cv2.imread(target, 0)
+    image_wh = template.shape[::-1]
+
+    res = cv2.matchTemplate(img_gray, template, cv2.TM_CCOEFF_NORMED)
+    loc = np.where(res >= precision)
+
+    count = 0
+    last_pt = [0, 0]
+
+    for pt in sorted(zip(*loc[::-1])):
+        if sqrt(abs(last_pt[0]-pt[0])**2 + abs(last_pt[0]-pt[0])**2) < threshold*min([h, w]):
+            continue
+        else:
+            last_pt = pt
+            print(pt)
+            count = count + 1
+            cv2.rectangle(img, pt, tuple(map(sum, zip(pt, image_wh))), (0, 0, 255), 2)
+    
+    return count, img
+
+
+
+def RandomOffset(pos, offset):
+    import random
+    x_offset = random.randrange(0, offset)
+    pos.x = pos.x + offset
+    pos.y = pos.y + offset - x_offset
+    
