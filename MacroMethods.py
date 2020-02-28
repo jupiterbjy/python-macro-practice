@@ -4,11 +4,12 @@ import weakref
 import pyautogui as pgui
 # import shutil
 
-from ImageModule import pos, saveImg
+from ImageModule import pos, saveImg, imageSearch
 
 # @functools.lru_cache(maxsize=256, typed=false)
 
 class Base:
+    
     def __init__(self):
         self.order = None
         self.actionSuccess = None
@@ -74,10 +75,16 @@ class Image(Base):
         
     def Dumptarget(self, name=self.targetName)
         imgSaver(self.targetImage, name)
+        
+    def pgui_region(self):
+        return *self.matchingArea[0], *(self.matchingArea[0] - self.matchingArea[1])
 
 
     def ScreenShot(self, p1, p2): # Assuming p1, p2 is 'pos' cls
         self.capturedImage = pgui.screenshot(region=(*p1, p1 - p2))
+        
+    def ImageSearch(self, precision):
+        self.capturedImage = imageSearch(self.targetImage, *self.pgui_region())
 
 
 class ImageClick(Image):
