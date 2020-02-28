@@ -6,92 +6,118 @@ import pyautogui as pgui
 
 from ImageModule import pos, saveImg, imageSearch, RandomOffset, scanOccurrence
 
-# @functools.lru_cache(maxsize=256, typed=false)
 
-class Base:
-    
-    def __init__(self):
-        self.order = None
-        self.actionSuccess = None
-        self.actionFail = None
-        self.methodType = 0
-
-    def action(self):
-        print('Call to Base Method')
-
-        
-class Wait(Base):
+class Click:
+    __slots__ = ('target', 'clickCount', 'clickDelay')
 
     def __init__(self):
-        super().__init__()
+        self.target = pos()
+        self.clickCount = 0
+        self.clickDelay = 0.01
 
-        self.methodType = 1
+    def click(self):
+        for i in range(self.clickCount):
+            pgui.click(*self.target)
+            time.sleep(self.clickDelay)
+
+
+class Wait:
+    __slots__ = 'delay'
+
+    def __init__(self):
+
         self.delay = 0
 
     def action(self):
         time.sleep(self.delay)
 
 
-class click(Base):
-
+class Base:
+    __slots__ = ('order', 'actionSuccess', 'actionFail')
+    
     def __init__(self):
-        super().__init__()
-
-        self.methodType = 2
-        self.target = pos()
+        self.order = None
+        self.actionSuccess = None
+        self.actionFail = None
 
     def action(self):
-        pgui.click(*self.target)
+        print('Call to Base Method')
 
 
 class Image(Base):
     # TODO: add weakref for Image, by adding all targets in single dict.
     # TODO: divide Image class to multiple sub-classes
-    __slots__ = ('methodType', 'targetImage', 'targetName', 'capturedImage'
-                 'screenArea', 'matchPoint', 'clickOnMatch', 'clickDelay',
-                 'clickCount', 'loop', 'loopCount', 'loopDelay', 'clickCount',
-                 'matchCount')
+    __slots__ = ('targetImage', 'targetName', 'capturedImage',
+                 'screenArea', 'matchPoint', 'precision')
     
     imgSaver = saveImg()
     
     def __init__(self):
         super().__init__()
 
-        self.methodType = 3
         self.targetImage = None
         self.targetName = None
         self.capturedImage = None
         self.screenArea = (pos(), pos())
         self.matchPoint = pos()
-        self.matchCount = 0
+        self.precision = 0.85
 
-        self.clickOnMatch = False
-        self.clickDelay = 0.05
-        # self.clickCount = 2
-        # TODO: make custom number of click possible.
+    @functools.lru_cache(maxsize=256, typed=False)
+    def _region(self, pos_tuple):
+        # change x/y x/y to x/y w/h for pyautogui.
+        return *pos_tuple[0], *(pos_tuple[0] - pos_tuple[1])
 
-        self.loop = False
-        self.loopCount = 0
-        self.loopDelay = 0.2
-    
     def DumpCaptured(self, name=None):
         self.imgSaver(self.capturedImage, name)
         
     def DumpTarget(self):
         self.imgSaver(self.targetImage, self.targetName)
-        
-    def pgui_region(self):
-        return *self.screenArea[0], *(self.screenArea[0] - self.screenArea[1])
 
-    def ImageSearch(self, precision=0.85):
+    def DumpCoordinates(self):      # Do I need this?
+        return self.screenArea, self.matchPoint
+
+
+class ImageSearch(Image, Click):
+    __slots__ = ('loopCount', 'loopDelay', 'trials', 'clickOnMatch', '_foundFlag')
+
+    def __init__(self):
+        super(ImageSearch, self).__init__()
+
+        self.loopCount = 0
+        self.loopDelay = 0.2
+        self.trials = 5
+        self.clickOnMatch = False
+        self._foundFlag = False
+
+    def _ImageSearch(self, precision=0.85):
         self.matchPoint, self.capturedImage = \
-                imageSearch(self.targetImage, *self.pgui_region(), precision)
-        
+            imageSearch(self.targetImage, *self._region(self.screenArea), precision)
+
+    def _ImageSearchMultiple(self, precision=0.85):
+        for i in range(self.trials):
+            self._ImageSearch()
+            sefl.
+
+
     def ImageClick(self, offset_max=5):
         pgui.click(RandomOffset(self.matchPoint, offset_max))
-        
-    def ScanOccurrence(self, precision=0.85):
+
+    def action(self):
+
+
+
+
+class SearchOccurrence(Image):
+    __slots__ = 'matchCount'
+
+    def __init__(self):
+        super(SearchOccurrence, self).__init__()
+
+        self.matchCount = 0
+
+    def ScanOccurrence(self, precis=0.85):
         self.matchCount, self.capturedImage = \
-                scanOccurrence(self.targetImage, *self.pgui_region(), precision)
+            scanOccurrence(self.targetImage, *self._region(self.screenArea), precis)
+
 
 # TODO: add GOTO like macro method.

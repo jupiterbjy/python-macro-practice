@@ -22,6 +22,9 @@ class pos:
     def __iter__(self):
         return self.x, self.y
 
+    def __hash__(self):
+        return hash((self.x, self.y))
+
     def __str__(self):
         return str(tuple(self))
 
@@ -114,7 +117,7 @@ def imageSearch(target, corner_pos, xy, precision=0.85):
     min_val, max_val, min_loc, max_loc = cv2.minMaxLoc(res)
     
     if max_val < precision:
-        return [-1, -1], img
+        return (-1, -1), img
     else:
         cv2.rectangle(img, max_loc, list(x+y for x,y in zip(img_wh, max_loc)), (0, 0, 255), 2)
         return max_loc, img
