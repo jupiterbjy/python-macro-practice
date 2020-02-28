@@ -46,13 +46,13 @@ class click(Base):
 
 class Image(Base):
     # TODO: add weakref for Image, by adding all targets in single dict.
-    # TODO: devide Image class to multiple sub-classes
+    # TODO: divide Image class to multiple sub-classes
     __slots__ = ('methodType', 'targetImage', 'targetName', 'capturedImage'
                  'screenArea', 'matchPoint', 'clickOnMatch', 'clickDelay',
                  'clickCount', 'loop', 'loopCount', 'loopDelay', 'clickCount',
-                'matchCount')
+                 'matchCount')
     
-    imgSaver = saveImg.save
+    imgSaver = saveImg()
     
     def __init__(self):
         super().__init__()
@@ -75,29 +75,23 @@ class Image(Base):
         self.loopDelay = 0.2
     
     def DumpCaptured(self, name=None):
-        imgSaver(self.capturedImage, name)
+        self.imgSaver(self.capturedImage, name)
         
-    def Dumptarget(self, name=self.targetName)
-        imgSaver(self.targetImage, name)
+    def DumpTarget(self):
+        self.imgSaver(self.targetImage, self.targetName)
         
     def pgui_region(self):
         return *self.screenArea[0], *(self.screenArea[0] - self.screenArea[1])
 
-    # def ScreenShot(self, p1, p2): # Assuming p1, p2 is 'pos' cls
-    #     self.capturedImage = pgui.screenshot(region=(*p1, p1 - p2))
-    # This don't match usage of self.capturedImage
-        
     def ImageSearch(self, precision=0.85):
         self.matchPoint, self.capturedImage = \
-                *imageSearch(self.targetImage, *self.pgui_region(), precision)
+                imageSearch(self.targetImage, *self.pgui_region(), precision)
         
-    def ImageClick(self, PixelDrift=5):
-        pgui.click(RandomOffset(self.matchPoint, PixelDrift))
+    def ImageClick(self, offset_max=5):
+        pgui.click(RandomOffset(self.matchPoint, offset_max))
         
-    def ScanOccurence(self, precision=0.85):
+    def ScanOccurrence(self, precision=0.85):
         self.matchCount, self.capturedImage = \
-                *scanOccurence(self.targetImage, *self.pgui_region(), precision)
-
-
+                scanOccurrence(self.targetImage, *self.pgui_region(), precision)
 
 # TODO: add GOTO like macro method.

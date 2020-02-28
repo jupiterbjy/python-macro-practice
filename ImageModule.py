@@ -1,15 +1,16 @@
 import cv2
 import os
+import time
 import numpy as np
 import pyautogui as pgui
 import keyboard
 from math import sqrt
 
-
 """
 This module will provide any necessary components required by MacroMethod,
 especially Image-related functions.
 """
+
 
 class pos:
     # referenced vector2d_v0.py from 'Fluent Python' by Luciano.
@@ -31,10 +32,7 @@ class pos:
         return abs(self.x - other.x), abs(self.y - other.y)
     
     def assign(self, tup):
-        self.x, self.y = *tup
-        
-    # def pgui_region(self, other):
-    #     return self.x, self.y, *(self - other)
+        self.x, self.y = tup
 
 
 def getCaptureArea():
@@ -52,7 +50,7 @@ def getCaptureArea():
             # TODO: check and rearrange input pos.
             time.sleep(0.5)
         
-        windowArea[order].assign(*pyautogui.position())
+        windowArea[order].assign(*pgui.position())
         
     def getArea():
         getPos(1)
@@ -64,8 +62,9 @@ def getCaptureArea():
     
 def saveImg():
     """
-    Save Image with ascending ordered numeric names.
-    :return:
+    Save Image with ascending ordered numeric names. Closure demonstration.
+    Refer docs of function save().
+    :return: returns closure function save().
     """
     order = 0
     
@@ -73,35 +72,42 @@ def saveImg():
         return str(n) + '.png'
         
     def save(file, name=None, overwrite=True):
+        """
+        Saves given image in ordered name.
+
+        :param file: Image to save.
+        :param name: Name to save.
+        :param overwrite: Overwrite if file with same name exist.
+        :return:
+        """
         nonlocal order
 
         if name is None:
             name = nameIt(order)
 
-        if overwrite:
-            while os.path.isfile(name):
-                order += 1
-                name = nameIt(order)
-                
-            print(f'File "{name}" already exists. Renaming. ')
-            # name = name.split('.')[0] + '_' + '.png'
-            # TODO: add other overwrite methods.
-
         cv2.imwrite(name + '.png', file)
-
         order += 1
+
+        # if name is None:
+        #
+        #     if not overwrite:
+        #         while os.path.isfile(name):
+        #             order += 1
+        #             name = nameIt(order)
+        #     else:
+        #         name = nameIt(order)
 
     return save
 
 
-def imageSearch(target, pos, xy, precision=0.85):
+def imageSearch(target, corner_pos, xy, precision=0.85):
     """
     position will use tuple(pos(), pos())!
     """
     
-    img = np.array(pgui.screenshot(region=(*pos, *xy)))
+    img = np.array(pgui.screenshot(region=(*corner_pos, *xy)))
     img_gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-    template = cv2.imread(image, 0)
+    template = cv2.imread(target, 0)
     img_wh = template.shape[::-1]
 
     res = cv2.matchTemplate(img_gray, template, cv2.TM_CCOEFF_NORMED)
@@ -114,11 +120,11 @@ def imageSearch(target, pos, xy, precision=0.85):
         return max_loc, img
 
 
-def scanOccurrence(target, pos, xy, precision=0.8, threshold=0.3):
+def scanOccurrence(target, corner_pos, xy, precision=0.8, threshold=0.3):
     
     # TODO: Rework these codes
     
-    img = np.array(pgui.screenshot(region=(*pos, *xy)))
+    img = np.array(pgui.screenshot(region=(*corner_pos, *xy)))
     img_gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
     template = cv2.imread(target, 0)
     image_wh = template.shape[::-1]
@@ -141,10 +147,9 @@ def scanOccurrence(target, pos, xy, precision=0.8, threshold=0.3):
     return count, img
 
 
-
-def RandomOffset(pos, offset):
+def RandomOffset(corner_pos, offset):
     import random
     x_offset = random.randrange(0, offset)
-    pos.x = pos.x + offset
-    pos.y = pos.y + offset - x_offset
+    corner_pos.x = corner_pos.x + offset
+    corner_pos.y = corner_pos.y + offset - x_offset
     
