@@ -9,5 +9,6 @@ Will complete Readme section when I have time to put GUI on this script.
 
 Example of usage: https://youtu.be/_ichOg5tf8Y
 
+-----------------
 
-UPDATE - 2020/02/22 working on Basic UI.
+2020/02/29 - rewriting with OOP. Should've made new branch, too late. Currently project is not even testable.
