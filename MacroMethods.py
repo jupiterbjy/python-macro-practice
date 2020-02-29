@@ -7,6 +7,7 @@ import pyautogui as pgui
 from ImageModule import pos, saveImg, imageSearch, RandomOffset, scanOccurrence
 
 # TODO: convert to default abc module if possible.
+# TODO: or convert into coroutine
 
 
 class Base:
@@ -21,7 +22,8 @@ class Base:
 
 
 class Click:
-    __slots__ = ('target', 'clickCount', 'clickDelay', 'preDelay')
+    __slots__ = ('target', 'clickCount', 'clickDelay',
+                 'preDelay', 'actionState')
 
     def __init__(self):
         self.target = pos()
@@ -30,6 +32,7 @@ class Click:
         self.preDelay = 0
 
     def click(self):
+
         time.sleep(self.preDelay)
 
         for i in range(self.clickCount - 1):
@@ -192,7 +195,7 @@ class ImageSearch(Image, Click):
         if self.matchPoint[0] == -1:
             self._foundFlag = False
 
-    def ImageSearchMultiple(self, precision=0.85):
+    def ImageSearchMultiple(self):
         for i in range(self.trials):
             self.ImageSearch()
             if self._foundFlag:
@@ -218,6 +221,7 @@ class ImageSearch(Image, Click):
 
 
 class SearchOccurrence(Image, Click):
+    # TODO: finish thid
     __slots__ = 'matchCount'
 
     def __init__(self):
@@ -236,4 +240,5 @@ class SearchOccurrence(Image, Click):
             self.actionState = 0
 
 
-# TODO: add GOTO like macro method.
+class Actions(Wait, Variable, Click, SearchOccurrence, imageSearch):
+    pass
