@@ -20,7 +20,7 @@ class pos:
         self.y = int(y)     # limiting what x could be, catching error here.
 
     def __iter__(self):
-        return self.x, self.y
+        return iter((self.x, self.y))
 
     def __hash__(self):
         return hash((self.x, self.y))
@@ -33,9 +33,26 @@ class pos:
 
     def __sub__(self, other):
         return abs(self.x - other.x), abs(self.y - other.y)
+
+    def __call__(self):
+        return self.x, self.y
+
     
     def assign(self, tup):
         self.x, self.y = tup
+
+    @staticmethod
+    def convert(p1, p2):
+        points = [p1, p2]
+
+
+class xy_wh:
+
+    def __init__(self, p1, p2):
+
+
+        self.xy = pos()
+        self.wh = pos()
 
 
 def getCaptureArea():

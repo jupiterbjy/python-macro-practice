@@ -8,6 +8,7 @@ from ImageModule import pos, saveImg, imageSearch, RandomOffset, scanOccurrence
 
 # TODO: convert to default abc module if possible.
 # TODO: or convert into coroutine
+# TODO: utilize sys.path.insert.
 
 
 class Base:
@@ -19,6 +20,10 @@ class Base:
 
     def action(self):
         print('Call to Base Method')
+
+# --------------------------------------------------------
+
+def click(pre_delay, click_count, pos, )
 
 
 class Click:
@@ -130,7 +135,6 @@ class Variable(Base):
     @valueType.register(str)
     def _(self):
         pass
-
 
 class ActionBase(Base):
     __slots__ = ('actionSuccess', 'actionFail', 'actionState')

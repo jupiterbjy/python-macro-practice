@@ -1,5 +1,5 @@
 
-from colorama import init, Fore, Style
+from colorama import Fore, Style
 import pyautogui
 import keyboard
 import time
@@ -8,7 +8,6 @@ import GlobalVar
 import MacroProcessor
 import GenerateMacroStep
 import KillProcess
-from FrozenDetect import *
 
 
 def GetMousePos(kill_key):              # similar code from pyautogui ex
@@ -71,7 +70,7 @@ def GetWindowPoint(kill_key):
 
 
 def GetWindowPoint_INFORM():
-    from ANSI_table import Check_ANSI
+    from Toolset.ANSI_table import Check_ANSI
 
     Check_ANSI()
 

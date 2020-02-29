@@ -1,9 +1,7 @@
 import sys
-from PyQt5 import uic
 from PyQt5.QtWidgets import *
-from PyQt5.QtCore import Qt
 
-import FrozenDetect
+from Toolset import FrozenDetect
 from pymacro import Ui_MainWindow 
 
 

@@ -1,6 +1,7 @@
 # python 3.8 add := in if statement
-import MacroMethods as macro
+from MacroMethods import Actions
 
+# TODO: convert into coroutine
 
 class sequence:
     def __init__(self, file=None, undo_max=5):
@@ -10,9 +11,12 @@ class sequence:
             self.backup(file)
 
     def readfile(self, file):
+
         pass
 
     def writefile(self):
+        for i in self.seq[0]:
+
         pass
 
     def run(self):
@@ -22,7 +26,7 @@ class sequence:
 
             for i in seq_list:
 
-                if isinstance(i, macro.LoopStart):
+                if isinstance(i, Actions.LoopStart):
                     loop_info = i.action()
 
                     for _ in range(loop_info[2]):

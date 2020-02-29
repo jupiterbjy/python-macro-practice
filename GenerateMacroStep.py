@@ -58,7 +58,7 @@ def FileAvailable(name, mode):
 				KillProcess.PressKill()
     
     
-    # Todo: finish this doomed code
+	# Todo: finish this doomed code
     
 	elif mode == 'generate':
 
