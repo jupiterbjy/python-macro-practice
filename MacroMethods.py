@@ -23,10 +23,8 @@ class Base:
 
 # --------------------------------------------------------
 
-def click(pre_delay, click_count, pos, )
 
-
-class Click:
+class ClickBase:
     __slots__ = ('target', 'clickCount', 'clickDelay',
                  'preDelay', 'actionState')
 
@@ -37,7 +35,6 @@ class Click:
         self.preDelay = 0
 
     def click(self):
-
         time.sleep(self.preDelay)
 
         for i in range(self.clickCount - 1):
@@ -45,6 +42,15 @@ class Click:
             time.sleep(self.clickDelay)
 
         pgui.click(*self.target)
+
+
+class Click(Base, ClickBase):
+    def __init__(self):
+        super().__init__()
+
+    def action(self):
+        self.click()
+
 
 # --------------------------------------------------------
 # TODO: find better way to embed loop.
@@ -136,6 +142,7 @@ class Variable(Base):
     def _(self):
         pass
 
+
 class ActionBase(Base):
     __slots__ = ('actionSuccess', 'actionFail', 'actionState')
     
@@ -160,15 +167,10 @@ class Image(ActionBase):
         self.targetImage = None
         self.targetName = None
         self.capturedImage = None
-        self.screenArea = (pos(), pos())
+        self.screenArea = pos(), pos()
         self.matchPoint = pos()
         self.precision = 0.85
         self.offsetMax = 5
-
-    @functools.lru_cache(maxsize=256, typed=False)
-    def _region(self):
-        # change x/y x/y to x/y w/h for pyautogui.
-        return *self.screenArea[0], *(self.screenArea[0] - self.screenArea[1])
 
     def DumpCaptured(self, name=None):
         self.imgSaver(self.capturedImage, name)
@@ -195,7 +197,7 @@ class ImageSearch(Image, Click):
 
     def ImageSearch(self):
         self.matchPoint, self.capturedImage = \
-            imageSearch(self.targetImage, *self._region(), self.precision)
+            imageSearch(self.targetImage, pos.pgui_cvrt(*self.screenArea), self.precision)
         if self.matchPoint[0] == -1:
             self._foundFlag = False
 
@@ -236,7 +238,7 @@ class SearchOccurrence(Image, Click):
     def ScanOccurrence(self):
         self.actionState = -1
         self.matchCount, self.capturedImage = \
-            scanOccurrence(self.targetImage, *self._region(), self.precision)
+            scanOccurrence(self.targetImage, pos.pgui_cvrt(*self.screenArea), self.precision)
         if self.matchCount > 0:
             self.actionState = 1
 

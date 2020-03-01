@@ -1,6 +1,7 @@
 import cv2
 import os
 import time
+import functools
 import numpy as np
 import pyautogui as pgui
 import keyboard
@@ -36,27 +37,24 @@ class pos:
 
     def __call__(self):
         return self.x, self.y
-
     
     def assign(self, tup):
         self.x, self.y = tup
 
     @staticmethod
     def convert(p1, p2):
-        points = [p1, p2]
+        x, y = [sorted(list(i)) for i in zip(p1, p2)]
+        return zip(x, y)
 
-
-class xy_wh:
-
-    def __init__(self, p1, p2):
-
-
-        self.xy = pos()
-        self.wh = pos()
+    @staticmethod                     # Not sure if this is proper approach
+    @functools.lru_cache(maxsize=128, typed=False)
+    def pgui_cvrt(p1, p2):
+        c1, c2 = pos.convert(p1, p2)
+        return *c1, *(c2 - c1)
 
 
 def getCaptureArea():
-    windowArea = pos(), pos()
+    window_area = pos(), pos()
     kill_key = 'f2'
     
     def breakKeyInput(input_key):     # delay until key is up, to prevent input skipping
@@ -64,13 +62,13 @@ def getCaptureArea():
             time.sleep(0.05)
     
     def getPos(order):
-        nonlocal windowArea, kill_key
+        nonlocal window_area, kill_key
         
         while not keyboard.is_pressed(kill_key):
             # TODO: check and rearrange input pos.
             time.sleep(0.5)
         
-        windowArea[order].assign(*pgui.position())
+        window_area[order].assign(*pgui.position())
         
     def getArea():
         getPos(1)
