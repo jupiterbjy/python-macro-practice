@@ -9,24 +9,41 @@ from ImageModule import pos, saveImg, imageSearch, RandomOffset, scanOccurrence
 # TODO: convert to default abc module if possible.
 # TODO: or convert into coroutine
 # TODO: utilize sys.path.insert.
+# TODO: pickle serialize class? Will use simple txt-based
 
 
 class Base:
-    __slots__ = ('name', 'order')
+    # __slots__ = ('name', 'order')
 
     def __init__(self):
-        self.name = None
-        self.order = -1
+        self.name = ''
+        self.next = None           # assign obj to run next.
+        self.actionState = -2      # -2: standby / -1: active / 0: fail / 1: Success
+        self.onSuccess = None
+        self.onFail = None
+
+    def run(self):
+        if self.action():
+            # self.onSuccess.run()          <- this might trigger depth limit.
+            if self.onSuccess is None:
+                return self.next.run
+            else:
+                return self.onSuccess.run
+
+        else:
+            if self.onFail is None:
+                return self.next.run
+            else:
+                return self.onFail.run
 
     def action(self):
-        print('Call to Base Method')
+        return True
 
 # --------------------------------------------------------
 
 
 class ClickBase:
-    __slots__ = ('target', 'clickCount', 'clickDelay',
-                 'preDelay', 'actionState')
+    # __slots__ = ('target', 'clickCount', 'clickDelay', 'preDelay')
 
     def __init__(self):
         self.target = pos()
@@ -34,7 +51,7 @@ class ClickBase:
         self.clickDelay = 0.01
         self.preDelay = 0
 
-    def click(self):
+    def _click(self):
         time.sleep(self.preDelay)
 
         for i in range(self.clickCount - 1):
@@ -49,7 +66,7 @@ class Click(Base, ClickBase):
         super().__init__()
 
     def action(self):
-        self.click()
+        self._click()
 
 
 # --------------------------------------------------------
@@ -90,19 +107,19 @@ class LoopEnd(Base):
 # --------------------------------------------------------
 
 
-class Goto(Base):
-    def __init__(self):
-        super().__init__()
-        self.gotoOrder = None
-
-    def action(self):
-        pass
-        # loop and goto will be handled by MacroSequencer.py.
-        # this is placeholder.
+# class Goto(Base):
+#     def __init__(self):
+#         super().__init__()
+#         self.gotoOrder = None
+#
+#     def action(self):
+#         pass
+#         # loop and goto will be handled by MacroSequencer.py.
+#         # this is placeholder.
 
 
 class Wait(Base):
-    __slots__ = ('delay', 'actionState')
+    # __slots__ = ('delay', 'actionState')
 
     def __init__(self):
         super().__init__()
@@ -113,8 +130,8 @@ class Wait(Base):
         self.actionState = -1
 
         time.sleep(self.delay)
-
         self.actionState = 1
+        return True
 
 
 class Variable(Base):
@@ -143,17 +160,7 @@ class Variable(Base):
         pass
 
 
-class ActionBase(Base):
-    __slots__ = ('actionSuccess', 'actionFail', 'actionState')
-    
-    def __init__(self):
-        super().__init__()
-        self.actionSuccess = None
-        self.actionFail = None
-        self.actionState = -2      # -2: standby / -1: active / 0: fail / 1: Success
-
-
-class Image(ActionBase):
+class Image(Base):
     # TODO: add weakref for Image, by adding all targets in single dict.
     # TODO: divide Image class to multiple sub-classes
     __slots__ = ('targetImage', 'targetName', 'capturedImage',
@@ -183,8 +190,7 @@ class Image(ActionBase):
 
 
 class ImageSearch(Image, ClickBase):
-    __slots__ = ('loopCount', 'loopDelay', 'trials', 'clickOnMatch',
-                 '_foundFlag')
+    # __slots__ = ('loopCount', 'loopDelay', 'trials', 'clickOnMatch', '_foundFlag')
 
     def __init__(self):
         super(ImageSearch, self).__init__()
@@ -221,14 +227,20 @@ class ImageSearch(Image, ClickBase):
         if self._foundFlag:
             if self.clickOnMatch:
                 self.target = self.matchPoint
-                self.click()
+                self._click()
+
+            self.actionState = 1
+            return True
+        else:
+            self.actionState = 0
+            return False
 
         # TODO: add error handling
 
 
 class SearchOccurrence(Image, ClickBase):
-    # TODO: finish thid
-    __slots__ = 'matchCount'
+    # TODO: finish this
+    # __slots__ = 'matchCount'
 
     def __init__(self):
         super(SearchOccurrence, self).__init__()
@@ -236,15 +248,21 @@ class SearchOccurrence(Image, ClickBase):
         self.matchCount = 0
 
     def ScanOccurrence(self):
-        self.actionState = -1
         self.matchCount, self.capturedImage = \
             scanOccurrence(self.targetImage, pos.pgui_cvrt(*self.screenArea), self.precision)
+
+    def action(self):
+        self.actionState = -1
+        self.ScanOccurrence()
+
         if self.matchCount > 0:
             self.actionState = 1
-
+            return True
         else:
             self.actionState = 0
+            return False
 
 
-class Actions(Wait, Variable, Click, SearchOccurrence, imageSearch):
+class Actions(Wait, Variable, Click, SearchOccurrence, ImageSearch):
+    # TODO: supply interface without __slots__ conflict
     pass
