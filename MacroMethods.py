@@ -182,7 +182,7 @@ class Image(ActionBase):
         return self.screenArea, self.matchPoint
 
 
-class ImageSearch(Image, Click):
+class ImageSearch(Image, ClickBase):
     __slots__ = ('loopCount', 'loopDelay', 'trials', 'clickOnMatch',
                  '_foundFlag')
 
@@ -226,7 +226,7 @@ class ImageSearch(Image, Click):
         # TODO: add error handling
 
 
-class SearchOccurrence(Image, Click):
+class SearchOccurrence(Image, ClickBase):
     # TODO: finish thid
     __slots__ = 'matchCount'
 
