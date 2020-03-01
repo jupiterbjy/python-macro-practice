@@ -74,35 +74,52 @@ class Click(Base, ClickBase):
 
 
 class Loop:
-    __slots__ = ('loopTime', 'endOrder', 'currentLoop', 'startOrder', 'loopName')
+    # __slots__ = ('loopTime', 'endOrder', 'currentLoop', 'startOrder', 'loopName')
 
     def __init__(self):
+
+        self.loopName = ''
         self.loopTime = 3
-        self.startOrder = None
-        self.endOrder = None
         self.currentLoop = 0
-        self.loopName = None
+
+    @staticmethod
+    def generate(self):
+
+        loop_start_cls = LoopStart()
+        loop_end_cls = LoopEnd()
+
+        loop_start_cls.next = loop_end_cls
+        loop_end_cls.onSuccess = loop_start_cls
+
+        return loop_start_cls, loop_end_cls
 
 
-class LoopStart(Base):
-    def __init__(self, loop_obj):
+class LoopStart(Base, Loop):
+    def __init__(self):
         super().__init__()
 
-        self.name = loop_obj.loopName
-        self.object = loop_obj
+        self.name = self.loopName
+        self.next = None
 
     def action(self):
-        return self.object.startOrder, self.object.endOrder, self.object.loopTime
+        return True
 
 
-class LoopEnd(Base):
-    def __init__(self, loop_obj):
+class LoopEnd(Base, Loop):
+    def __init__(self):
         super().__init__()
-        self.name = loop_obj.loopName
-        self.object = loop_obj
+
+        self.name = self.loopName
+        self.next = None
+        # self.onFail = None
+        # self.onSuccess = None
+        # Will override onSuccess for loop, onFail for loop end.
 
     def action(self):
-        pass
+        if self.currentLoop < self.loopTime:
+            return True
+        else:
+            return False
 
 # --------------------------------------------------------
 
@@ -263,6 +280,6 @@ class SearchOccurrence(Image, ClickBase):
             return False
 
 
-class Actions(Wait, Variable, Click, SearchOccurrence, ImageSearch):
+class Actions(Wait, Variable, Click, SearchOccurrence, ImageSearch, Loop):
     # TODO: supply interface without __slots__ conflict
     pass
