@@ -5,6 +5,7 @@ import pyautogui as pgui
 # import shutil
 
 from ImageModule import pos, saveImg, imageSearch, RandomOffset, scanOccurrence
+from Toolset import member_loader
 
 # TODO: convert to default abc module if possible.
 # TODO: or convert into coroutine
@@ -12,7 +13,7 @@ from ImageModule import pos, saveImg, imageSearch, RandomOffset, scanOccurrence
 # TODO: pickle serialize class? Will use simple txt-based
 
 
-class Base:
+class _Base:
     # __slots__ = ('name', 'order')
 
     def __init__(self):
@@ -42,7 +43,7 @@ class Base:
 # --------------------------------------------------------
 
 
-class ClickBase:
+class _ClickBase:
     # __slots__ = ('target', 'clickCount', 'clickDelay', 'preDelay')
 
     def __init__(self):
@@ -61,7 +62,7 @@ class ClickBase:
         pgui.click(*self.target)
 
 
-class Click(Base, ClickBase):
+class Click(_Base, _ClickBase):
     def __init__(self):
         super().__init__()
 
@@ -83,7 +84,7 @@ class Loop:
         self.currentLoop = 0
 
     @staticmethod
-    def generate(self):
+    def generate():
 
         loop_start_cls = LoopStart()
         loop_end_cls = LoopEnd()
@@ -94,7 +95,7 @@ class Loop:
         return loop_start_cls, loop_end_cls
 
 
-class LoopStart(Base, Loop):
+class LoopStart(_Base, Loop):
     def __init__(self):
         super().__init__()
 
@@ -105,7 +106,7 @@ class LoopStart(Base, Loop):
         return True
 
 
-class LoopEnd(Base, Loop):
+class LoopEnd(_Base, Loop):
     def __init__(self):
         super().__init__()
 
@@ -135,7 +136,7 @@ class LoopEnd(Base, Loop):
 #         # this is placeholder.
 
 
-class Wait(Base):
+class Wait(_Base):
     # __slots__ = ('delay', 'actionState')
 
     def __init__(self):
@@ -151,7 +152,7 @@ class Wait(Base):
         return True
 
 
-class Variable(Base):
+class Variable(_Base):
     def __init__(self):
         super().__init__()
         self.name = 'variable'
@@ -177,11 +178,11 @@ class Variable(Base):
         pass
 
 
-class Image(Base):
+class _Image(_Base):
     # TODO: add weakref for Image, by adding all targets in single dict.
     # TODO: divide Image class to multiple sub-classes
-    __slots__ = ('targetImage', 'targetName', 'capturedImage',
-                 'screenArea', 'matchPoint', 'precision', 'offsetMax')
+    #__slots__ = ('targetImage', 'targetName', 'capturedImage',
+    #             'screenArea', 'matchPoint', 'precision', 'offsetMax')
     
     imgSaver = saveImg()
     
@@ -206,7 +207,7 @@ class Image(Base):
         return self.screenArea, self.matchPoint
 
 
-class ImageSearch(Image, ClickBase):
+class ImageSearch(_Image, _ClickBase):
     # __slots__ = ('loopCount', 'loopDelay', 'trials', 'clickOnMatch', '_foundFlag')
 
     def __init__(self):
@@ -255,7 +256,7 @@ class ImageSearch(Image, ClickBase):
         # TODO: add error handling
 
 
-class SearchOccurrence(Image, ClickBase):
+class SearchOccurrence(_Image, _ClickBase):
     # TODO: finish this
     # __slots__ = 'matchCount'
 
@@ -281,5 +282,7 @@ class SearchOccurrence(Image, ClickBase):
 
 
 class Actions(Wait, Variable, Click, SearchOccurrence, ImageSearch, Loop):
-    # TODO: supply interface without __slots__ conflict
     pass
+
+
+__all__ = member_loader(__name__)

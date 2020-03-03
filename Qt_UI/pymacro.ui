@@ -150,7 +150,7 @@
            </size>
           </property>
           <property name="currentIndex">
-           <number>0</number>
+           <number>1</number>
           </property>
           <widget class="QWidget" name="onSuccessTab">
            <attribute name="title">
@@ -371,7 +371,7 @@
               <string>Count</string>
              </property>
             </widget>
-            <widget class="QSpinBox" name="loopCountSpin_2">
+            <widget class="QSpinBox" name="clickCountSpin">
              <property name="geometry">
               <rect>
                <x>20</x>
@@ -394,7 +394,7 @@
               <string>Interval</string>
              </property>
             </widget>
-            <widget class="QDoubleSpinBox" name="loopDelaySpin_2">
+            <widget class="QDoubleSpinBox" name="clickIntervalSpin">
              <property name="geometry">
               <rect>
                <x>20</x>
