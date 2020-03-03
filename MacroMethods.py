@@ -285,4 +285,4 @@ class Actions(Wait, Variable, Click, SearchOccurrence, ImageSearch, Loop):
     pass
 
 
-__all__ = member_loader(__name__)
+__all__ = member_loader.ListClass(__name__)
