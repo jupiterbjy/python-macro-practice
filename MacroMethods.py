@@ -3,8 +3,7 @@ import functools
 # import weakref
 import pyautogui as pgui
 # import shutil
-
-from ImageModule import pos, saveImg, imageSearch, RandomOffset, scanOccurrence
+import ImageModule as ImgM
 from ToolSet import MemberLoader
 
 # TODO: somehow implement coroutine
@@ -46,7 +45,7 @@ class _ClickBase:
     # __slots__ = ('target', 'clickCount', 'clickDelay', 'preDelay')
 
     def __init__(self):
-        self.target = pos()
+        self.target = ImgM.pos()
         self.clickCount = 0
         self.clickDelay = 0.01
         self.preDelay = 0
@@ -182,7 +181,7 @@ class _Image(_Base):
     # slots_= ('targetImage', 'targetName', 'capturedImage',
     #             'screenArea', 'matchPoint', 'precision', 'offsetMax')
     
-    imgSaver = saveImg()
+    imgSaver = ImgM.saveImg()
     
     def __init__(self):
         super().__init__()
@@ -190,8 +189,8 @@ class _Image(_Base):
         self.targetImage = None
         self.targetName = None
         self.capturedImage = None
-        self.screenArea = pos(), pos()
-        self.matchPoint = pos()
+        self.screenArea = ImgM.pos(), ImgM.pos()
+        self.matchPoint = ImgM.pos()
         self.precision = 0.85
         self.offsetMax = 5
 
@@ -219,7 +218,7 @@ class ImageSearch(_Image, _ClickBase):
 
     def ImageSearch(self):
         self.matchPoint, self.capturedImage = \
-            imageSearch(self.targetImage, pos.pgui_cvrt(*self.screenArea), self.precision)
+            ImgM.imageSearch(self.targetImage, ImgM.pos.pgui_cvrt(*self.screenArea), self.precision)
         if self.matchPoint[0] == -1:
             self._foundFlag = False
 
@@ -234,7 +233,7 @@ class ImageSearch(_Image, _ClickBase):
             self.actionState = 0
 
     def ImageClick(self):
-        pgui.click(RandomOffset(self.matchPoint, self.offsetMax))
+        pgui.click(ImgM.RandomOffset(self.matchPoint, self.offsetMax))
 
     def action(self):
         self.actionState = -1
@@ -262,7 +261,7 @@ class SearchOccurrence(_Image, _ClickBase):
 
     def ScanOccurrence(self):
         self.matchCount, self.capturedImage = \
-            scanOccurrence(self.targetImage, pos.pgui_cvrt(*self.screenArea), self.precision)
+            ImgM.scanOccurrence(self.targetImage, ImgM.pos.pgui_cvrt(*self.screenArea), self.precision)
 
     def action(self):
         self.actionState = -1
