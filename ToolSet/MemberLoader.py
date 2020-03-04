@@ -28,13 +28,13 @@ def ListTarget(name, target, prefix_mode, blacklist):
 
     if not prefix_mode:
         results -= blacklist
-        return list(results)
+        return sorted(results)
     
     else:
         exclude = ''.join([str(i) for i in blacklist])
         regex = '^[' + exclude + ']'
 
-        return [i for i in results if not bool(re.match(regex, i))]
+        return sorted(i for i in results if not bool(re.match(regex, i)))
 
 
 def ListClass(name, prefix_mode=True, blacklist=None):
