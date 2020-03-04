@@ -1,4 +1,4 @@
-from Toolset import member_loader
+from ToolSet import MemberLoader
 
 
 def Check_CMD():
@@ -73,5 +73,5 @@ def Colorize(txt, color):
         
     
     
-__all__ = member_loader.ListFunction(__name__, prefix_mode= True)
+__all__ = MemberLoader.ListFunction(__name__, prefix_mode= True)
 __all__.append('ANSI_C')

@@ -5,7 +5,7 @@ import pyautogui as pgui
 # import shutil
 
 from ImageModule import pos, saveImg, imageSearch, RandomOffset, scanOccurrence
-from Toolset import member_loader
+from ToolSet import MemberLoader
 
 # TODO: convert to default abc module if possible.
 # TODO: or convert into coroutine
@@ -285,4 +285,4 @@ class Actions(Wait, Variable, Click, SearchOccurrence, ImageSearch, Loop):
     pass
 
 
-__all__ = member_loader.ListClass(__name__)
+__all__ = MemberLoader.ListClass(__name__)

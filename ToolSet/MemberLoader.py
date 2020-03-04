@@ -9,7 +9,9 @@ Main usage is for generating __all__ upon function defining.
 i.e.
 __all__ = member_loader.ListFunction(__name__, name_only = True)
 
-Blacklist only supported for array return, I have no time.
+Blacklist only supported for array return.
+
+On default will follow python's way, ignoring case starting with underscore.
 '''
 # TODO: add dict key remove for blacklist
 
@@ -31,12 +33,8 @@ def ListTarget(name, target, prefix_mode, blacklist):
     else:
         exclude = ''.join([str(i) for i in blacklist])
         regex = '^[' + exclude + ']'
-        out = []
-        for i in results:
-            if not bool(re.match(regex, i)):
-                out.append(i)
 
-        return out
+        return [i for i in results if not bool(re.match(regex, i))]
 
 
 def ListClass(name, prefix_mode=True, blacklist=None):

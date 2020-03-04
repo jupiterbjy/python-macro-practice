@@ -1,7 +1,7 @@
 import sys
 from PyQt5.QtWidgets import *
 
-from Toolset import FrozenDetect
+from ToolSet import FrozenDetect
 from pymacro import Ui_MainWindow
 import MacroMethods as macro
 
