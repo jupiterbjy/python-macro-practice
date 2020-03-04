@@ -9,6 +9,7 @@ import MacroMethods as macro
 # TODO: refer this and create icons for listWidgetItem.
 # Nyaruko kawaii~~~!
 
+
 class MainWindow(QMainWindow, Ui_MainWindow):
     def __init__(self, *args, obj=None, **kwargs):
         super(MainWindow, self).__init__(*args, **kwargs)
@@ -16,6 +17,10 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         self.insertButton.released.connect(self.addMethod)
         self.listAvailableMethods()
+        self.sequenceList.clear()
+        self.seqStorage = []
+
+        # TODO: remove placeholders when testing is complete.
 
     def initializing(self):
         pass
@@ -35,6 +40,19 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.methodList.addItem(i)
 
     def addMethod(self):
+        obj = self.methodList.selectedItems()
+
+        def addSeq(cls):
+            if len(self.seqStorage) == 0:
+                pass
+            else:
+                self.seqStorage.append(cls)
+                self.seqStorage[-2].next = self.seqStorage[-1]
+
+        if 'Loop' in obj:
+            loop_start, loop_end = macro.Loop.generate()
+
+
         self.method
         self.item = self.methodList.addItem()
         self.loopCountSpin

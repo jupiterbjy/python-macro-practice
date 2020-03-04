@@ -82,15 +82,18 @@ class Loop:
         self.currentLoop = 0
 
     @staticmethod
-    def generate():
+    def generate(name, loops):
 
-        loop_start_cls = LoopStart()
-        loop_end_cls = LoopEnd()
+        looper = LoopStart(), LoopEnd()
 
-        loop_start_cls.next = loop_end_cls
-        loop_end_cls.onSuccess = loop_start_cls
+        looper[0].next = looper[1]
+        looper[1].onSuccess = looper[0]
 
-        return loop_start_cls, loop_end_cls
+        for i in looper:
+            i.loopName = name
+            i.loopTime = loops
+
+        return looper
 
 
 class LoopStart(_Base, Loop):
