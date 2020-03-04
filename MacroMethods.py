@@ -7,10 +7,9 @@ import pyautogui as pgui
 from ImageModule import pos, saveImg, imageSearch, RandomOffset, scanOccurrence
 from ToolSet import MemberLoader
 
-# TODO: convert to default abc module if possible.
-# TODO: or convert into coroutine
-# TODO: utilize sys.path.insert.
-# TODO: pickle serialize class? Will use simple txt-based
+# TODO: somehow implement coroutine
+# TODO: utilize sys.path.insert?
+# TODO: pickle serialize class? Will use simple txt-based for now.
 
 
 class _Base:
@@ -180,8 +179,7 @@ class Variable(_Base):
 
 class _Image(_Base):
     # TODO: add weakref for Image, by adding all targets in single dict.
-    # TODO: divide Image class to multiple sub-classes
-    #__slots__ = ('targetImage', 'targetName', 'capturedImage',
+    # slots_= ('targetImage', 'targetName', 'capturedImage',
     #             'screenArea', 'matchPoint', 'precision', 'offsetMax')
     
     imgSaver = saveImg()
@@ -253,11 +251,8 @@ class ImageSearch(_Image, _ClickBase):
             self.actionState = 0
             return False
 
-        # TODO: add error handling
-
 
 class SearchOccurrence(_Image, _ClickBase):
-    # TODO: finish this
     # __slots__ = 'matchCount'
 
     def __init__(self):
