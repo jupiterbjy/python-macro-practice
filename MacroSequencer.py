@@ -3,6 +3,7 @@ from MacroMethods import Actions
 
 # TODO: convert into coroutine
 # TODO: convert into
+# Deprecated
 
 class sequence:
     def __init__(self, file=None, undo_max=5):
@@ -17,8 +18,7 @@ class sequence:
 
     def writefile(self):
         for i in self.seq[0]:
-
-        pass
+            pass
 
     def run(self):
 

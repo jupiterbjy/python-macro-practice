@@ -40,19 +40,60 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         for i in setItems(macro.__all__):
             self.methodList.addItem(i)
 
+        # TODO: hide LoopStart & LoopEnd from UI.
+
+    def addMethodMain(self):
+        selected = self.methodList.selectedItems()  # only one object will be in list.
+
+        for i in selected:
+            obj = macro.classes[i]
+            return self.addMethod(obj())
+
     @singledispatch
-    def addMethod(self):
-        obj = [self.methodList.selectedItems()]
+    def addMethod(self, obj):
+        print(f'Wrong Object {str(obj)} supplied.')
 
-        def addSeq(cls):
-            if len(self.seqStorage) == 0:
-                pass
-            else:
-                self.seqStorage.append(cls)
-                self.seqStorage[-2].next = self.seqStorage[-1]
+    @addMethod.register(macro.Click)
+    def _(self, obj):
+        pass
 
-        if 'Loop' in obj:
-            loop_start, loop_end = macro.Loop.generate()
+    @addMethod.register(macro.ImageSearch)
+    def _(self, obj):
+        obj.clickOnMatch = self.clickTargetCheck.isChecked()
+        obj.trials = self.loopCountSpin.value()
+        obj.loopDelay = self.loopDelaySpin.value()
+        obj.name
+        obj.targetImage = None
+        pass
+
+    @addMethod.register(macro.Loop)
+    def _(self, obj):
+        pass
+
+    @addMethod.register(macro.LoopStart)
+    def _(self, obj):
+        pass
+
+    @addMethod.register(macro.LoopEnd)
+    def _(self, obj):
+        pass
+
+    @addMethod.register(macro.SearchOccurrence)
+    def _(self, obj):
+        pass
+
+    @addMethod.register(macro.Variable)
+    def _(self, obj):
+        pass
+
+    @addMethod.register(macro.Wait)
+    def _(self, obj):
+        obj.delay = None
+        obj.name = None
+        obj.onFail = None
+        obj.onSuccess = None
+
+    def temp(self):
 
         self.method
         self.item = self.methodList.addItem()

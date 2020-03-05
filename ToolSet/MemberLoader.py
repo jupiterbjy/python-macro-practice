@@ -37,7 +37,7 @@ def ListTarget(name, target, prefix_mode, blacklist, return_target):
     sorted(filtered)
 
     if return_target:
-        return filtered
+        return [i for _, i in filtered]
 
     else:
         return [i for i, _ in filtered]

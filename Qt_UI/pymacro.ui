@@ -205,13 +205,13 @@
            </size>
           </property>
           <property name="currentIndex">
-           <number>0</number>
+           <number>2</number>
           </property>
           <widget class="QWidget" name="imgTab">
            <attribute name="title">
-            <string>Image</string>
+            <string>Search</string>
            </attribute>
-           <widget class="QPushButton" name="insertButton">
+           <widget class="QPushButton" name="searchInsert">
             <property name="geometry">
              <rect>
               <x>170</x>
@@ -237,13 +237,13 @@
              <string>Click Target</string>
             </property>
            </widget>
-           <widget class="QLabel" name="ImgLabel">
+           <widget class="QLabel" name="searchImgLabel">
             <property name="geometry">
              <rect>
               <x>10</x>
               <y>10</y>
               <width>226</width>
-              <height>181</height>
+              <height>151</height>
              </rect>
             </property>
             <property name="autoFillBackground">
@@ -256,13 +256,13 @@
              <string/>
             </property>
            </widget>
-           <widget class="QLabel" name="ImgNameLabel">
+           <widget class="QLabel" name="serachImgNameLabel">
             <property name="geometry">
              <rect>
-              <x>10</x>
-              <y>180</y>
-              <width>56</width>
-              <height>12</height>
+              <x>11</x>
+              <y>145</y>
+              <width>221</width>
+              <height>20</height>
              </rect>
             </property>
             <property name="lineWidth">
@@ -285,7 +285,7 @@
              </rect>
             </property>
             <property name="title">
-             <string>Loop</string>
+             <string>Trials</string>
             </property>
             <widget class="QLabel" name="label">
              <property name="geometry">
@@ -300,7 +300,7 @@
               <string>Count</string>
              </property>
             </widget>
-            <widget class="QSpinBox" name="loopCountSpin">
+            <widget class="QSpinBox" name="trialsCountSpin">
              <property name="geometry">
               <rect>
                <x>15</x>
@@ -323,7 +323,7 @@
               <string>Interval</string>
              </property>
             </widget>
-            <widget class="QDoubleSpinBox" name="loopDelaySpin">
+            <widget class="QDoubleSpinBox" name="trialsIntervalSpin">
              <property name="geometry">
               <rect>
                <x>14</x>
@@ -417,10 +417,118 @@
              </property>
             </widget>
            </widget>
+           <widget class="QPushButton" name="searchImgLoadButton">
+            <property name="geometry">
+             <rect>
+              <x>161</x>
+              <y>164</y>
+              <width>75</width>
+              <height>23</height>
+             </rect>
+            </property>
+            <property name="text">
+             <string>Load Img</string>
+            </property>
+           </widget>
+           <widget class="QPushButton" name="searchImgClearButton">
+            <property name="geometry">
+             <rect>
+              <x>80</x>
+              <y>164</y>
+              <width>75</width>
+              <height>23</height>
+             </rect>
+            </property>
+            <property name="text">
+             <string>Clear Img</string>
+            </property>
+           </widget>
+          </widget>
+          <widget class="QWidget" name="tab">
+           <attribute name="title">
+            <string>Count</string>
+           </attribute>
+           <widget class="QLabel" name="countImgLabel">
+            <property name="geometry">
+             <rect>
+              <x>10</x>
+              <y>10</y>
+              <width>226</width>
+              <height>151</height>
+             </rect>
+            </property>
+            <property name="autoFillBackground">
+             <bool>true</bool>
+            </property>
+            <property name="frameShape">
+             <enum>QFrame::StyledPanel</enum>
+            </property>
+            <property name="text">
+             <string/>
+            </property>
+           </widget>
+           <widget class="QLabel" name="countImgNameLabel">
+            <property name="geometry">
+             <rect>
+              <x>11</x>
+              <y>145</y>
+              <width>221</width>
+              <height>20</height>
+             </rect>
+            </property>
+            <property name="lineWidth">
+             <number>0</number>
+            </property>
+            <property name="text">
+             <string>No Image</string>
+            </property>
+            <property name="textFormat">
+             <enum>Qt::RichText</enum>
+            </property>
+           </widget>
+           <widget class="QPushButton" name="countImgLoadButton">
+            <property name="geometry">
+             <rect>
+              <x>161</x>
+              <y>164</y>
+              <width>75</width>
+              <height>23</height>
+             </rect>
+            </property>
+            <property name="text">
+             <string>Load Img</string>
+            </property>
+           </widget>
+           <widget class="QPushButton" name="countImgClearButton">
+            <property name="geometry">
+             <rect>
+              <x>80</x>
+              <y>164</y>
+              <width>75</width>
+              <height>23</height>
+             </rect>
+            </property>
+            <property name="text">
+             <string>Clear Img</string>
+            </property>
+           </widget>
+           <widget class="QPushButton" name="countInsert">
+            <property name="geometry">
+             <rect>
+              <x>170</x>
+              <y>340</y>
+              <width>61</width>
+              <height>21</height>
+             </rect>
+            </property>
+            <property name="text">
+             <string>Insert</string>
+            </property>
+           </widget>
           </widget>
           <widget class="QWidget" name="funcTab">
            <attribute name="title">
-            <string>Functions</string>
+            <string>Etc</string>
            </attribute>
            <widget class="QPushButton" name="funcButton">
             <property name="geometry">
@@ -434,6 +542,178 @@
             <property name="text">
              <string>Insert</string>
             </property>
+           </widget>
+           <widget class="QGroupBox" name="groupBox_3">
+            <property name="geometry">
+             <rect>
+              <x>10</x>
+              <y>10</y>
+              <width>91</width>
+              <height>81</height>
+             </rect>
+            </property>
+            <property name="title">
+             <string>Wait</string>
+            </property>
+            <widget class="QDoubleSpinBox" name="waitSpin">
+             <property name="geometry">
+              <rect>
+               <x>10</x>
+               <y>20</y>
+               <width>71</width>
+               <height>21</height>
+              </rect>
+             </property>
+             <property name="suffix">
+              <string>s</string>
+             </property>
+             <property name="decimals">
+              <number>1</number>
+             </property>
+             <property name="maximum">
+              <double>100000000000.000000000000000</double>
+             </property>
+             <property name="singleStep">
+              <double>0.500000000000000</double>
+             </property>
+             <property name="value">
+              <double>5.000000000000000</double>
+             </property>
+            </widget>
+            <widget class="QPushButton" name="waitInsert">
+             <property name="geometry">
+              <rect>
+               <x>10</x>
+               <y>50</y>
+               <width>71</width>
+               <height>21</height>
+              </rect>
+             </property>
+             <property name="text">
+              <string>Insert</string>
+             </property>
+            </widget>
+           </widget>
+           <widget class="QGroupBox" name="groupBox_4">
+            <property name="geometry">
+             <rect>
+              <x>10</x>
+              <y>100</y>
+              <width>91</width>
+              <height>81</height>
+             </rect>
+            </property>
+            <property name="title">
+             <string>Loop</string>
+            </property>
+            <widget class="QSpinBox" name="loopCountSpin">
+             <property name="geometry">
+              <rect>
+               <x>10</x>
+               <y>20</y>
+               <width>71</width>
+               <height>21</height>
+              </rect>
+             </property>
+            </widget>
+            <widget class="QPushButton" name="LoopInsert">
+             <property name="geometry">
+              <rect>
+               <x>10</x>
+               <y>50</y>
+               <width>71</width>
+               <height>21</height>
+              </rect>
+             </property>
+             <property name="text">
+              <string>Insert</string>
+             </property>
+            </widget>
+           </widget>
+           <widget class="QGroupBox" name="groupBox_5">
+            <property name="geometry">
+             <rect>
+              <x>10</x>
+              <y>190</y>
+              <width>91</width>
+              <height>181</height>
+             </rect>
+            </property>
+            <property name="title">
+             <string>Click</string>
+            </property>
+            <widget class="QSpinBox" name="loopCountSpin_2">
+             <property name="geometry">
+              <rect>
+               <x>10</x>
+               <y>40</y>
+               <width>71</width>
+               <height>21</height>
+              </rect>
+             </property>
+            </widget>
+            <widget class="QPushButton" name="clickInsert">
+             <property name="geometry">
+              <rect>
+               <x>10</x>
+               <y>150</y>
+               <width>71</width>
+               <height>21</height>
+              </rect>
+             </property>
+             <property name="text">
+              <string>Insert</string>
+             </property>
+            </widget>
+            <widget class="QLabel" name="label_5">
+             <property name="geometry">
+              <rect>
+               <x>10</x>
+               <y>20</y>
+               <width>81</width>
+               <height>20</height>
+              </rect>
+             </property>
+             <property name="text">
+              <string>X</string>
+             </property>
+            </widget>
+            <widget class="QLabel" name="label_6">
+             <property name="geometry">
+              <rect>
+               <x>10</x>
+               <y>70</y>
+               <width>81</width>
+               <height>20</height>
+              </rect>
+             </property>
+             <property name="text">
+              <string>Y</string>
+             </property>
+            </widget>
+            <widget class="QSpinBox" name="loopCountSpin_3">
+             <property name="geometry">
+              <rect>
+               <x>10</x>
+               <y>90</y>
+               <width>71</width>
+               <height>21</height>
+              </rect>
+             </property>
+            </widget>
+            <widget class="QPushButton" name="coordFromImg">
+             <property name="geometry">
+              <rect>
+               <x>10</x>
+               <y>120</y>
+               <width>71</width>
+               <height>21</height>
+              </rect>
+             </property>
+             <property name="text">
+              <string>From Img</string>
+             </property>
+            </widget>
            </widget>
           </widget>
           <widget class="QWidget" name="debugTab">
