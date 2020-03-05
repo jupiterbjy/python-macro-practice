@@ -1,4 +1,5 @@
 import sys
+from functools import singledispatch
 from PyQt5.QtWidgets import *
 
 from ToolSet import FrozenDetect
@@ -39,8 +40,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         for i in setItems(macro.__all__):
             self.methodList.addItem(i)
 
+    @singledispatch
     def addMethod(self):
-        obj = self.methodList.selectedItems()
+        obj = [self.methodList.selectedItems()]
 
         def addSeq(cls):
             if len(self.seqStorage) == 0:
@@ -51,7 +53,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         if 'Loop' in obj:
             loop_start, loop_end = macro.Loop.generate()
-
 
         self.method
         self.item = self.methodList.addItem()
@@ -71,7 +72,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         macro.Click()
         macro.LoopStart()
-
 
 
 def main():

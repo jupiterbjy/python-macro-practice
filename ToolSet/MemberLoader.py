@@ -16,7 +16,8 @@ On default will follow python's way, ignoring case starting with underscore.
 # TODO: add dict key remove for blacklist
 
 
-def ListTarget(name, target, prefix_mode, blacklist):
+def ListTarget(name, target, prefix_mode, blacklist, return_target):
+
     if prefix_mode and blacklist is None:
         blacklist = {'_'}
 
@@ -24,22 +25,27 @@ def ListTarget(name, target, prefix_mode, blacklist):
         blacklist = {}
 
     members = inspect.getmembers(modules[name], target)
-    results = {a for a, _ in members}
 
-    if not prefix_mode:
-        results -= blacklist
-        return sorted(results)
-    
-    else:
+    if prefix_mode:
         exclude = ''.join([str(i) for i in blacklist])
         regex = '^[' + exclude + ']'
 
-        return sorted(i for i in results if not bool(re.match(regex, i)))
+        filtered = [i for i in members if not bool(re.match(regex, i[0]))]
+    else:
+        filtered = [i for i in members if i[0] not in blacklist]
+
+    sorted(filtered)
+
+    if return_target:
+        return filtered
+
+    else:
+        return [i for i, _ in filtered]
 
 
-def ListClass(name, prefix_mode=True, blacklist=None):
-    return ListTarget(name, inspect.isclass, prefix_mode, blacklist)
+def ListClass(name, prefix_mode=True, blacklist=None, return_target=False):
+    return ListTarget(name, inspect.isclass, prefix_mode, blacklist, return_target)
 
 
-def ListFunction(name, prefix_mode=True, blacklist=None):
-    return ListTarget(name, inspect.isfunction, prefix_mode, blacklist)
+def ListFunction(name, prefix_mode=True, blacklist=None, return_target=False):
+    return ListTarget(name, inspect.isfunction, prefix_mode, blacklist, return_target)
