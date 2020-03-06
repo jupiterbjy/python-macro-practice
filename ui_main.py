@@ -8,7 +8,29 @@ import MacroMethods as macro
 
 # https://stackoverflow.com/questions/25187444/pyqt-qlistwidget-custom-items
 # TODO: refer this and create icons for listWidgetItem.
-# Nyaruko kawaii~~~!
+# Nyaruko kawaii~~~!!
+
+
+class SeqItemWidget(QWidget):
+    def __init__(self, flags, parent=None, *args, **kwargs):
+        super().__init__(flags, parent, *args, **kwargs)
+        self.textLayOut = QVBoxLayout()
+        self.textUpLabel = QLabel()
+        self.textDownLabel = QLabel()
+        self.textLayOut.addItem(self.textUpLabel)
+        self.textLayOut.addItem(self.textDownLabel)
+        self.allHBoxLayOut = QHBoxLayout()
+        self.iconLabel = QLabel()
+        self.allHBoxLayOut.addItem(self.iconLabel)
+        self.allHBoxLayOut.addLayout(self.textLayOut)
+        self.setLayout(self.allHBoxLayOut)
+
+        self.textUpQLabel.setStyleSheet('''
+                    color: rgb(0, 0, 255);
+                ''')
+        self.textDownQLabel.setStyleSheet('''
+                    color: rgb(255, 0, 0);
+                ''')
 
 
 class MainWindow(QMainWindow, Ui_MainWindow):
@@ -25,6 +47,11 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
     def initializing(self):
         pass
+
+    def updateToSelected(self):
+        selected = self.sequenceList.selectedItems()
+        for i in selected:
+            pass
 
     def listAvailableMethods(self):
 
@@ -46,8 +73,12 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         selected = self.methodList.selectedItems()  # only one object will be in list.
 
         for i in selected:
-            obj = macro.classes[i]
-            return self.addMethod(obj())
+            obj = macro.classes[i]()
+            obj.name = self.nameLine
+
+        get = self.addMethod(obj)
+        item = SeqItemWidget()
+        # TODO: find way to assign target
 
     @singledispatch
     def addMethod(self, obj):
@@ -62,9 +93,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         obj.clickOnMatch = self.clickTargetCheck.isChecked()
         obj.trials = self.loopCountSpin.value()
         obj.loopDelay = self.loopDelaySpin.value()
-        obj.name
+        obj.name = self.nameLine.text()
         obj.targetImage = None
-        pass
+        return obj
 
     @addMethod.register(macro.Loop)
     def _(self, obj):
@@ -92,19 +123,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         obj.name = None
         obj.onFail = None
         obj.onSuccess = None
-
-    def temp(self):
-
-        self.method
-        self.item = self.methodList.addItem()
-        self.loopCountSpin
-        self.loopDelaySpin
-        self.clickCountSpin
-        self.clickIntervalSpin
-        self.clickTargetCheck
-
-        self.ImgLabel
-        self.ImgNameLabel
 
     def loadMethods(self):
         item = QListWidgetItem()
