@@ -77,8 +77,17 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.seqStorage = []
 
         self.searchInsert.released.connect(self.addMethodMain)
+        self.methodList.currentRowChanged.connect(self.disableOptions)
         self.initializing()
         # Create QListWidget
+
+    def selectedMethod(self):
+        return MacroMethods.classes[self.methodList.currentRow()]
+
+    def disableOptions(self):
+        selected = self.selectedMethod()
+
+
 
     def _append_text(self, msg):
         self.outputTextEdit.moveCursor(QTextCursor.End)
@@ -114,6 +123,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         # TODO: hide LoopStart & LoopEnd from UI.
 
     def refreshSequence(self):
+        # TODO: refresh all option sections upon selecting seq list.
         self.sequenceList.clear()
         print('Refreshing Sequence.')
         pass
@@ -121,10 +131,10 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     # -------------------------------------------------
 
     def addMethodMain(self):
-        selected = self.methodList.currentRow()  # only one object will be in list.
-
-        obj = self.addMethod(MacroMethods.classes[selected]())
+        target = self.selectedMethod()
+        obj = self.addMethod(target())
         obj.name = self.nameLine.text()
+
         print(f'Adding {obj.name} in seq.')
         img = 'template.png'
         txt2 = 'test'
@@ -183,14 +193,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         return obj
 
     # -------------------------------------------------
-
-    def loadMethods(self):
-        item = QListWidgetItem()
-        item.setText("")
-        self.methodList.addItem(item)
-
-        MacroMethods.Click()
-        MacroMethods.LoopStart()
 
 
 def main():

@@ -281,5 +281,6 @@ class sActions(Wait, Variable, Click, SearchOccurrence, ImageSearch, Loop):
     pass
 
 
+
 __all__ = MemberLoader.ListClass(__name__, blacklist={'_', 's'})
 classes = MemberLoader.ListClass(__name__, blacklist={'_', 's'}, return_target=True)
