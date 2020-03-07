@@ -140,7 +140,7 @@ class LoopEnd(_Base, Loop):
 class Wait(_Base):
     # __slots__ = ('delay', 'actionState')
 
-    def __init__(self, name, delay=0):
+    def __init__(self):
         super().__init__()
         self.delay = 0
         self.actionState = -2
@@ -281,5 +281,5 @@ class sActions(Wait, Variable, Click, SearchOccurrence, ImageSearch, Loop):
     pass
 
 
-__all__ = MemberLoader.ListClass(__name__, blacklist={'s'})
-classes = MemberLoader.ListClass(__name__, blacklist={'s'}, return_target=True)
+__all__ = MemberLoader.ListClass(__name__, blacklist={'_', 's'})
+classes = MemberLoader.ListClass(__name__, blacklist={'_', 's'}, return_target=True)
