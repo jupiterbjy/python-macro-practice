@@ -24,8 +24,10 @@ def imageCheck(file_dir):
         file_name = fileNameExtract(file_dir)
 
         try:
-            _ = cv2.imread(file_dir, 0)
+            temp = cv2.imread(file_dir, 0)
         except cv2.error as err:
-            print(f'Error loading {file_name}.')
+            return False
         else:
-            return file_dir
+            if temp.size == 0:
+                return False
+            return True

@@ -91,6 +91,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         self.searchInsert.released.connect(self.addMethodMain)
         self.methodList.currentRowChanged.connect(self.disableOptions)
+        self.searchImgLoadButton.released.connect(self.searchLoadImage)
         self.initializing()
         # Create QListWidget
 
@@ -102,18 +103,24 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     def disableOptions(self):
         selected = self.selectedMethod()
 
-    def loadImage(self):
-        file_dir = QFileDialog.getOpenFileName()
+    # TODO: reorder function orders
+    def searchLoadImage(self):
+        file_dir = QFileDialog.getOpenFileName()[0]
+        file_name = Tools.fileNameExtract(file_dir)
+        print(file_dir)
 
-        if file_dir[0] != '':
-            file_name = Tools.fileNameExtract(file_dir)
-            
-            try:
-                _ = cv2.imread(file_dir, 0)
-            except cv2.error as err:
-                print(f'Error loading {file_name}.')
-            else:
-                return file_dir
+        if Tools.imageCheck(file_dir):
+
+            self.cachedImage['search'] = file_dir
+
+            self.searchImgLabel.setPixmap(
+                QPixmap(file_dir).scaled(226, 151, Qt.KeepAspectRatio))
+
+            self.searchImgNameLabel.setText(file_name)
+
+        else:
+            print(f'Error loading {file_name}.')
+
 
     def _append_text(self, msg):
         self.outputTextEdit.moveCursor(QTextCursor.End)
