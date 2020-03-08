@@ -16,12 +16,14 @@ def IsFrozen(change_dir=True):
     :param change_dir: If true, will set working directory where exe is.
     :return: Returns True-False according to frozen state.
     """
+    print(sys.executable)
 
     if getattr(sys, 'frozen', False):
         if change_dir:
             SetWorkingDirectory(sys.executable)
         return True
     else:
+        os.chdir(os.path.dirname(sys.argv[0]))
         return False
 
 
@@ -32,5 +34,4 @@ def SetWorkingDirectory(directory):
     :return: returns nothing.
     """
     tmp = directory.split('\\')[:-1]
-    path = '\\'.join(tmp)
-    os.chdir(path)
+    os.chdir('\\'.join(tmp))

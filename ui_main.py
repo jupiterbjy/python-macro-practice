@@ -1,12 +1,12 @@
 import sys
-from functools import singledispatch
 from PyQt5.QtWidgets import *
 from PyQt5.QtCore import *
 from PyQt5.QtGui import *
 
-from ToolSet import FrozenDetect
+from ToolSet import FrozenDetect, ObjectDispatch
 from pymacro import Ui_MainWindow
 import MacroMethods
+
 
 # https://stackoverflow.com/questions/25187444/pyqt-qlistwidget-custom-items
 # TODO: refer this and create icons for listWidgetItem.
@@ -49,7 +49,7 @@ class SeqItemWidget(QWidget):
         self.allHBoxLayOut = QHBoxLayout()
         self.iconLabel = QLabel()
         self.allHBoxLayOut.addWidget(self.iconLabel)
-        self.allHBoxLayOut.addLayout(self.textLayOut)
+        self.allHBoxLayOut.addLayout(self.textLayOut, 1)
         self.setLayout(self.allHBoxLayOut)
 
         self.textUpLabel.setStyleSheet('''
@@ -60,13 +60,14 @@ class SeqItemWidget(QWidget):
                 ''')
 
     def setup(self, t_up, t_down, img_path):
+        print(img_path)
         self.textUpLabel.setText(t_up)
         self.textDownLabel.setText(t_down)
-        self.iconLabel.setPixmap(QPixmap(img_path))
+        self.iconLabel.setPixmap(QPixmap(img_path).scaledToHeight(48))
 
 
 class MainWindow(QMainWindow, Ui_MainWindow):
-    def __init__(self, *args, obj=None, **kwargs):
+    def __init__(self, *args, **kwargs):
         super(MainWindow, self).__init__(*args, **kwargs)
         self.setupUi(self)
 
@@ -86,8 +87,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
     def disableOptions(self):
         selected = self.selectedMethod()
-
-
 
     def _append_text(self, msg):
         self.outputTextEdit.moveCursor(QTextCursor.End)
@@ -132,67 +131,73 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
     def addMethodMain(self):
         target = self.selectedMethod()
-        obj = self.addMethod(target())
+        dispatch = self.CreateDispatcher()
+        obj = dispatch(target)
         obj.name = self.nameLine.text()
 
         print(f'Adding {obj.name} in seq.')
         img = 'template.png'
-        txt2 = 'test'
-
-        print(str(self.addMethod.registry.keys()))
+        txt2 = str(type(obj)).split(' ')[1]
 
         item = SeqItemWidget()
-        self.sequenceList.addItem(item.setup(obj.name, txt2, img))
+        item.setup(txt2, obj.name, img)
 
-        # TODO: find way to assign target
+        list_item = QListWidgetItem(self.sequenceList)
+        list_item.setSizeHint(item.sizeHint())
 
-    @singledispatch
-    def addMethod(self, obj):
-        print(f'Wrong Object {str(obj)} supplied.')
-        return obj
-
-    @addMethod.register(MacroMethods.Click)
-    def _(self, obj):
-        pass
-
-    @addMethod.register(MacroMethods.ImageSearch)
-    def _(self, obj):
-        obj.clickOnMatch = self.clickTargetCheck.isChecked()
-        obj.trials = self.loopCountSpin.value()
-        obj.loopDelay = self.loopDelaySpin.value()
-        obj.name = self.nameLine.text()
-        obj.targetImage = None
-        return obj
-
-    @addMethod.register(MacroMethods.Loop)
-    def _(self, obj):
-        pass
-
-    @addMethod.register(MacroMethods.LoopStart)
-    def _(self, obj):
-        pass
-
-    @addMethod.register(MacroMethods.LoopEnd)
-    def _(self, obj):
-        pass
-
-    @addMethod.register(MacroMethods.SearchOccurrence)
-    def _(self, obj):
-        pass
-
-    @addMethod.register(MacroMethods.Variable)
-    def _(self, obj):
-        pass
-
-    @addMethod.register(MacroMethods.Wait)
-    def _(self, obj):
-        print('adding object wait')
-        obj.delay = self.waitSpin.value
-        obj.onFail = None
-        obj.onSuccess = None
-        return obj
+        self.sequenceList.addItem(list_item)
+        self.sequenceList.setItemWidget(list_item, item)
 
     # -------------------------------------------------
+
+    def CreateDispatcher(self):
+        def defaultBehavior(obj):
+            print(f'Wrong Object {str(obj)} supplied.')
+            return obj
+
+        dispatch = ObjectDispatch.dispatchObject(defaultBehavior)
+
+        @ObjectDispatch.register(dispatch, MacroMethods.Click)
+        def _(obj):
+            return obj
+
+        @ObjectDispatch.register(dispatch, MacroMethods.ImageSearch)
+        def _(obj):
+            obj.clickOnMatch = self.clickTargetCheck.isChecked()
+            obj.trials = self.loopCountSpin.value()
+            obj.loopDelay = self.loopDelaySpin.value()
+            obj.targetImage = None
+            return obj
+
+        @ObjectDispatch.register(dispatch, MacroMethods.Loop)
+        def _(obj):
+            return obj
+
+        @ObjectDispatch.register(dispatch, MacroMethods.LoopStart)
+        def _(obj):
+            return obj
+
+        @ObjectDispatch.register(dispatch, MacroMethods.LoopEnd)
+        def _(obj):
+            return obj
+
+        @ObjectDispatch.register(dispatch, MacroMethods.SearchOccurrence)
+        def _(obj):
+            return obj
+
+        @ObjectDispatch.register(dispatch, MacroMethods.Variable)
+        def _(obj):
+            return obj
+
+        @ObjectDispatch.register(dispatch, MacroMethods.Wait)
+        def _(obj):
+            print('adding object wait')
+            obj.delay = self.waitSpin.value
+            obj.onFail = None
+            obj.onSuccess = None
+            return obj
+
+        return dispatch
 
 
 def main():

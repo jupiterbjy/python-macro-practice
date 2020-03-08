@@ -3,9 +3,7 @@ import cv2
 import pyautogui
 import time
 
-import CustomAction as Ca
-import KillProcess
-import ImgWrapper as Iw
+from Legacy import CustomAction as Ca, ImgWrapper as Iw, KillProcess
 
 init(convert=False, strip=False)
 

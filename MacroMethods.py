@@ -3,7 +3,7 @@ import functools
 # import weakref
 import pyautogui as pgui
 # import shutil
-import ImageModule as ImgM
+from Legacy import ImageModule as ImgM
 from ToolSet import MemberLoader
 
 # TODO: somehow implement coroutine

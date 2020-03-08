@@ -1,6 +1,6 @@
 import time
 
-import KillProcess
+from Legacy import KillProcess
 
 
 def TStr():

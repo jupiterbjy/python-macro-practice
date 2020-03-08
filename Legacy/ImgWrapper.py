@@ -1,6 +1,5 @@
 from colorama import init, Fore, Style
 import time
-import pyautogui as p_gui
 import numpy as np
 import cv2
 import sys
@@ -54,7 +53,7 @@ def GetGlobalPos():
     global p1, p2
 
     try:
-        import GlobalVar
+        from Legacy import GlobalVar
         if GlobalVar.x2 == 0:
             raise NameError
 

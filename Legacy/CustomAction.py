@@ -1,8 +1,7 @@
 import pyautogui
 import time
 
-import ImgWrapper as Iw
-import KillProcess
+from Legacy import ImgWrapper as Iw, KillProcess
 
 
 # Write Custom action and set Op Mode to 3 4 5 6

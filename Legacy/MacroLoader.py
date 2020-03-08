@@ -4,10 +4,7 @@ import pyautogui
 import keyboard
 import time
 
-import GlobalVar
-import MacroProcessor
-import GenerateMacroStep
-import KillProcess
+from Legacy import MacroProcessor, GlobalVar, GenerateMacroStep, KillProcess
 
 
 def GetMousePos(kill_key):              # similar code from pyautogui ex
@@ -93,7 +90,7 @@ def GetFileInfo():
 
     file_name = input("File Name: ")
     if file_name is '':
-        file_name = 'Macro1.txt'
+        file_name = 'macro1.txt'
 
     return file_name
 

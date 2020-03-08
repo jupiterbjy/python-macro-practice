@@ -3,7 +3,7 @@ import pyautogui
 import time
 import cv2
 
-from ImgWrapper import ScreenShotArea
+from Legacy.ImgWrapper import ScreenShotArea
 from ToolSet.FrozenDetect import DetectFrozen
 
 
