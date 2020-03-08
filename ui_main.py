@@ -3,10 +3,10 @@ from PyQt5.QtWidgets import *
 from PyQt5.QtCore import *
 from PyQt5.QtGui import *
 
-from ToolSet import FrozenDetect, ObjectDispatch
+from Toolset import FrozenDetect, ObjectDispatch, Tools
 from pymacro import Ui_MainWindow
 import MacroMethods
-
+import cv2
 
 # https://stackoverflow.com/questions/25187444/pyqt-qlistwidget-custom-items
 # TODO: refer this and create icons for listWidgetItem.
@@ -67,6 +67,9 @@ class SeqItemWidget(QWidget):
 
 
 def ClassNameRip(name):
+    if type(name) != type:
+        name = type(name)
+
     out = str(name).split('.')[-1]
     return out.replace('\'>', '')
 
@@ -81,6 +84,10 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self._stdout.printOccur.connect(lambda x: self._append_text(x))
 
         self.seqStorage = []
+        self.cachedImage = {
+            'search': None,
+            'count': None
+        }
 
         self.searchInsert.released.connect(self.addMethodMain)
         self.methodList.currentRowChanged.connect(self.disableOptions)
@@ -94,6 +101,19 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
     def disableOptions(self):
         selected = self.selectedMethod()
+
+    def loadImage(self):
+        file_dir = QFileDialog.getOpenFileName()
+
+        if file_dir[0] != '':
+            file_name = Tools.fileNameExtract(file_dir)
+            
+            try:
+                _ = cv2.imread(file_dir, 0)
+            except cv2.error as err:
+                print(f'Error loading {file_name}.')
+            else:
+                return file_dir
 
     def _append_text(self, msg):
         self.outputTextEdit.moveCursor(QTextCursor.End)
@@ -139,11 +159,11 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     def addMethodMain(self):
         target = self.selectedMethod()
         dispatch = self.CreateDispatcher()
-        obj = dispatch(target)
-        print(obj)
-        obj.name = self.nameLine.text()
 
-        print(f'Adding "{obj.name}" type {ClassNameRip(obj)}.')
+        obj = dispatch(target)
+        obj.name = self.nameLine.text()
+        print(f'Add: {ClassNameRip(obj)} object "{obj.name}"')
+
         img = 'template.png'
         txt2 = str(type(obj))
 
@@ -159,6 +179,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     # -------------------------------------------------
 
     def CreateDispatcher(self):
+
         def defaultBehavior(obj):
             print(f'Object {str(obj)} Not dispatched.')
             return obj
@@ -171,10 +192,10 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         @ObjectDispatch.register(dispatch, MacroMethods.ImageSearch)
         def _(obj):
-            obj.clickOnMatch = self.clickTargetCheck.isChecked()
-            obj.trials = self.loopCountSpin.value()
-            obj.loopDelay = self.loopDelaySpin.value()
-            obj.targetImage = None
+            obj.clickOnMatch = self.searchClickGroup.isChecked()
+            obj.trials = self.trialsCountSpin.value()
+            obj.loopDelay = self.trialsIntervalSpin.value()
+            obj.targetImage = self.cachedImage['search']
             return obj
 
         @ObjectDispatch.register(dispatch, MacroMethods.Loop)

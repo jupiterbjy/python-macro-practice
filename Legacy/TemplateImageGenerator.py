@@ -4,7 +4,7 @@ import time
 import cv2
 
 from Legacy.ImgWrapper import ScreenShotArea
-from ToolSet.FrozenDetect import DetectFrozen
+from Toolset.FrozenDetect import DetectFrozen
 
 
 def GetMousePos(kill_key):              # similar code from pyautogui ex

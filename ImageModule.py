@@ -11,6 +11,7 @@ from math import sqrt
 This module will provide any necessary components required by MacroMethod,
 especially Image-related functions.
 """
+# TODO: add exception handler for functions here.
 
 
 class pos:
@@ -88,7 +89,7 @@ def saveImg():
     
     def nameIt(n):
         return str(n) + '.png'
-        
+
     def save(file, name=None, overwrite=True):
         """
         Saves given image in ordered name.
@@ -105,15 +106,6 @@ def saveImg():
 
         cv2.imwrite(name + '.png', file)
         order += 1
-
-        # if name is None:
-        #
-        #     if not overwrite:
-        #         while os.path.isfile(name):
-        #             order += 1
-        #             name = nameIt(order)
-        #     else:
-        #         name = nameIt(order)
 
     return save
 

@@ -4,7 +4,7 @@ import functools
 import pyautogui as pgui
 # import shutil
 import ImageModule as ImgM
-from ToolSet import MemberLoader
+from Toolset import MemberLoader
 
 # TODO: somehow implement coroutine
 # TODO: utilize sys.path.insert?

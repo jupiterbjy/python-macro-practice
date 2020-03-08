@@ -15,8 +15,6 @@ class dispatchObject:
         raise RuntimeError('Default function is not assigned to function_map.')
 
     def dispatch(self, obj, *args, **kwargs):
-        print('get:', str(type(obj)))
-
         return self.function_map.get(str(type(obj)), self.default)(obj)
 
 
@@ -32,3 +30,8 @@ def register(dispatch_obj, type_obj):
         return wrapper
 
     return decorator
+
+
+def mainDispatch():
+    # TODO: change decorator so wrapper 'CreateDispatcher' is not required.
+    pass

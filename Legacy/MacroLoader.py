@@ -67,7 +67,7 @@ def GetWindowPoint(kill_key):
 
 
 def GetWindowPoint_INFORM():
-    from ToolSet.ANSI_table import Check_ANSI
+    from Toolset.ANSI_table import Check_ANSI
 
     Check_ANSI()
 
