@@ -63,7 +63,12 @@ class SeqItemWidget(QWidget):
         print(img_path)
         self.textUpLabel.setText(t_up)
         self.textDownLabel.setText(t_down)
-        self.iconLabel.setPixmap(QPixmap(img_path).scaledToHeight(48))
+        self.iconLabel.setPixmap(QPixmap(img_path).scaledToHeight(44))
+
+
+def ClassNameRip(name):
+    out = str(name).split('.')[-1]
+    return out.replace('\'>', '')
 
 
 class MainWindow(QMainWindow, Ui_MainWindow):
@@ -83,7 +88,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         # Create QListWidget
 
     def selectedMethod(self):
-        return MacroMethods.classes[self.methodList.currentRow()]
+        out = MacroMethods.classes[self.methodList.currentRow()]
+        print('selected:', ClassNameRip(out))
+        return out()
 
     def disableOptions(self):
         selected = self.selectedMethod()
@@ -103,7 +110,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             pass
 
     def listAvailableMethods(self):
-        print('Loading Methods.')
+        print('Loading Methods:')
 
         def setItems(item_list):    # is this proper way of utilizing coroutine?
             for name in item_list:
@@ -133,11 +140,12 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         target = self.selectedMethod()
         dispatch = self.CreateDispatcher()
         obj = dispatch(target)
+        print(obj)
         obj.name = self.nameLine.text()
 
-        print(f'Adding {obj.name} in seq.')
+        print(f'Adding "{obj.name}" type {ClassNameRip(obj)}.')
         img = 'template.png'
-        txt2 = str(type(obj)).split(' ')[1]
+        txt2 = str(type(obj))
 
         item = SeqItemWidget()
         item.setup(txt2, obj.name, img)
@@ -152,7 +160,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
     def CreateDispatcher(self):
         def defaultBehavior(obj):
-            print(f'Wrong Object {str(obj)} supplied.')
+            print(f'Object {str(obj)} Not dispatched.')
             return obj
 
         dispatch = ObjectDispatch.dispatchObject(defaultBehavior)
@@ -191,7 +199,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         @ObjectDispatch.register(dispatch, MacroMethods.Wait)
         def _(obj):
-            print('adding object wait')
             obj.delay = self.waitSpin.value
             obj.onFail = None
             obj.onSuccess = None

@@ -134,7 +134,7 @@ def imageSearch(target, corner_pos, xy, precision=0.85):
     if max_val < precision:
         return (-1, -1), img
     else:
-        cv2.rectangle(img, max_loc, list(x+y for x,y in zip(img_wh, max_loc)), (0, 0, 255), 2)
+        cv2.rectangle(img, max_loc, list(x+y for x, y in zip(img_wh, max_loc)), (0, 0, 255), 2)
         return max_loc, img
 
 
@@ -154,11 +154,10 @@ def scanOccurrence(target, corner_pos, xy, precision=0.8, threshold=0.3):
     last_pt = [0, 0]
 
     for pt in sorted(zip(*loc[::-1])):
-        if sqrt(abs(last_pt[0]-pt[0])**2 + abs(last_pt[0]-pt[0])**2) < threshold*min([h, w]):
+        if sqrt(abs(last_pt[0]-pt[0])**2 + abs(last_pt[0]-pt[0])**2) < threshold*min(image_wh):
             continue
         else:
-            last_pt = pt
-            print(pt)
+            print(last_pt := pt)
             count = count + 1
             cv2.rectangle(img, pt, tuple(map(sum, zip(pt, image_wh))), (0, 0, 255), 2)
     
@@ -170,4 +169,3 @@ def RandomOffset(corner_pos, offset):
     x_offset = random.randrange(0, offset)
     corner_pos.x = corner_pos.x + offset
     corner_pos.y = corner_pos.y + offset - x_offset
-    

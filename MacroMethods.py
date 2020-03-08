@@ -3,7 +3,7 @@ import functools
 # import weakref
 import pyautogui as pgui
 # import shutil
-from Legacy import ImageModule as ImgM
+import ImageModule as ImgM
 from ToolSet import MemberLoader
 
 # TODO: somehow implement coroutine
@@ -90,7 +90,7 @@ class Loop:
         looper[1].onSuccess = looper[0]
 
         for i in looper:
-            i.loopName = name
+            i.name = name
             i.loopTime = loops
 
         return looper
@@ -100,7 +100,7 @@ class LoopStart(_Base, Loop):
     def __init__(self):
         super().__init__()
 
-        self.name = self.loopName
+        self.name = ''
         self.next = None
 
     def action(self):
@@ -111,7 +111,7 @@ class LoopEnd(_Base, Loop):
     def __init__(self):
         super().__init__()
 
-        self.name = self.loopName
+        self.name = ''
         self.next = None
         # self.onFail = None
         # self.onSuccess = None
@@ -279,7 +279,6 @@ class SearchOccurrence(_Image, _ClickBase):
 
 class sActions(Wait, Variable, Click, SearchOccurrence, ImageSearch, Loop):
     pass
-
 
 
 __all__ = MemberLoader.ListClass(__name__, blacklist={'_', 's'})

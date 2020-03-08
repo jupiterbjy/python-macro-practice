@@ -16,7 +16,6 @@ def IsFrozen(change_dir=True):
     :param change_dir: If true, will set working directory where exe is.
     :return: Returns True-False according to frozen state.
     """
-    print(sys.executable)
 
     if getattr(sys, 'frozen', False):
         if change_dir:
