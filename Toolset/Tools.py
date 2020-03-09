@@ -30,4 +30,4 @@ def imageCheck(file_dir):
         else:
             if temp.size == 0:
                 return False
-            return True
+            return temp

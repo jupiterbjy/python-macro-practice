@@ -1,4 +1,6 @@
 import sys
+from PIL.ImageQt import ImageQt
+from PIL import Image
 from PyQt5.QtWidgets import *
 from PyQt5.QtCore import *
 from PyQt5.QtGui import *
@@ -104,22 +106,38 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         selected = self.selectedMethod()
 
     # TODO: reorder function orders
-    def searchLoadImage(self):
+
+    @ staticmethod
+    def _loadImage():
+
         file_dir = QFileDialog.getOpenFileName()[0]
         file_name = Tools.fileNameExtract(file_dir)
-        print(file_dir)
+        try:
+            img = Image.open(file_dir).convert('RGB')
 
-        if Tools.imageCheck(file_dir):
+        except NameError:
+            print(f'{file_name} not found.')
+            return None, None
 
-            self.cachedImage['search'] = file_dir
-
-            self.searchImgLabel.setPixmap(
-                QPixmap(file_dir).scaled(226, 151, Qt.KeepAspectRatio))
-
-            self.searchImgNameLabel.setText(file_name)
+        except Image.UnidentifiedImageError:
+            print(f'{file_name} is not image.')
+            return None, None
 
         else:
-            print(f'Error loading {file_name}.')
+            return img, file_name
+
+    @staticmethod
+    def _setPix(image):
+        return QPixmap(ImageQt(image).scaled(226, 151, Qt.KeepAspectRatio))
+
+    def searchLoadImage(self):
+        img, file_name = self._loadImage()
+
+        if img is not None:
+
+            self.cachedImage['search'] = img
+            self.searchImgLabel.setPixmap(QPixmap(self.setPix(img)))
+            self.searchImgNameLabel.setText(file_name)
 
     def _append_text(self, msg):
         self.outputTextEdit.moveCursor(QTextCursor.End)
