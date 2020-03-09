@@ -1,11 +1,13 @@
 """
-Mimics Singledispatch, but for objects.
+Mimics singledispatch, but for objects.
+use decorator function 'register' to do what that name implies.
 """
 
 
-class dispatchObject:
+class dispatcher:
     def __init__(self, func=None):
         self.function_map = {}
+        self.registerNotice = True
         self.default = self.template if func is None else func
 
     def __call__(self, obj, *args, **kwargs):
@@ -17,21 +19,14 @@ class dispatchObject:
     def dispatch(self, obj, *args, **kwargs):
         return self.function_map.get(str(type(obj)), self.default)(obj)
 
+    def register(self, type_obj):
 
-# https://stackoverflow.com/questions/5929107/decorators-with-parameters
-# Referred this.
-def register(dispatch_obj, type_obj):
-    def decorator(func):
-        dispatch_obj.function_map[str(type_obj)] = func
+        def decorator(func):
 
-        def wrapper(*args, **kwargs):
-            return func(*args, **kwargs)
+            self.function_map[str(type_obj)] = func
 
-        return wrapper
+            def wrapper(*args, **kwargs):
+                return func(*args, **kwargs)
 
-    return decorator
-
-
-def mainDispatch():
-    # TODO: change decorator so wrapper 'CreateDispatcher' is not required.
-    pass
+            return wrapper
+        return decorator

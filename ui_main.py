@@ -121,7 +121,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         else:
             print(f'Error loading {file_name}.')
 
-
     def _append_text(self, msg):
         self.outputTextEdit.moveCursor(QTextCursor.End)
         self.outputTextEdit.insertPlainText(msg)
@@ -186,18 +185,19 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     # -------------------------------------------------
 
     def CreateDispatcher(self):
+        # Not sure if modularizing this is better or not.
 
         def defaultBehavior(obj):
             print(f'Object {str(obj)} Not dispatched.')
             return obj
 
-        dispatch = ObjectDispatch.dispatchObject(defaultBehavior)
+        dispatch = ObjectDispatch.dispatcher(defaultBehavior)
 
-        @ObjectDispatch.register(dispatch, MacroMethods.Click)
+        @dispatch.register(MacroMethods.Click)
         def _(obj):
             return obj
 
-        @ObjectDispatch.register(dispatch, MacroMethods.ImageSearch)
+        @dispatch.register(MacroMethods.ImageSearch)
         def _(obj):
             obj.clickOnMatch = self.searchClickGroup.isChecked()
             obj.trials = self.trialsCountSpin.value()
@@ -205,29 +205,29 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             obj.targetImage = self.cachedImage['search']
             return obj
 
-        @ObjectDispatch.register(dispatch, MacroMethods.Loop)
+        @dispatch.register(MacroMethods.Loop)
         def _(obj):
             return obj
 
-        @ObjectDispatch.register(dispatch, MacroMethods.LoopStart)
+        @dispatch.register(MacroMethods.LoopStart)
         def _(obj):
             return obj
 
-        @ObjectDispatch.register(dispatch, MacroMethods.LoopEnd)
+        @dispatch.register(MacroMethods.LoopEnd)
         def _(obj):
             return obj
 
-        @ObjectDispatch.register(dispatch, MacroMethods.SearchOccurrence)
+        @dispatch.register(MacroMethods.SearchOccurrence)
         def _(obj):
             return obj
 
-        @ObjectDispatch.register(dispatch, MacroMethods.Variable)
+        @dispatch.register(MacroMethods.Variable)
         def _(obj):
             return obj
 
-        @ObjectDispatch.register(dispatch, MacroMethods.Wait)
+        @dispatch.register(MacroMethods.Wait)
         def _(obj):
-            obj.delay = self.waitSpin.value
+            obj.delay = self.waitSpin.value()
             obj.onFail = None
             obj.onSuccess = None
             return obj
