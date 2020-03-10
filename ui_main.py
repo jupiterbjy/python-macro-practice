@@ -100,9 +100,11 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     def selectedMethod(self):
         out = MacroMethods.classes[self.methodList.currentRow()]
         print('selected:', ClassNameRip(out))
-        return out
+        return out()
 
     def disableOptions(self):
+        # TODO: find target groupBoxes with inspect
+
         selected = self.selectedMethod()
         groups = [self.waitGroup, self.searchClickGroup, self.clickGroup,
                   self.loopGroup, self.trialsGroup]
@@ -113,41 +115,48 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         dispatch = ObjectDispatch.dispatcher(default)
 
         @dispatch.register(MacroMethods.Click)
-        def _(obj):
-            return obj
+        def _(_):
+            self.tabWidget.setCurrentIndex(1)
+            self.tabWidget.setTabEnabled(1, True)
+            self.clickGroup.setEnabled(True)
 
         @dispatch.register(MacroMethods.ImageSearch)
-        def _(obj):
-            obj.clickOnMatch = self.searchClickGroup.isChecked()
-            obj.trials = self.trialsCountSpin.value()
-            obj.loopDelay = self.trialsIntervalSpin.value()
-            obj.targetImage = self.cachedImage['search']
-            return obj
+        def _(_):
+            self.tabWidget.setCurrentIndex(0)
+            self.trialsGroup.setEnabled(True)
+            self.tabWidget.setTabEnabled(0, True)
+            self.searchClickGroup.setEnabled(True)
 
         @dispatch.register(MacroMethods.Loop)
-        def _(obj):
-            return obj
-
-        @dispatch.register(MacroMethods.LoopStart)
-        def _(obj):
-            return obj
-
-        @dispatch.register(MacroMethods.LoopEnd)
-        def _(obj):
-            return obj
+        def _(_):
+            self.tabWidget.setCurrentIndex(2)
+            self.tabWidget.setTabEnabled(2, True)
+            self.loopGroup.setEnabled(True)
 
         @dispatch.register(MacroMethods.SearchOccurrence)
-        def _(obj):
-            return obj
+        def _(_):
+            self.tabWidget.setCurrentIndex(1)
+            self.tabWidget.setTabEnabled(1, True)
 
         @dispatch.register(MacroMethods.Variable)
-        def _(obj):
-            return obj
+        def _(_):
+            self.tabWidget.setCurrentIndex(2)
+            self.tabWidget.setTabEnabled(2, True)
 
         @dispatch.register(MacroMethods.Wait)
-        def _(obj):
+        def _(_):
+            self.tabWidget.setCurrentIndex(2)
+            self.tabWidget.setTabEnabled(2, True)
             self.waitGroup.setEnabled(True)
 
+        for g in groups:
+            g.setEnabled(False)
+
+        for i in range(3):
+            self.tabWidget.setTabEnabled(i, False)
+
+        dispatch.dispatch(selected)
+        print(dispatch.function_map)
 
     # TODO: reorder functions
 
@@ -205,7 +214,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         target = self.selectedMethod()
         dispatch = self.CreateDispatcher()
 
-        obj = dispatch(target())
+        obj = dispatch(target)
         obj.name = self.nameLine.text()
         print(f'Add: {ClassNameRip(obj)} object "{obj.name}"')
 
@@ -245,14 +254,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             return obj
 
         @dispatch.register(MacroMethods.Loop)
-        def _(obj):
-            return obj
-
-        @dispatch.register(MacroMethods.LoopStart)
-        def _(obj):
-            return obj
-
-        @dispatch.register(MacroMethods.LoopEnd)
         def _(obj):
             return obj
 
