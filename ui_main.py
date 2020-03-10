@@ -93,7 +93,11 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         self.searchInsert.released.connect(self.addMethodMain)
         self.methodList.currentRowChanged.connect(self.disableOptions)
+
         self.searchImgLoadButton.released.connect(self.searchLoadImage)
+        self.searchImgClearButton.released.connect(self.searchImageClear)
+
+        self.countImgClearButton.released.connect(self.countImageClear)
         self.initializing()
         # Create QListWidget
 
@@ -168,6 +172,14 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.cachedImage['search'] = img
             self.searchImgLabel.setPixmap(QPixmap(_setPix(img)))
             self.searchImgNameLabel.setText(file_name)
+
+    def searchImageClear(self):
+        self.searchImgLabel.clear()
+        self.searchImgNameLabel.setText('No Image')
+
+    def countImageClear(self):
+        self.countImgLabel.clear()
+        self.countImgNameLabel.setText('No Image')
 
     def _append_text(self, msg):
         self.outputTextEdit.moveCursor(QTextCursor.End)
