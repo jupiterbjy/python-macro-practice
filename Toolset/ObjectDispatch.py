@@ -5,10 +5,10 @@ use decorator function 'register' to do what that name implies.
 
 
 class dispatcher:
-    def __init__(self, func=None):
+    def __init__(self, default=None):
         self.function_map = {}
         self.registerNotice = True
-        self.default = self.template if func is None else func
+        self.default = self.template if default is None else default
 
     def __call__(self, obj, *args, **kwargs):
         return self.dispatch(obj, *args, **kwargs)

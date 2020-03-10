@@ -174,15 +174,24 @@
             <property name="text">
              <string/>
             </property>
+            <property name="alignment">
+             <set>Qt::AlignCenter</set>
+            </property>
            </widget>
            <widget class="QLabel" name="searchImgNameLabel">
             <property name="geometry">
              <rect>
-              <x>11</x>
-              <y>145</y>
-              <width>221</width>
-              <height>20</height>
+              <x>14</x>
+              <y>146</y>
+              <width>218</width>
+              <height>12</height>
              </rect>
+            </property>
+            <property name="autoFillBackground">
+             <bool>false</bool>
+            </property>
+            <property name="frameShadow">
+             <enum>QFrame::Plain</enum>
             </property>
             <property name="lineWidth">
              <number>0</number>
@@ -193,8 +202,11 @@
             <property name="textFormat">
              <enum>Qt::RichText</enum>
             </property>
+            <property name="wordWrap">
+             <bool>false</bool>
+            </property>
            </widget>
-           <widget class="QGroupBox" name="groupBox">
+           <widget class="QGroupBox" name="trialsGroup">
             <property name="geometry">
              <rect>
               <x>130</x>
@@ -528,7 +540,7 @@
              </property>
             </widget>
            </widget>
-           <widget class="QGroupBox" name="clickGroup_2">
+           <widget class="QGroupBox" name="clickGroup">
             <property name="enabled">
              <bool>false</bool>
             </property>

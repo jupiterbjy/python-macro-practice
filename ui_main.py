@@ -104,41 +104,60 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
     def disableOptions(self):
         selected = self.selectedMethod()
+        groups = [self.waitGroup, self.searchClickGroup, self.clickGroup,
+                  self.loopGroup, self.trialsGroup]
+
+        def default(obj):
+            print(f'Function for target {obj} is not designated.')
+
+        dispatch = ObjectDispatch.dispatcher(default)
+
+        @dispatch.register(MacroMethods.Click)
+        def _(obj):
+            return obj
+
+        @dispatch.register(MacroMethods.ImageSearch)
+        def _(obj):
+            obj.clickOnMatch = self.searchClickGroup.isChecked()
+            obj.trials = self.trialsCountSpin.value()
+            obj.loopDelay = self.trialsIntervalSpin.value()
+            obj.targetImage = self.cachedImage['search']
+            return obj
+
+        @dispatch.register(MacroMethods.Loop)
+        def _(obj):
+            return obj
+
+        @dispatch.register(MacroMethods.LoopStart)
+        def _(obj):
+            return obj
+
+        @dispatch.register(MacroMethods.LoopEnd)
+        def _(obj):
+            return obj
+
+        @dispatch.register(MacroMethods.SearchOccurrence)
+        def _(obj):
+            return obj
+
+        @dispatch.register(MacroMethods.Variable)
+        def _(obj):
+            return obj
+
+        @dispatch.register(MacroMethods.Wait)
+        def _(obj):
+            self.waitGroup.setEnabled(True)
 
 
-
-    # TODO: reorder function orders
-
-    @ staticmethod
-    def _loadImage():
-
-        file_dir = QFileDialog.getOpenFileName()[0]
-        file_name = Tools.fileNameExtract(file_dir)
-        try:
-            img = Image.open(file_dir).convert('RGB')
-
-        except NameError:
-            print(f'{file_name} not found.')
-            return None, None
-
-        except Image.UnidentifiedImageError:
-            print(f'{file_name} is not image.')
-            return None, None
-
-        else:
-            return img, file_name
-
-    @staticmethod
-    def _setPix(image):
-        return QPixmap(ImageQt(image).scaled(226, 151, Qt.KeepAspectRatio))
+    # TODO: reorder functions
 
     def searchLoadImage(self):
-        img, file_name = self._loadImage()
+        img, file_name = _loadImage()
 
         if img is not None:
 
             self.cachedImage['search'] = img
-            self.searchImgLabel.setPixmap(QPixmap(self._setPix(img)))
+            self.searchImgLabel.setPixmap(QPixmap(_setPix(img)))
             self.searchImgNameLabel.setText(file_name)
 
     def _append_text(self, msg):
@@ -253,6 +272,29 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             return obj
 
         return dispatch
+
+
+def _setPix(image):
+    return QPixmap(ImageQt(image).scaled(226, 151, Qt.KeepAspectRatio))
+
+
+def _loadImage():
+
+    file_dir = QFileDialog.getOpenFileName()[0]
+    file_name = Tools.fileNameExtract(file_dir)
+    try:
+        img = Image.open(file_dir).convert('RGB')
+
+    except NameError:
+        print(f'{file_name} not found.')
+        return None, None
+
+    except Image.UnidentifiedImageError:
+        print(f'{file_name} is not image.')
+        return None, None
+
+    else:
+        return img, file_name
 
 
 def main():

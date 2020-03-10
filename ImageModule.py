@@ -62,29 +62,38 @@ class Area:
 
 
 def getCaptureArea():
-    window_area = pos(), pos()
+    p1 = pos()
+    p2 = pos()
     kill_key = 'f2'
     
     def breakKeyInput(input_key):     # delay until key is up, to prevent input skipping
         while keyboard.is_pressed(input_key):
             time.sleep(0.05)
     
-    def getPos(order):
-        nonlocal window_area, kill_key
-        
+    def getPos(p):
+        nonlocal kill_key
+
         while not keyboard.is_pressed(kill_key):
             # TODO: check and rearrange input pos.
             time.sleep(0.5)
         
-        window_area[order].assign(*pgui.position())
+        p.set(*pgui.position())
+        breakKeyInput(kill_key)
         
     def getArea():
-        getPos(1)
-        breakKeyInput(kill_key)
-        
-        getPos(2)
-        breakKeyInput(kill_key)
-        
+
+        # all_clear = False
+        # while all_clear:
+        #     getPos(p1)
+        #     getPos(p2)
+            # TODO: add confirmation
+
+        getPos(p1)
+        getPos(p2)
+
+    getArea()
+    return Area(*p1, *p2)
+
     
 def saveImg():
     """
@@ -97,7 +106,7 @@ def saveImg():
     def nameIt(n):
         return str(n) + '.png'
 
-    def save(file, name=None, overwrite=True):
+    def save(file, name=None):
         """
         Saves given image in ordered name.
 
