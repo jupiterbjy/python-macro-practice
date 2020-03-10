@@ -100,10 +100,12 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     def selectedMethod(self):
         out = MacroMethods.classes[self.methodList.currentRow()]
         print('selected:', ClassNameRip(out))
-        return out()
+        return out
 
     def disableOptions(self):
         selected = self.selectedMethod()
+
+
 
     # TODO: reorder function orders
 
@@ -136,7 +138,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         if img is not None:
 
             self.cachedImage['search'] = img
-            self.searchImgLabel.setPixmap(QPixmap(self.setPix(img)))
+            self.searchImgLabel.setPixmap(QPixmap(self._setPix(img)))
             self.searchImgNameLabel.setText(file_name)
 
     def _append_text(self, msg):
@@ -184,7 +186,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         target = self.selectedMethod()
         dispatch = self.CreateDispatcher()
 
-        obj = dispatch(target)
+        obj = dispatch(target())
         obj.name = self.nameLine.text()
         print(f'Add: {ClassNameRip(obj)} object "{obj.name}"')
 

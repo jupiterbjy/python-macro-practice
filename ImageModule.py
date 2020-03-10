@@ -39,19 +39,26 @@ class pos:
     def __call__(self):
         return self.x, self.y
     
-    def assign(self, tup):
-        self.x, self.y = tup
+    def set(self, x, y):
+        self.x, self.y = x, y
 
-    @staticmethod
-    def convert(p1, p2):
-        x, y = [sorted(list(i)) for i in zip(p1, p2)]
-        return zip(x, y)
 
-    @staticmethod                     # Not sure if this is proper approach
+class Area:
+
+    def __init__(self, x1, y1, x2, y2):
+        self.p1 = pos(x1, y1)
+        self.p2 = pos(x2, y2)
+        self.sort()
+
+    @property
+    def pygui(self):
+        return *self.p1, *(self.p1 - self.p2)
+
     @functools.lru_cache(maxsize=128, typed=False)
-    def pgui_cvrt(p1, p2):
-        c1, c2 = pos.convert(p1, p2)
-        return *c1, *(c2 - c1)
+    def sort(self):
+        x, y = [sorted(list(i)) for i in zip(self.p1, self.p2)]
+        self.p1.set(x[0], y[0])
+        self.p2.set(x[1], y[1])
 
 
 def getCaptureArea():
