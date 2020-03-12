@@ -30,3 +30,25 @@ class dispatcher:
 
             return wrapper
         return decorator
+
+
+def obj_dispatch():
+    def deco(func):
+        function_map = {}
+        default = func
+
+        def wrapper(obj, *args, **kwargs):
+            nonlocal function_map, default
+
+            def register(_obj, _func):
+                function_map[type(_obj)] = _func
+
+            if t := type(obj) in function_map:
+                out = function_map[t]
+            else:
+                out = default
+
+            out(obj, *args, **kwargs)
+
+        return wrapper
+    return deco
