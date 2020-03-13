@@ -33,6 +33,7 @@ class dispatcher:
 
 
 def obj_dispatch():
+    # how i inject value in function?
     def deco(func):
         function_map = {}
         default = func

@@ -60,6 +60,9 @@ class Area:
         self.p1.set(x[0], y[0])
         self.p2.set(x[1], y[1])
 
+    def set(self, x1, y1, x2, y2):
+        self.__init__(x1, y1, x2, y2)
+
 
 def getCaptureArea():
     p1 = pos()

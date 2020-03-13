@@ -5,10 +5,9 @@ from PyQt5.QtWidgets import *
 from PyQt5.QtCore import *
 from PyQt5.QtGui import *
 
-from Toolset import FrozenDetect, ObjectDispatch, Tools
+from Toolset import FrozenDetect, ObjectDispatch, Tools, TextTools
 from pymacro import Ui_MainWindow
 import MacroMethods
-import cv2
 
 # https://stackoverflow.com/questions/25187444/pyqt-qlistwidget-custom-items
 # TODO: refer this and create icons for listWidgetItem.
@@ -99,17 +98,18 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         self.countImgLoadButton.released.connect(self.countLoadImage)
         self.countImgClearButton.released.connect(self.countImageClear)
-        self.sequenceList.currentRowChanged.connect(self.updateToSelected)
+        self.sequenceList.clicked.connect(self.updateToSelected)
         self.initializing()
         # Create QListWidget
 
     def selectedMethod(self):
-        out = MacroMethods.classes[self.methodList.currentRow()]
+        # TODO: change color of 'selected:' with TextTools.
+        out = MacroMethods.classes[str(self.methodList.currentItem().text())]
         print('selected:', ClassNameRip(out))
         return out()
 
-    def disableOptions(self, passed_object=None):
-        # TODO: find target groupBoxes with inspect
+    def disableOptions(self, _, passed_object=None):
+        # Seems like release-connect args with row index for currentRowChanged.
 
         if passed_object is None:
             selected = self.selectedMethod()
@@ -120,7 +120,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                   self.loopGroup, self.trialsGroup]
 
         def default(obj):
-            print(f'Function for target {obj} is not designated.')
+            print('disableOptions:')
+            print(f'Function for {obj} is not designated.')
 
         dispatch = ObjectDispatch.dispatcher(default)
 
@@ -166,7 +167,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.tabWidget.setTabEnabled(i, False)
 
         dispatch.dispatch(selected)
-        print(dispatch.function_map)
 
     # TODO: reorder functions
 
@@ -215,40 +215,43 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
     def updateToSelected(self):
         # Assuming that wrong class will never inserted here.
-        selected = self.sequenceList.selectedItems()[0]
+
         obj = self.seqStorage[self.sequenceList.currentRow()]
 
         self.disableOptions(obj)
+        print(obj)
 
         def default(obj_):
-            print('Something Went Wrong:')
+            print('updateToSelected:')
             print(f'{ClassNameRip(obj_)} is supplied.')
 
         dispatch = ObjectDispatch.dispatcher(default)
 
         @dispatch.register(MacroMethods.Click)
         def _(obj_):
-            pass
+            return obj_
 
         @dispatch.register(MacroMethods.ImageSearch)
         def _(obj_):
             self.searchClickGroup.setEnabled(obj_.clickOnMatch)
+
             self.trialsCountSpin.setValue(obj_.trials)
             self.trialsIntervalSpin.setValue(obj_.loopDelay)
             self.cachedImage['search'] = obj_.targetImage
+            self.searchImgNameLabel.setText(obj_.targetName)
             self.searchLoadImage('search')
 
         @dispatch.register(MacroMethods.Loop)
         def _(obj_):
-            return obj
+            return obj_
 
         @dispatch.register(MacroMethods.SearchOccurrence)
         def _(obj_):
-            return obj
+            return obj_
 
         @dispatch.register(MacroMethods.Variable)
         def _(obj_):
-            return obj
+            return obj_
 
         @dispatch.register(MacroMethods.Wait)
         def _(obj_):
@@ -267,9 +270,11 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 # TODO: add icon assignment, will use this function then.
 
         self.methodList.clear()
-        # self.methodList.addItems(setItems(macro.__all__))
         for i in setItems(MacroMethods.__all__):
             self.methodList.addItem(i)
+
+        # self.methodList.addItems(setItems(macro.__all__))
+        # Not using above to maintain order of items. Not sure if setItems ruins it.
 
         self.methodList.setCurrentRow(0)
 
@@ -306,11 +311,17 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.seqStorage.append(obj)
 
     # -------------------------------------------------
+    def seqRunMain(self):
+        self.seqStorage = MacroMethods.NextSetter(self.seqStorage)
+
+    def setXYFromImage(self):
+        pass
 
     def CreateDispatcher(self):
         # Not sure if modularizing this is better or not.
 
         def defaultBehavior(obj):
+            print('CreateDispatcher:')
             print(f'Object {str(obj)} Not dispatched.')
             return obj
 
@@ -318,14 +329,17 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         @dispatch.register(MacroMethods.Click)
         def _(obj):
-            obj.
+            obj.target.set(self.xSpin.value(), self.ySpin.value())
             return obj
 
         @dispatch.register(MacroMethods.ImageSearch)
         def _(obj):
-            obj.clickOnMatch = self.searchClickGroup.isChecked()
+            obj.clickOnMatch = self.searchClickGroup.isEnabled()
+            print(self.searchClickGroup.isEnabled())
             obj.trials = self.trialsCountSpin.value()
             obj.loopDelay = self.trialsIntervalSpin.value()
+            obj.clickCount = self.clickCountSpin.value()
+            obj.clickDelay = self.clickIntervalSpin.value()
             obj.targetImage = self.cachedImage['search']
             return obj
 

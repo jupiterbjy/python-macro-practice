@@ -23,7 +23,7 @@ class _Base:
 
     def run(self):
         if self.action():
-            # self.onSuccess.run()          <- this might trigger depth limit.
+            # self.onSuccess.run()          <- this might trigger depth limit..?
             if self.onSuccess is None:
                 return self.next.run
             else:
@@ -284,5 +284,18 @@ class sActions(Wait, Variable, Click, SearchOccurrence, ImageSearch, Loop):
     pass
 
 
+def NextSetter(sequence):
+    if sequence:
+        # This is waste of memory
+        temp = list(sequence)
+        for idx, i in enumerate(temp):
+            if idx + 1 < len(temp):
+                i.next = temp[idx + 1]
+            else:
+                break
+
+        return temp
+
+
 __all__ = MemberLoader.ListClass(__name__, blacklist={'_', 's'})
-classes = MemberLoader.ListClass(__name__, blacklist={'_', 's'}, return_target=True)
+classes = MemberLoader.ListClass(__name__, blacklist={'_', 's'}, return_dict=True)

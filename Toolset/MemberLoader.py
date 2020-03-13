@@ -16,7 +16,7 @@ On default will follow python's way, ignoring case starting with underscore.
 # TODO: add dict key remove for blacklist
 
 
-def ListTarget(name, target, prefix_mode, blacklist, return_target):
+def ListTarget(name, target, prefix_mode, blacklist, return_dict):
 
     if prefix_mode and blacklist is None:
         blacklist = {'_'}
@@ -36,16 +36,20 @@ def ListTarget(name, target, prefix_mode, blacklist, return_target):
 
     sorted(filtered)
 
-    if return_target:
-        return [i for _, i in filtered]
+    if return_dict:
+        return FunctionToDict([i for _, i in filtered])
 
     else:
         return [i for i, _ in filtered]
 
 
-def ListClass(name, prefix_mode=True, blacklist=None, return_target=False):
-    return ListTarget(name, inspect.isclass, prefix_mode, blacklist, return_target)
+def ListClass(name, prefix_mode=True, blacklist=None, return_dict=False):
+    return ListTarget(name, inspect.isclass, prefix_mode, blacklist, return_dict)
 
 
-def ListFunction(name, prefix_mode=True, blacklist=None, return_target=False):
-    return ListTarget(name, inspect.isfunction, prefix_mode, blacklist, return_target)
+def ListFunction(name, prefix_mode=True, blacklist=None, return_dict=False):
+    return ListTarget(name, inspect.isfunction, prefix_mode, blacklist, return_dict)
+
+
+def FunctionToDict(func_list):
+    return dict((i.__name__, i) for i in func_list)
