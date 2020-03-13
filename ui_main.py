@@ -97,7 +97,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.searchImgLoadButton.released.connect(self.searchLoadImage)
         self.searchImgClearButton.released.connect(self.searchImageClear)
 
+        self.countImgLoadButton.released.connect(self.countLoadImage)
         self.countImgClearButton.released.connect(self.countImageClear)
+        self.sequenceList.currentRowChanged.connect(self.updateToSelected)
         self.initializing()
         # Create QListWidget
 
@@ -106,10 +108,14 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         print('selected:', ClassNameRip(out))
         return out()
 
-    def disableOptions(self):
+    def disableOptions(self, passed_object=None):
         # TODO: find target groupBoxes with inspect
 
-        selected = self.selectedMethod()
+        if passed_object is None:
+            selected = self.selectedMethod()
+        else:
+            selected = passed_object
+
         groups = [self.waitGroup, self.searchClickGroup, self.clickGroup,
                   self.loopGroup, self.trialsGroup]
 
@@ -164,18 +170,35 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
     # TODO: reorder functions
 
-    def searchLoadImage(self):
-        img, file_name = _loadImage()
+    def searchLoadImage(self, image_name=None):
+        # TODO: split this with main loader.
+        if image_name is None:
+            img, file_name = _loadImage()
+            self.cachedImage['search'] = img
+        else:
+            img = self.cachedImage[image_name]
+            file_name = image_name
 
         if img is not None:
-
-            self.cachedImage['search'] = img
             self.searchImgLabel.setPixmap(QPixmap(_setPix(img)))
             self.searchImgNameLabel.setText(file_name)
 
     def searchImageClear(self):
         self.searchImgLabel.clear()
         self.searchImgNameLabel.setText('No Image')
+
+    def countLoadImage(self, image_name=None):
+        # TODO: split this with main loader.
+        if image_name is None:
+            img, file_name = _loadImage()
+            self.cachedImage['count'] = img
+        else:
+            img = self.cachedImage[image_name]
+            file_name = image_name
+
+        if img is not None:
+            self.countImgLabel.setPixmap(QPixmap(_setPix(img)))
+            self.countImgNameLabel.setText(file_name)
 
     def countImageClear(self):
         self.countImgLabel.clear()
@@ -191,9 +214,47 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.refreshSequence()
 
     def updateToSelected(self):
-        selected = self.sequenceList.selectedItems()
-        for i in selected:
+        # Assuming that wrong class will never inserted here.
+        selected = self.sequenceList.selectedItems()[0]
+        obj = self.seqStorage[self.sequenceList.currentRow()]
+
+        self.disableOptions(obj)
+
+        def default(obj_):
+            print('Something Went Wrong:')
+            print(f'{ClassNameRip(obj_)} is supplied.')
+
+        dispatch = ObjectDispatch.dispatcher(default)
+
+        @dispatch.register(MacroMethods.Click)
+        def _(obj_):
             pass
+
+        @dispatch.register(MacroMethods.ImageSearch)
+        def _(obj_):
+            self.searchClickGroup.setEnabled(obj_.clickOnMatch)
+            self.trialsCountSpin.setValue(obj_.trials)
+            self.trialsIntervalSpin.setValue(obj_.loopDelay)
+            self.cachedImage['search'] = obj_.targetImage
+            self.searchLoadImage('search')
+
+        @dispatch.register(MacroMethods.Loop)
+        def _(obj_):
+            return obj
+
+        @dispatch.register(MacroMethods.SearchOccurrence)
+        def _(obj_):
+            return obj
+
+        @dispatch.register(MacroMethods.Variable)
+        def _(obj_):
+            return obj
+
+        @dispatch.register(MacroMethods.Wait)
+        def _(obj_):
+            self.waitSpin.setValue(obj_.delay)
+
+        dispatch.dispatch(obj)
 
     def listAvailableMethods(self):
         print('Loading Methods:')
@@ -242,6 +303,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.sequenceList.addItem(list_item)
         self.sequenceList.setItemWidget(list_item, item)
 
+        self.seqStorage.append(obj)
+
     # -------------------------------------------------
 
     def CreateDispatcher(self):
@@ -255,6 +318,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         @dispatch.register(MacroMethods.Click)
         def _(obj):
+            obj.
             return obj
 
         @dispatch.register(MacroMethods.ImageSearch)

@@ -192,7 +192,7 @@ class _Image(_Base):
         self.targetImage = None
         self.targetName = None
         self.capturedImage = None
-        self.screenArea = ImgM.pos(), ImgM.pos()
+        self.screenArea = ImgM.Area()
         self.matchPoint = ImgM.pos()
         self.precision = 0.85
         self.offsetMax = 5
@@ -205,6 +205,9 @@ class _Image(_Base):
 
     def DumpCoordinates(self):      # Do I need this?
         return self.screenArea, self.matchPoint
+
+    def SetArea(self, x1, y1, x2, y2):
+        self.screenArea.__init__(x1, y1, x2, y2)
 
 
 class ImageSearch(_Image, _ClickBase):
@@ -220,7 +223,7 @@ class ImageSearch(_Image, _ClickBase):
 
     def ImageSearch(self):
         self.matchPoint, self.capturedImage = \
-            ImgM.imageSearch(self.targetImage, ImgM.pos.pgui_cvrt(*self.screenArea), self.precision)
+            ImgM.imageSearch(self.targetImage, self.screenArea.pygui, self.precision)
         if self.matchPoint[0] == -1:
             self._foundFlag = False
 
@@ -263,7 +266,7 @@ class SearchOccurrence(_Image, _ClickBase):
 
     def ScanOccurrence(self):
         self.matchCount, self.capturedImage = \
-            ImgM.scanOccurrence(self.targetImage, ImgM.pos.pgui_cvrt(*self.screenArea), self.precision)
+            ImgM.scanOccurrence(self.targetImage, self.screenArea.pygui, self.precision)
 
     def action(self):
         self.actionState = -1

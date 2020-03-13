@@ -45,7 +45,7 @@ class pos:
 
 class Area:
 
-    def __init__(self, x1, y1, x2, y2):
+    def __init__(self, x1=-1, y1=-1, x2=-1, y2=-1):
         self.p1 = pos(x1, y1)
         self.p2 = pos(x2, y2)
         self.sort()
