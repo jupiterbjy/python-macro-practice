@@ -97,11 +97,11 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.methodList.currentRowChanged.connect(self.disableOptions)
 
         self.searchImgLoadButton.released.connect(self.searchLoadImage)
-        self.searchImgClearButton.released.connect(self.searchImageClear)
+        self.searchImgClearButton.released.connect(self.searchImageUpdate)
 
         self.countImgLoadButton.released.connect(self.countLoadImage)
-        self.countImgClearButton.released.connect(self.countImageClear)
-        self.sequenceList.clicked.connect(self.updateToSelected)
+        self.countImgClearButton.released.connect(self.countImageUpdate)
+        self.sequenceList.currentRowChanged.connect(self.updateToSelected)
 
         self.actionSave.triggered.connect(self.seqSave)
         self.actionLoad.triggered.connect(self.seqLoad)
@@ -176,69 +176,84 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
     # TODO: reorder functions
 
-    def searchLoadImage(self, image_name=None):
-        if image_name is None:
-            img, file_name = _loadImage()
-            self.cachedImage['search'] = img
+    def searchImageUpdate(self, obj=None):
+        if obj is None:
+            self.searchImgLabel.clear()
+            self.searchImgNameLabel.setText('No Image')
         else:
-            img = self.cachedImage[image_name]
-            file_name = image_name
+            self.searchImgNameLabel.setText(obj.name)
+            self.searchImgLabel.setPixmap(_setPix(obj.targetImage))
+
+    def searchLoadImage(self):
+        img, file_name = _loadImage()
+        self.cachedImage['search'] = img
 
         if img is not None:
-            self.searchImgLabel.setPixmap(QPixmap(_setPix(img)))
+            self.searchImgLabel.setPixmap(_setPix(img))
             self.searchImgNameLabel.setText(file_name)
 
-    def searchImageClear(self):
-        self.searchImgLabel.clear()
-        self.searchImgNameLabel.setText('No Image')
-
-    def countLoadImage(self, image_name=None):
-        if image_name is None:
-            img, file_name = _loadImage()
-            self.cachedImage['count'] = img
+    def countImageUpdate(self, obj=None):
+        if obj is None:
+            self.countImgLabel.clear()
+            self.countImgNameLabel.setText('No Image')
         else:
-            img = self.cachedImage[image_name]
-            file_name = image_name
+            self.countImgNameLabel.setText(obj.name)
+            self.countImgLabel.setPixmap(_setPix(obj.targetImage))
+
+    def countLoadImage(self):
+        img, file_name = _loadImage()
+        self.cachedImage['count'] = img
 
         if img is not None:
             self.countImgLabel.setPixmap(QPixmap(_setPix(img)))
             self.countImgNameLabel.setText(file_name)
 
-    def countImageClear(self):
-        self.countImgLabel.clear()
-        self.countImgNameLabel.setText('No Image')
-
     def seqSave(self):
         name = QFileDialog.getSaveFileName(self, 'Save file')[0]
         target = MacroMethods.NextSetter(self.seqStorage)
-        pickle.dump(target, open(name, 'wb'), protocol=pickle.HIGHEST_PROTOCOL)
+        try:
+            pickle.dump(target, open(name, 'wb'), protocol=pickle.HIGHEST_PROTOCOL)
+        except FileNotFoundError:
+            print('seqSave:')
+            print('save canceled.')
+            pass
 
     def seqLoad(self):
         name = QFileDialog.getOpenFileName(self)[0]
-        target = pickle.load(open(name, 'rb'))
-        for i in target:
-            self.addMethodMain(tgt=i)
+        try:
+            target = pickle.load(open(name, 'rb'))
+        except FileNotFoundError:
+            print('seqLoad:')
+            print('FileNotFound.')
+            pass
+        else:
+            self.initializing(manual=True)
+            for i in target:
+                self.addMethodMain(tgt=i)
 
     def _append_text(self, msg):
         self.outputTextEdit.moveCursor(QTextCursor.End)
         self.outputTextEdit.insertPlainText(msg)
         QApplication.processEvents(QEventLoop.ExcludeUserInputEvents)
 
-    def initializing(self):
-        self.listAvailableMethods()
+    def initializing(self, manual=False):
+        if not manual:
+            self.listAvailableMethods()
         self.refreshSequence()
         self.disableOptions(passed_object=MacroMethods.Click())
 
     def updateToSelected(self):
         # Assuming that wrong class will never inserted here.
+        if not self.seqStorage:
+            print('something went wrong in updateToSelected.')
+            return
 
         obj = self.seqStorage[self.sequenceList.currentRow()]
 
-        self.disableOptions(obj)
-        print(obj)
+        self.disableOptions(passed_object=obj)
+        print('update2selected:')
 
         def default(obj_):
-            print('updateToSelected:')
             print(f'{ClassNameRip(obj_)} is supplied.')
 
         dispatch = ObjectDispatch.dispatcher(default)
@@ -250,13 +265,14 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         @dispatch.register(MacroMethods.ImageSearch)
         def _(obj_):
+            print('dispatched to image')
             self.searchClickGroup.setEnabled(obj_.clickOnMatch)
 
             self.trialsCountSpin.setValue(obj_.trials)
             self.trialsIntervalSpin.setValue(obj_.loopDelay)
             self.cachedImage['search'] = obj_.targetImage
             self.searchImgNameLabel.setText(obj_.targetName)
-            self.searchLoadImage('search')
+            self.searchImageUpdate(obj_)
 
         @dispatch.register(MacroMethods.Loop)
         def _(obj_):
@@ -264,6 +280,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         @dispatch.register(MacroMethods.SearchOccurrence)
         def _(obj_):
+            self.countImageUpdate(obj_)
             return obj_
 
         @dispatch.register(MacroMethods.Variable)
@@ -272,6 +289,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         @dispatch.register(MacroMethods.Wait)
         def _(obj_):
+            print('dispatched to wait')
             self.waitSpin.setValue(obj_.delay)
 
         dispatch.dispatch(obj)
@@ -312,7 +330,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             obj.name = self.nameLine.text()
         else:
             obj = tgt
-            _, img = self.addObjectDispatch(tgt)
+            _, img = self.addObjectDispatch(tgt, new=False)
 
         print(f'Add: {ClassNameRip(obj)} object "{obj.name}"')
 
@@ -331,13 +349,14 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.sequenceList.setItemWidget(list_item, item)
 
         self.seqStorage.append(obj)
+        print(self.seqStorage)
 
     # -------------------------------------------------
 
     def setXYFromImage(self):
         pass
 
-    def addObjectDispatch(self, target):
+    def addObjectDispatch(self, target, new=True):
         # Not sure if modularizing this is better or not.
 
         def defaultBehavior(obj):
@@ -360,7 +379,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             obj.loopDelay = self.trialsIntervalSpin.value()
             obj.clickCount = self.clickCountSpin.value()
             obj.clickDelay = self.clickIntervalSpin.value()
-            obj.targetImage = self.cachedImage['search']
+            if new:
+                obj.targetImage = self.cachedImage['search']
             return obj, 'image.png'
 
         @dispatch.register(MacroMethods.Loop)
@@ -369,7 +389,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         @dispatch.register(MacroMethods.SearchOccurrence)
         def _(obj):
-            return obj, None
+            if new:
+                obj.target = self.cachedImage['count']
+            return obj, 'count.png'
 
         @dispatch.register(MacroMethods.Variable)
         def _(obj):
