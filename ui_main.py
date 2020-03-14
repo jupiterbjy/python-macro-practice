@@ -20,6 +20,7 @@ import MacroMethods
 # TODO: reorder functions
 # TODO: change color of 'selected:' with TextTools.
 # TODO: add undo
+# TODO: add methods auto selection upon change in seq selection.
 # Nyaruko kawaii!
 
 ICON_LOCATION = './icons/methods/'
@@ -40,7 +41,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             'count': None
         }
 
-        self.searchInsert.released.connect(self.addMethodMain)
+        self.insertButton.released.connect(self.addMethodMain)
         self.methodList.currentRowChanged.connect(self.disableOptions)
 
         self.searchImgLoadButton.released.connect(self.searchLoadImage)
