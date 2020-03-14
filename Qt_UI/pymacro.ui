@@ -150,7 +150,7 @@
            </size>
           </property>
           <property name="currentIndex">
-           <number>3</number>
+           <number>2</number>
           </property>
           <widget class="QWidget" name="imgTab">
            <attribute name="title">
@@ -410,10 +410,10 @@
            <widget class="QLabel" name="countImgNameLabel">
             <property name="geometry">
              <rect>
-              <x>11</x>
-              <y>145</y>
-              <width>221</width>
-              <height>20</height>
+              <x>14</x>
+              <y>146</y>
+              <width>218</width>
+              <height>12</height>
              </rect>
             </property>
             <property name="lineWidth">
@@ -472,7 +472,7 @@
            </widget>
            <widget class="QGroupBox" name="waitGroup">
             <property name="enabled">
-             <bool>false</bool>
+             <bool>true</bool>
             </property>
             <property name="geometry">
              <rect>
@@ -516,7 +516,7 @@
            </widget>
            <widget class="QGroupBox" name="loopGroup">
             <property name="enabled">
-             <bool>false</bool>
+             <bool>true</bool>
             </property>
             <property name="geometry">
              <rect>
@@ -528,6 +528,9 @@
             </property>
             <property name="title">
              <string>Loop</string>
+            </property>
+            <property name="checkable">
+             <bool>false</bool>
             </property>
             <widget class="QSpinBox" name="loopCountSpin">
              <property name="geometry">
@@ -541,20 +544,53 @@
             </widget>
            </widget>
            <widget class="QGroupBox" name="clickGroup">
-            <property name="enabled">
-             <bool>false</bool>
-            </property>
             <property name="geometry">
              <rect>
               <x>10</x>
               <y>130</y>
               <width>91</width>
-              <height>151</height>
+              <height>161</height>
              </rect>
             </property>
             <property name="title">
              <string>Click</string>
             </property>
+            <widget class="QPushButton" name="coordFromImg">
+             <property name="geometry">
+              <rect>
+               <x>10</x>
+               <y>120</y>
+               <width>71</width>
+               <height>21</height>
+              </rect>
+             </property>
+             <property name="text">
+              <string>From Img</string>
+             </property>
+            </widget>
+            <widget class="QSpinBox" name="ySpin">
+             <property name="geometry">
+              <rect>
+               <x>10</x>
+               <y>90</y>
+               <width>71</width>
+               <height>21</height>
+              </rect>
+             </property>
+            </widget>
+            <widget class="QLabel" name="label_6">
+             <property name="geometry">
+              <rect>
+               <x>10</x>
+               <y>70</y>
+               <width>81</width>
+               <height>20</height>
+              </rect>
+             </property>
+             <property name="text">
+              <string>Y</string>
+             </property>
+            </widget>
             <widget class="QSpinBox" name="xSpin">
              <property name="geometry">
               <rect>
@@ -576,42 +612,6 @@
              </property>
              <property name="text">
               <string>X</string>
-             </property>
-            </widget>
-            <widget class="QLabel" name="label_6">
-             <property name="geometry">
-              <rect>
-               <x>10</x>
-               <y>70</y>
-               <width>81</width>
-               <height>20</height>
-              </rect>
-             </property>
-             <property name="text">
-              <string>Y</string>
-             </property>
-            </widget>
-            <widget class="QSpinBox" name="ySpin">
-             <property name="geometry">
-              <rect>
-               <x>10</x>
-               <y>90</y>
-               <width>71</width>
-               <height>21</height>
-              </rect>
-             </property>
-            </widget>
-            <widget class="QPushButton" name="coordFromImg">
-             <property name="geometry">
-              <rect>
-               <x>10</x>
-               <y>120</y>
-               <width>71</width>
-               <height>21</height>
-              </rect>
-             </property>
-             <property name="text">
-              <string>From Img</string>
              </property>
             </widget>
            </widget>

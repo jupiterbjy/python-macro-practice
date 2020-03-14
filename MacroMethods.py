@@ -15,6 +15,7 @@ class _Base:
     # __slots__ = ('name', 'order')
 
     def __init__(self):
+        super(_Base, self).__init__()
         self.name = ''
         self.next = None           # assign obj to run next.
         self.actionState = -2      # -2: standby / -1: active / 0: fail / 1: Success
@@ -61,8 +62,6 @@ class _ClickBase:
 
 
 class Click(_Base, _ClickBase):
-    def __init__(self):
-        super().__init__()
 
     def action(self):
         self._click()
@@ -298,4 +297,4 @@ def NextSetter(sequence):
 
 
 __all__ = MemberLoader.ListClass(__name__, blacklist={'_', 's'})
-classes = MemberLoader.ListClass(__name__, blacklist={'_', 's'}, return_dict=True)
+class_dict = MemberLoader.ListClass(__name__, blacklist={'_', 's'}, return_dict=True)

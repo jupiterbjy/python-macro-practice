@@ -12,7 +12,7 @@ def rgbToHex(r=0, g=0, b=0):
     return '#' + ''.join(out)
 
 
-def QtColorize(text, color='#000000', size=0, weight=0):
+def QtColorize(text, color='#000000', size=None, weight=None):
     start = '<span style=\" '
     font = f'font-size:{size}pt; '
     font_weight = f'font-weight:{weight}; '
@@ -23,10 +23,10 @@ def QtColorize(text, color='#000000', size=0, weight=0):
 
     out = [start, font, font_weight, color, end, txt, span_complete]
 
-    if not size:
+    if size is None:
         out.remove(font)
 
-    if not weight:
+    if weight is None:
         out.remove(font_weight)
 
     return ''.join(out)

@@ -1,4 +1,5 @@
 import sys
+import pickle
 from PIL.ImageQt import ImageQt
 from PIL import Image
 from PyQt5.QtWidgets import *
@@ -12,6 +13,8 @@ import MacroMethods
 # https://stackoverflow.com/questions/25187444/pyqt-qlistwidget-custom-items
 # TODO: refer this and create icons for listWidgetItem.
 # Nyaruko kawaii!
+
+ICON_LOCATION = './icons/methods/'
 
 
 class StdoutRedirect(QObject):
@@ -99,16 +102,19 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.countImgLoadButton.released.connect(self.countLoadImage)
         self.countImgClearButton.released.connect(self.countImageClear)
         self.sequenceList.clicked.connect(self.updateToSelected)
+
+        self.actionSave.triggered.connect(self.seqSave)
+        self.actionLoad.triggered.connect(self.seqLoad)
         self.initializing()
         # Create QListWidget
 
     def selectedMethod(self):
         # TODO: change color of 'selected:' with TextTools.
-        out = MacroMethods.classes[str(self.methodList.currentItem().text())]
+        out = MacroMethods.class_dict[str(self.methodList.currentItem().text())]
         print('selected:', ClassNameRip(out))
         return out()
 
-    def disableOptions(self, _, passed_object=None):
+    def disableOptions(self, _=None, passed_object=None):
         # Seems like release-connect args with row index for currentRowChanged.
 
         if passed_object is None:
@@ -127,8 +133,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         @dispatch.register(MacroMethods.Click)
         def _(_):
-            self.tabWidget.setCurrentIndex(1)
-            self.tabWidget.setTabEnabled(1, True)
+            self.tabWidget.setCurrentIndex(2)
+            self.tabWidget.setTabEnabled(2, True)
             self.clickGroup.setEnabled(True)
 
         @dispatch.register(MacroMethods.ImageSearch)
@@ -171,7 +177,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     # TODO: reorder functions
 
     def searchLoadImage(self, image_name=None):
-        # TODO: split this with main loader.
         if image_name is None:
             img, file_name = _loadImage()
             self.cachedImage['search'] = img
@@ -188,7 +193,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.searchImgNameLabel.setText('No Image')
 
     def countLoadImage(self, image_name=None):
-        # TODO: split this with main loader.
         if image_name is None:
             img, file_name = _loadImage()
             self.cachedImage['count'] = img
@@ -204,6 +208,17 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.countImgLabel.clear()
         self.countImgNameLabel.setText('No Image')
 
+    def seqSave(self):
+        name = QFileDialog.getSaveFileName(self, 'Save file')[0]
+        target = MacroMethods.NextSetter(self.seqStorage)
+        pickle.dump(target, open(name, 'wb'), protocol=pickle.HIGHEST_PROTOCOL)
+
+    def seqLoad(self):
+        name = QFileDialog.getOpenFileName(self)[0]
+        target = pickle.load(open(name, 'rb'))
+        for i in target:
+            self.addMethodMain(tgt=i)
+
     def _append_text(self, msg):
         self.outputTextEdit.moveCursor(QTextCursor.End)
         self.outputTextEdit.insertPlainText(msg)
@@ -212,6 +227,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     def initializing(self):
         self.listAvailableMethods()
         self.refreshSequence()
+        self.disableOptions(passed_object=MacroMethods.Click())
 
     def updateToSelected(self):
         # Assuming that wrong class will never inserted here.
@@ -229,7 +245,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         @dispatch.register(MacroMethods.Click)
         def _(obj_):
-            return obj_
+            self.xSpin.setValue(obj_.target.x)
+            self.ySpin.setValue(obj_.target.y)
 
         @dispatch.register(MacroMethods.ImageSearch)
         def _(obj_):
@@ -288,19 +305,24 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
     # -------------------------------------------------
 
-    def addMethodMain(self):
-        target = self.selectedMethod()
-        dispatch = self.CreateDispatcher()
+    def addMethodMain(self, tgt=None):
+        if tgt is None:
+            target = self.selectedMethod()
+            obj, img = self.addObjectDispatch(target)
+            obj.name = self.nameLine.text()
+        else:
+            obj = tgt
+            _, img = self.addObjectDispatch(tgt)
 
-        obj = dispatch(target)
-        obj.name = self.nameLine.text()
         print(f'Add: {ClassNameRip(obj)} object "{obj.name}"')
 
-        img = 'template.png'
+        if img is None:
+            img = 'template.png'
+
         txt2 = str(type(obj))
 
         item = SeqItemWidget()
-        item.setup(txt2, obj.name, img)
+        item.setup(txt2, obj.name, ''.join([ICON_LOCATION, img]))
 
         list_item = QListWidgetItem(self.sequenceList)
         list_item.setSizeHint(item.sizeHint())
@@ -311,17 +333,15 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.seqStorage.append(obj)
 
     # -------------------------------------------------
-    def seqRunMain(self):
-        self.seqStorage = MacroMethods.NextSetter(self.seqStorage)
 
     def setXYFromImage(self):
         pass
 
-    def CreateDispatcher(self):
+    def addObjectDispatch(self, target):
         # Not sure if modularizing this is better or not.
 
         def defaultBehavior(obj):
-            print('CreateDispatcher:')
+            print('addObjectDispatch:')
             print(f'Object {str(obj)} Not dispatched.')
             return obj
 
@@ -330,7 +350,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         @dispatch.register(MacroMethods.Click)
         def _(obj):
             obj.target.set(self.xSpin.value(), self.ySpin.value())
-            return obj
+            return obj, 'click.png'
 
         @dispatch.register(MacroMethods.ImageSearch)
         def _(obj):
@@ -341,28 +361,28 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             obj.clickCount = self.clickCountSpin.value()
             obj.clickDelay = self.clickIntervalSpin.value()
             obj.targetImage = self.cachedImage['search']
-            return obj
+            return obj, 'image.png'
 
         @dispatch.register(MacroMethods.Loop)
         def _(obj):
-            return obj
+            return obj, None
 
         @dispatch.register(MacroMethods.SearchOccurrence)
         def _(obj):
-            return obj
+            return obj, None
 
         @dispatch.register(MacroMethods.Variable)
         def _(obj):
-            return obj
+            return obj, None
 
         @dispatch.register(MacroMethods.Wait)
         def _(obj):
             obj.delay = self.waitSpin.value()
             obj.onFail = None
             obj.onSuccess = None
-            return obj
+            return obj, 'wait.png'
 
-        return dispatch
+        return dispatch(target)
 
 
 def _setPix(image):
