@@ -353,9 +353,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
 
 def main():
-
     app = QApplication(sys.argv)
-
     window = MainWindow()
     window.show()
     sys.exit(app.exec())
