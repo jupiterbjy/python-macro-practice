@@ -17,7 +17,7 @@ especially Image-related functions.
 class pos:
     # referenced vector2d_v0.py from 'Fluent Python' by Luciano.
 
-    def __init__(self, x=-1, y=-1):
+    def __init__(self, x=0, y=0):
         self.x = int(x)
         self.y = int(y)     # limiting what x could be, catching error here.
 
@@ -33,6 +33,9 @@ class pos:
     def __eq__(self, other):
         return tuple(self) == tuple(other)
 
+    def __add__(self, other):
+        return (self.x + other.x), (self.y + other.y)
+
     def __sub__(self, other):
         return abs(self.x - other.x), abs(self.y - other.y)
 
@@ -45,7 +48,7 @@ class pos:
 
 class Area:
 
-    def __init__(self, x1=-1, y1=-1, x2=-1, y2=-1):
+    def __init__(self, x1=0, y1=0, x2=0, y2=0):
         self.p1 = pos(x1, y1)
         self.p2 = pos(x2, y2)
         self.sort()
@@ -76,10 +79,7 @@ def getCaptureArea():
     def getPos(p):
         nonlocal kill_key
 
-        while not keyboard.is_pressed(kill_key):
-            # TODO: check and rearrange input pos.
-            time.sleep(0.5)
-        
+        breakKeyInput(kill_key)
         p.set(*pgui.position())
         breakKeyInput(kill_key)
         
@@ -89,7 +89,7 @@ def getCaptureArea():
         # while all_clear:
         #     getPos(p1)
         #     getPos(p2)
-            # TODO: add confirmation
+        # TODO: add confirmation
 
         getPos(p1)
         getPos(p2)

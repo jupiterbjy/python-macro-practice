@@ -21,6 +21,7 @@ class _Base:
         self.actionState = -2      # -2: standby / -1: active / 0: fail / 1: Success
         self.onSuccess = None
         self.onFail = None
+        self.screenArea = ImgM.Area()
 
     def run(self):
         if self.action():
@@ -39,6 +40,9 @@ class _Base:
     def action(self):
         return True
 
+    def SetArea(self, x1, y1, x2, y2):
+        self.screenArea = ImgM.Area(x1, y1, x2, y2)
+
 # --------------------------------------------------------
 
 
@@ -51,17 +55,20 @@ class _ClickBase:
         self.clickDelay = 0.01
         self.preDelay = 0
 
-    def _click(self):
+    def _click(self, abs_target=ImgM.pos()):
         time.sleep(self.preDelay)
 
         for i in range(self.clickCount - 1):
-            pgui.click(*self.target)
+            pgui.click(*(self.target + abs_target))
             time.sleep(self.clickDelay)
 
         pgui.click(*self.target)
 
 
 class Click(_Base, _ClickBase):
+    @property
+    def absoluteTarget(self):
+        return self.target
 
     def action(self):
         self._click()
@@ -83,7 +90,7 @@ class Loop:
     @staticmethod
     def generate(name, loops):
 
-        looper = LoopStart(), LoopEnd()
+        looper = _LoopStart(), _LoopEnd()
 
         looper[0].next = looper[1]
         looper[1].onSuccess = looper[0]
@@ -95,7 +102,7 @@ class Loop:
         return looper
 
 
-class LoopStart(_Base, Loop):
+class _LoopStart(_Base, Loop):
     def __init__(self):
         super().__init__()
 
@@ -106,7 +113,7 @@ class LoopStart(_Base, Loop):
         return True
 
 
-class LoopEnd(_Base, Loop):
+class _LoopEnd(_Base, Loop):
     def __init__(self):
         super().__init__()
 
@@ -180,8 +187,6 @@ class Variable(_Base):
 
 class _Image(_Base):
     # TODO: add weakref for Image, by adding all targets in single dict.
-    # slots_= ('targetImage', 'targetName', 'capturedImage',
-    #             'screenArea', 'matchPoint', 'precision', 'offsetMax')
     
     imgSaver = ImgM.saveImg()
     
@@ -191,7 +196,6 @@ class _Image(_Base):
         self.targetImage = None
         self.targetName = None
         self.capturedImage = None
-        self.screenArea = ImgM.Area()
         self.matchPoint = ImgM.pos()
         self.precision = 0.85
         self.offsetMax = 5
@@ -205,12 +209,8 @@ class _Image(_Base):
     def DumpCoordinates(self):      # Do I need this?
         return self.screenArea, self.matchPoint
 
-    def SetArea(self, x1, y1, x2, y2):
-        self.screenArea.__init__(x1, y1, x2, y2)
-
 
 class ImageSearch(_Image, _ClickBase):
-    # __slots__ = ('loopCount', 'loopDelay', 'trials', 'clickOnMatch', '_foundFlag')
 
     def __init__(self):
         super(ImageSearch, self).__init__()
@@ -256,7 +256,6 @@ class ImageSearch(_Image, _ClickBase):
 
 
 class SearchOccurrence(_Image, _ClickBase):
-    # __slots__ = 'matchCount'
 
     def __init__(self):
         super(SearchOccurrence, self).__init__()
@@ -286,14 +285,11 @@ class sActions(Wait, Variable, Click, SearchOccurrence, ImageSearch, Loop):
 def NextSetter(sequence):
     if sequence:
         # This is waste of memory
-        temp = list(sequence)
-        for idx, i in enumerate(temp):
-            if idx + 1 < len(temp):
-                i.next = temp[idx + 1]
+        for idx, i in enumerate(sequence):
+            if idx + 1 < len(sequence):
+                i.next = sequence[idx + 1]
             else:
                 break
-
-        return temp
 
 
 __all__ = MemberLoader.ListClass(__name__, blacklist={'_', 's'})
