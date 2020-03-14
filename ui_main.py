@@ -1,12 +1,10 @@
 import sys
 import pickle
-from PIL.ImageQt import ImageQt
-from PIL import Image
 from PyQt5.QtWidgets import *
 from PyQt5.QtCore import *
 from PyQt5.QtGui import *
 
-from Toolset import FrozenDetect, ObjectDispatch, Tools, TextTools
+from Toolset import QtTools, FrozenDetect, ObjectDispatch, Tools
 from pymacro import Ui_MainWindow
 import MacroMethods
 
@@ -23,73 +21,12 @@ import MacroMethods
 ICON_LOCATION = './icons/methods/'
 
 
-class StdoutRedirect(QObject):
-    # Codes from below.
-    # https://4uwingnet.tistory.com/9
-
-    printOccur = pyqtSignal(str, str, name="print")
-
-    def __init__(self, *param):
-        QObject.__init__(self, None)
-        self.daemon = True
-        self.sys_stdout = sys.stdout.write
-        self.sys_stderr = sys.stderr.write
-
-    def stop(self):
-        sys.stdout.write = self.sys_stdout
-        sys.stderr.write = self.sys_stderr
-
-    def start(self):
-        sys.stdout.write = self.write
-        sys.stderr.write = lambda msg: self.write(msg, color="red")
-
-    def write(self, s, color="black"):
-        sys.stdout.flush()
-        self.printOccur.emit(s, color)
-
-
-class SeqItemWidget(QWidget):
-    def __init__(self, parent=None):
-        super().__init__()
-        self.textLayOut = QVBoxLayout()
-        self.textUpLabel = QLabel()
-        self.textDownLabel = QLabel()
-        self.textLayOut.addWidget(self.textUpLabel)
-        self.textLayOut.addWidget(self.textDownLabel)
-        self.allHBoxLayOut = QHBoxLayout()
-        self.iconLabel = QLabel()
-        self.allHBoxLayOut.addWidget(self.iconLabel)
-        self.allHBoxLayOut.addLayout(self.textLayOut, 1)
-        self.setLayout(self.allHBoxLayOut)
-
-        self.textUpLabel.setStyleSheet('''
-                    color: rgb(0, 0, 255);
-                ''')
-        self.textDownLabel.setStyleSheet('''
-                    color: rgb(255, 0, 0);
-                ''')
-
-    def setup(self, t_up, t_down, img_path):
-        print(img_path)
-        self.textUpLabel.setText(t_up)
-        self.textDownLabel.setText(t_down)
-        self.iconLabel.setPixmap(QPixmap(img_path).scaledToHeight(44))
-
-
-def ClassNameRip(name):
-    if type(name) != type:
-        name = type(name)
-
-    out = str(name).split('.')[-1]
-    return out.replace('\'>', '')
-
-
 class MainWindow(QMainWindow, Ui_MainWindow):
     def __init__(self, *args, **kwargs):
         super(MainWindow, self).__init__(*args, **kwargs)
         self.setupUi(self)
 
-        self._stdout = StdoutRedirect()
+        self._stdout = QtTools.StdoutRedirect()
         self._stdout.start()
         self._stdout.printOccur.connect(lambda x: self._append_text(x))
 
@@ -117,7 +54,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     def selectedMethod(self):
         # TODO: change color of 'selected:' with TextTools.
         out = MacroMethods.class_dict[str(self.methodList.currentItem().text())]
-        print('selected:', ClassNameRip(out))
+        print('selected:', Tools.ClassNameRip(out))
         return out()
 
     def disableOptions(self, _=None, passed_object=None):
@@ -188,14 +125,14 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.searchImgNameLabel.setText('No Image')
         else:
             self.searchImgNameLabel.setText(obj.name)
-            self.searchImgLabel.setPixmap(_setPix(obj.targetImage))
+            self.searchImgLabel.setPixmap(QtTools.setPix(obj.targetImage))
 
     def searchLoadImage(self):
-        img, file_name = _loadImage()
+        img, file_name = QtTools.loadImage(self)
         self.cachedImage['search'] = img
 
         if img is not None:
-            self.searchImgLabel.setPixmap(_setPix(img))
+            self.searchImgLabel.setPixmap(QtTools.setPix(img))
             self.searchImgNameLabel.setText(file_name)
 
     def countImageUpdate(self, obj=None):
@@ -204,16 +141,17 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.countImgNameLabel.setText('No Image')
         else:
             self.countImgNameLabel.setText(obj.name)
-            self.countImgLabel.setPixmap(_setPix(obj.targetImage))
+            self.countImgLabel.setPixmap(QtTools.setPix(obj.targetImage))
 
     def countLoadImage(self):
-        img, file_name = _loadImage()
+        img, file_name = QtTools.loadImage(self)
         self.cachedImage['count'] = img
 
         if img is not None:
-            self.countImgLabel.setPixmap(QPixmap(_setPix(img)))
+            self.countImgLabel.setPixmap(QtTools.setPix(img))
             self.countImgNameLabel.setText(file_name)
 
+    # noinspection PyCallByClass,PyArgumentList
     def seqSave(self):
         name = QFileDialog.getSaveFileName(self, 'Save file')[0]
         target = MacroMethods.NextSetter(self.seqStorage)
@@ -224,6 +162,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             print('save canceled.')
             pass
 
+    # noinspection PyCallByClass,PyArgumentList
     def seqLoad(self):
         name = QFileDialog.getOpenFileName(self)[0]
         try:
@@ -260,7 +199,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         print('update2selected:')
 
         def default(obj_):
-            print(f'{ClassNameRip(obj_)} is supplied.')
+            print(f'{Tools.ClassNameRip(obj_)} is supplied.')
 
         dispatch = ObjectDispatch.dispatcher(default)
 
@@ -338,14 +277,14 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             obj = tgt
             _, img = self.addObjectDispatch(tgt, new=False)
 
-        print(f'Add: {ClassNameRip(obj)} object "{obj.name}"')
+        print(f'Add: {Tools.ClassNameRip(obj)} object "{obj.name}"')
 
         if img is None:
             img = 'template.png'
 
         txt2 = str(type(obj))
 
-        item = SeqItemWidget()
+        item = QtTools.SeqItemWidget()
         item.setup(txt2, obj.name, ''.join([ICON_LOCATION, img]))
 
         list_item = QListWidgetItem(self.sequenceList)
@@ -411,29 +350,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             return obj, 'wait.png'
 
         return dispatch(target)
-
-
-def _setPix(image):
-    return QPixmap(ImageQt(image).scaled(226, 151, Qt.KeepAspectRatio))
-
-
-def _loadImage():
-
-    file_dir = QFileDialog.getOpenFileName()[0]
-    file_name = Tools.fileNameExtract(file_dir)
-    try:
-        img = Image.open(file_dir).convert('RGB')
-
-    except NameError:
-        print(f'{file_name} not found.')
-        return None, None
-
-    except Image.UnidentifiedImageError:
-        print(f'{file_name} is not image.')
-        return None, None
-
-    else:
-        return img, file_name
 
 
 def main():

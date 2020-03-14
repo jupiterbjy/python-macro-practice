@@ -31,3 +31,11 @@ def imageCheck(file_dir):
             if temp.size == 0:
                 return False
             return temp
+
+
+def ClassNameRip(name):
+    if type(name) != type:
+        name = type(name)
+
+    out = str(name).split('.')[-1]
+    return out.replace('\'>', '')
