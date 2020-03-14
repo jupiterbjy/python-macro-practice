@@ -12,6 +12,12 @@ import MacroMethods
 
 # https://stackoverflow.com/questions/25187444/pyqt-qlistwidget-custom-items
 # TODO: refer this and create icons for listWidgetItem.
+# TODO: disable 'insert' button if condition is not met.
+# TODO: separate 'edit' and 'insert'
+# TODO: assign progress bar to time left for action.
+# TODO: give property to base to get remaining time.
+# TODO: fix loaded sequence disabling searchClickGroup
+# TODO; fix sequence variables not loading when loaded.
 # Nyaruko kawaii!
 
 ICON_LOCATION = './icons/methods/'
