@@ -92,36 +92,48 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         # Clears image when arg are not given.
         if obj is None:
             self.searchImgLabel.clear()
+            self.searchImgLabel.setStyleSheet('background-color: rgba(240, 240, 240, 255);')
             self.searchImgNameLabel.setText('No Image')
         else:
             self.searchImgNameLabel.setText(obj.name)
+            self.searchImgLabel.setStyleSheet('background-color: rgba(40, 40, 40, 255);')
             self.searchImgLabel.setPixmap(
                 QtTools.setPix(obj.targetImage).scaled(*IMG_CONVERT))
 
     def searchLoadImage(self):
-        img, file_name = QtTools.loadImage(self)
-        self.cachedImage['search'] = img
+        try:
+            img, file_name = QtTools.loadImage(self)
+        except TypeError:
+            return
+        else:
+            self.cachedImage['search'] = img
 
-        if img is not None:
-            self.searchImgLabel.setPixmap(QtTools.setPix(img))
-            self.searchImgNameLabel.setText(file_name)
+            if img is not None:
+                self.searchImgLabel.setPixmap(QtTools.setPix(img).scaled(*IMG_CONVERT))
+                self.searchImgNameLabel.setText(file_name)
 
     def countImageUpdate(self, obj=None):
         if obj is None:
             self.countImgLabel.clear()
+            self.countImgLabel.setStyleSheet('background-color: rgba(240, 240, 240, 255);')
             self.countImgNameLabel.setText('No Image')
         else:
             self.countImgNameLabel.setText(obj.name)
+            self.countImgLabel.setStyleSheet('background-color: rgba(40, 40, 40, 255);')
             self.countImgLabel.setPixmap(
                 QtTools.setPix(obj.targetImage).scaled(*IMG_CONVERT))
 
     def countLoadImage(self):
-        img, file_name = QtTools.loadImage(self)
-        self.cachedImage['count'] = img
+        try:
+            img, file_name = QtTools.loadImage(self)
+        except TypeError:
+            return
+        else:
+            self.cachedImage['count'] = img
 
-        if img is not None:
-            self.countImgLabel.setPixmap(QtTools.setPix(img))
-            self.countImgNameLabel.setText(file_name)
+            if img is not None:
+                self.countImgLabel.setPixmap(QtTools.setPix(img).scaled(*IMG_CONVERT))
+                self.countImgNameLabel.setText(file_name)
 
     # noinspection PyCallByClass,PyArgumentList
     def seqSave(self):
@@ -160,6 +172,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     def initializing(self, manual=False):
         if not manual:
             self.listAvailableMethods()
+        else:
+            self.seqStorage.clear()
+
         self.sequenceList.clear()
         self.disableOptions(passed_object=MacroMethods.Click())
 

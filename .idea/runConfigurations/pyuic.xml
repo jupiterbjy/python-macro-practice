@@ -1,6 +1,6 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="pyuic5" type="ShConfigurationType">
-    <option name="SCRIPT_PATH" value="$PROJECT_DIR$/Toolset/pyuic5.bat" />
+  <configuration default="false" name="pyuic" type="ShConfigurationType">
+    <option name="SCRIPT_PATH" value="$PROJECT_DIR$/Qt_UI/pyuic.bat" />
     <option name="SCRIPT_OPTIONS" value="" />
     <option name="SCRIPT_WORKING_DIRECTORY" value="$PROJECT_DIR$" />
     <option name="INTERPRETER_PATH" value="" />

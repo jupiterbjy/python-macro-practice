@@ -224,6 +224,10 @@
             <property name="autoFillBackground">
              <bool>false</bool>
             </property>
+            <property name="styleSheet">
+             <string notr="true">background-color: rgba(0, 0, 0, 120);
+color: rgb(255, 255, 255);</string>
+            </property>
             <property name="frameShadow">
              <enum>QFrame::Plain</enum>
             </property>
@@ -464,6 +468,19 @@
               <width>218</width>
               <height>12</height>
              </rect>
+            </property>
+            <property name="autoFillBackground">
+             <bool>false</bool>
+            </property>
+            <property name="styleSheet">
+             <string notr="true">background-color: rgba(0, 0, 0, 120);
+color: rgb(255, 255, 255);</string>
+            </property>
+            <property name="frameShape">
+             <enum>QFrame::NoFrame</enum>
+            </property>
+            <property name="frameShadow">
+             <enum>QFrame::Plain</enum>
             </property>
             <property name="lineWidth">
              <number>0</number>

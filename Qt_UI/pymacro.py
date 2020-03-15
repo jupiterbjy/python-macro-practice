@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file './Qt_UI/pymacro.ui'
+# Form implementation generated from reading ui file './pymacro.ui'
 #
 # Created by: PyQt5 UI code generator 5.14.1
 #
@@ -113,6 +113,8 @@ class Ui_MainWindow(object):
         self.searchImgNameLabel = QtWidgets.QLabel(self.imgTab)
         self.searchImgNameLabel.setGeometry(QtCore.QRect(14, 146, 218, 12))
         self.searchImgNameLabel.setAutoFillBackground(False)
+        self.searchImgNameLabel.setStyleSheet("background-color: rgba(0, 0, 0, 120);\n"
+"color: rgb(255, 255, 255);")
         self.searchImgNameLabel.setFrameShadow(QtWidgets.QFrame.Plain)
         self.searchImgNameLabel.setLineWidth(0)
         self.searchImgNameLabel.setTextFormat(QtCore.Qt.RichText)
@@ -181,6 +183,11 @@ class Ui_MainWindow(object):
         self.countImgLabel.setObjectName("countImgLabel")
         self.countImgNameLabel = QtWidgets.QLabel(self.tab)
         self.countImgNameLabel.setGeometry(QtCore.QRect(14, 146, 218, 12))
+        self.countImgNameLabel.setAutoFillBackground(False)
+        self.countImgNameLabel.setStyleSheet("background-color: rgba(0, 0, 0, 120);\n"
+"color: rgb(255, 255, 255);")
+        self.countImgNameLabel.setFrameShape(QtWidgets.QFrame.NoFrame)
+        self.countImgNameLabel.setFrameShadow(QtWidgets.QFrame.Plain)
         self.countImgNameLabel.setLineWidth(0)
         self.countImgNameLabel.setTextFormat(QtCore.Qt.RichText)
         self.countImgNameLabel.setObjectName("countImgNameLabel")

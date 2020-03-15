@@ -89,15 +89,21 @@ def setPix(image):
     if isinstance(image, str):
         return QPixmap(image)
     else:
-        tmp = ImageQt(image).rgbSwapped()
+        tmp = ImageQt(image).copy()     # Plain ImageQt() call don't return QImage.
         # TransformMode => Qt::SmoothTransformation for better quality is possible.
         return QPixmap(tmp)
 
 
 def loadImage(self):
+    print('loadImage:')
 
     file_dir = QFileDialog.getOpenFileName(self)[0]
     file_name = Tools.fileNameExtract(file_dir)
+
+    if not file_dir:
+        print('└ Canceled')
+        return False
+
     try:
         img = Image.open(file_dir).convert('RGB')
 
