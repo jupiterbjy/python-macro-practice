@@ -19,6 +19,7 @@ import MacroMethods
 # TODO: change color of 'selected:' with TextTools.
 # TODO: add undo
 # TODO: add methods auto selection upon change in seq selection.
+# TODO: implement random offset via option.
 
 ICON_LOCATION = './icons/methods/'
 ICON_ASSIGN = {
