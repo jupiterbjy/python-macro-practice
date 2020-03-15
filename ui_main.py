@@ -9,8 +9,6 @@ from ImageModule import getCaptureArea
 from pymacro import Ui_MainWindow
 import MacroMethods
 
-# https://stackoverflow.com/questions/25187444/pyqt-qlistwidget-custom-items
-# TODO: refer this and create icons for listWidgetItem.
 # TODO: disable 'insert' button if condition is not met.
 # TODO: separate 'edit' and 'insert'
 # TODO: assign progress bar to time left for action.
@@ -21,9 +19,11 @@ import MacroMethods
 # TODO: change color of 'selected:' with TextTools.
 # TODO: add undo
 # TODO: add methods auto selection upon change in seq selection.
-# Nyaruko kawaii!
 
 ICON_LOCATION = './icons/methods/'
+ICON_ASSIGN = {
+
+}
 
 
 class MainWindow(QMainWindow, Ui_MainWindow):
@@ -139,19 +139,15 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     def listAvailableMethods(self):
         print('Loading Methods:')
 
-        def setItems(item_list):    # is this proper way of utilizing coroutine?
+        def setItems(item_list):
             for name in item_list:
                 item = QListWidgetItem()
                 item.setText(name)
                 yield item
-                # TODO: add icon assignment, will use this function then.
 
         self.methodList.clear()
         for i in setItems(MacroMethods.__all__):
             self.methodList.addItem(i)
-
-        # self.methodList.addItems(setItems(macro.__all__))
-        # Not using above to maintain order of items. Not sure if setItems ruins it.
 
         self.methodList.setCurrentRow(0)
 

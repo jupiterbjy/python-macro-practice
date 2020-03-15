@@ -1,8 +1,6 @@
 import time
 import functools
-# import weakref
 import pyautogui as pgui
-# import shutil
 import ImageModule as ImgM
 from Toolset import MemberLoader
 
