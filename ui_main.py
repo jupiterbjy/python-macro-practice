@@ -23,7 +23,14 @@ import MacroMethods
 
 ICON_LOCATION = './icons/methods/'
 ICON_ASSIGN = {
-
+    MacroMethods.Click: 'click.png',
+    MacroMethods.Loop: 'loop.png',
+    MacroMethods.sLoopEnd: 'loopEnd.png',
+    MacroMethods.sLoopStart: 'loopStart.png',
+    MacroMethods.ImageSearch: 'imageSearch.png',
+    MacroMethods.Variable: 'variable.png',
+    MacroMethods.Wait: 'wait.png',
+    'default': 'template.png',
 }
 
 
@@ -155,16 +162,15 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     def addMethodMain(self, tgt=None):
         if tgt is None:
             target = self.selectedMethod()
-            obj, img = self.addObjectDispatch(target)
+            obj = self.configObject(target)
             obj.name = self.nameLine.text()
         else:
             obj = tgt
-            _, img = self.addObjectDispatch(tgt, new=False)
+            self.configObject(tgt, new=False)
 
         print(f'Add: {Tools.ClassNameRip(obj)} object "{obj.name}"')
 
-        if img is None:
-            img = 'template.png'
+        img = ICON_ASSIGN.setdefault(type(obj), 'default')
 
         txt2 = str(type(obj))
 
@@ -188,19 +194,17 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.outputTextEdit.insertPlainText(msg)
         QApplication.processEvents(QEventLoop.ExcludeUserInputEvents)
 
-    def addObjectDispatch(self, target, new=True):
+    def configObject(self, target, new=True):
 
         def defaultBehavior(obj):
-            print('addObjectDispatch:')
+            print('configObject:')
             print(f'Object {str(obj)} Not dispatched.')
-            return obj
 
         dispatch = ObjectDispatch.dispatcher(defaultBehavior)
 
         @dispatch.register(MacroMethods.Click)
         def _(obj):
             obj.target.set(self.xSpin.value(), self.ySpin.value())
-            return obj, 'click.png'
 
         @dispatch.register(MacroMethods.ImageSearch)
         def _(obj):
@@ -212,28 +216,25 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             obj.clickDelay = self.clickIntervalSpin.value()
             if new:
                 obj.targetImage = self.cachedImage['search']
-            return obj, 'image.png'
 
         @dispatch.register(MacroMethods.Loop)
         def _(obj):
-            return obj, None
+            pass
 
         @dispatch.register(MacroMethods.SearchOccurrence)
         def _(obj):
             if new:
                 obj.target = self.cachedImage['count']
-            return obj, 'count.png'
 
         @dispatch.register(MacroMethods.Variable)
         def _(obj):
-            return obj, None
+            pass
 
         @dispatch.register(MacroMethods.Wait)
         def _(obj):
             obj.delay = self.waitSpin.value()
             obj.onFail = None
             obj.onSuccess = None
-            return obj, 'wait.png'
 
         return dispatch(target)
 

@@ -88,7 +88,7 @@ class Loop:
     @staticmethod
     def generate(name, loops):
 
-        looper = _LoopStart(), _LoopEnd()
+        looper = sLoopStart(), sLoopEnd()
 
         looper[0].next = looper[1]
         looper[1].onSuccess = looper[0]
@@ -100,7 +100,7 @@ class Loop:
         return looper
 
 
-class _LoopStart(_Base, Loop):
+class sLoopStart(_Base, Loop):
     def __init__(self):
         super().__init__()
 
@@ -111,7 +111,7 @@ class _LoopStart(_Base, Loop):
         return True
 
 
-class _LoopEnd(_Base, Loop):
+class sLoopEnd(_Base, Loop):
     def __init__(self):
         super().__init__()
 
