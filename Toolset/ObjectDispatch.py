@@ -17,13 +17,13 @@ class dispatcher:
         raise RuntimeError('Default function is not assigned to function_map.')
 
     def dispatch(self, obj, *args, **kwargs):
-        return self.function_map.get(str(type(obj)), self.default)(obj)
+        return self.function_map.get(type(obj), self.default)(obj)
 
     def register(self, type_obj):
 
         def decorator(func):
 
-            self.function_map[str(type_obj)] = func
+            self.function_map[type_obj] = func
 
             def wrapper(*args, **kwargs):
                 return func(*args, **kwargs)
@@ -32,6 +32,7 @@ class dispatcher:
         return decorator
 
 
+# Not working, can't inject value this way.
 def obj_dispatch():
     # how i inject value in function?
     def deco(func):
