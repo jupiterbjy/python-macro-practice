@@ -45,6 +45,8 @@ class SeqItemWidget(QWidget):
         self.textLayOut.addWidget(self.textDownLabel)
         self.allHBoxLayOut = QHBoxLayout()
         self.iconLabel = QLabel()
+        self.iconLabel.setMinimumSize(QSize(48, 48))
+        self.iconLabel.setMaximumSize(QSize(48, 48))
         self.allHBoxLayOut.addWidget(self.iconLabel)
         self.allHBoxLayOut.addLayout(self.textLayOut, 1)
         self.setLayout(self.allHBoxLayOut)
@@ -60,11 +62,33 @@ class SeqItemWidget(QWidget):
         print(img_path)
         self.textUpLabel.setText(t_up)
         self.textDownLabel.setText(t_down)
-        self.iconLabel.setPixmap(QPixmap(img_path).scaledToHeight(44))
+        self.iconLabel.setPixmap(setPix(img_path))
+        self.iconLabel.setScaledContents(True)
+
+
+class MethodItemWidget(QWidget):
+    def __init__(self, img_path, name):
+        super().__init__()
+        self.methodLayout = QGridLayout()
+
+        self.itemIcon = QLabel()
+        self.itemIcon.setMinimumSize(QSize(24, 24))
+        self.itemIcon.setMaximumSize(QSize(24, 24))
+        self.itemIcon.setPixmap(setPix(img_path))
+        self.itemIcon.setScaledContents(True)
+        self.methodLayout.addWidget(self.itemIcon, 0, 0, 1, 1)
+
+        self.itemName = QLabel()
+        self.itemName.setText(name)
+        self.methodLayout.addWidget(self.itemName, 0, 1, 1, 1)
+        self.setLayout(self.methodLayout)
 
 
 def setPix(image):
-    return QPixmap(ImageQt(image).scaled(226, 151, Qt.KeepAspectRatio))
+    if isinstance(image, str):
+        return QPixmap(image)
+    else:
+        return QPixmap(ImageQt(image))
 
 
 def loadImage(self):

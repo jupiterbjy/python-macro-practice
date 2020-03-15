@@ -166,7 +166,7 @@
            </size>
           </property>
           <property name="currentIndex">
-           <number>3</number>
+           <number>1</number>
           </property>
           <property name="usesScrollButtons">
            <bool>true</bool>
@@ -183,6 +183,18 @@
               <width>226</width>
               <height>151</height>
              </rect>
+            </property>
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="maximumSize">
+             <size>
+              <width>226</width>
+              <height>151</height>
+             </size>
             </property>
             <property name="autoFillBackground">
              <bool>true</bool>
@@ -415,6 +427,18 @@
               <width>226</width>
               <height>151</height>
              </rect>
+            </property>
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="maximumSize">
+             <size>
+              <width>226</width>
+              <height>151</height>
+             </size>
             </property>
             <property name="autoFillBackground">
              <bool>true</bool>

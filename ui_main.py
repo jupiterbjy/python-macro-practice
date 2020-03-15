@@ -6,7 +6,7 @@ from PyQt5.QtGui import *
 
 from Toolset import QtTools, FrozenDetect, ObjectDispatch, Tools
 from ImageModule import getCaptureArea
-from pymacro import Ui_MainWindow
+from Qt_UI.pymacro import Ui_MainWindow
 import MacroMethods
 
 # TODO: disable 'insert' button if condition is not met.
@@ -30,7 +30,16 @@ ICON_ASSIGN = {
     MacroMethods.ImageSearch: 'imageSearch.png',
     MacroMethods.Variable: 'variable.png',
     MacroMethods.Wait: 'wait.png',
+    MacroMethods.SearchOccurrence: 'count.png',
+    'Click': 'click.png',
+    'Loop': 'loop.png',
+    'sLoopEnd': 'loopEnd.png',
+    'sLoopStart': 'loopStart.png',
+    'ImageSearch': 'imageSearch.png',
+    'Variable': 'variable.png',
+    'Wait': 'wait.png',
     'default': 'template.png',
+    'SearchOccurrence': 'count.png',
 }
 
 
@@ -57,7 +66,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         self.countImgLoadButton.released.connect(self.countLoadImage)
         self.countImgClearButton.released.connect(self.countImageUpdate)
-        self.sequenceList.currentRowChanged.connect(self.updateToSelected)
+        self.sequenceList.clicked.connect(self.updateToSelected)
 
         self.actionSave.triggered.connect(self.seqSave)
         self.actionLoad.triggered.connect(self.seqLoad)
@@ -76,7 +85,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.seqStorage[0].action()
 
     def selectedMethod(self):
-        out = MacroMethods.class_dict[str(self.methodList.currentItem().text())]
+        out = MacroMethods.class_dict[MacroMethods.__all__[self.methodList.currentRow()]]
         print('selected:', Tools.ClassNameRip(out))
         return out()
 
@@ -116,27 +125,37 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     # noinspection PyCallByClass,PyArgumentList
     def seqSave(self):
         name = QFileDialog.getSaveFileName(self, 'Save file')[0]
-        target = MacroMethods.NextSetter(self.seqStorage)
+        MacroMethods.NextSetter(self.seqStorage)
         try:
-            pickle.dump(target, open(name, 'wb'), protocol=pickle.HIGHEST_PROTOCOL)
+            pickle.dump(self.seqStorage, open(name, 'wb'), protocol=pickle.HIGHEST_PROTOCOL)
+
         except FileNotFoundError:
             print('seqSave:')
             print('save canceled.')
-            pass
+
 
     # noinspection PyCallByClass,PyArgumentList
     def seqLoad(self):
         name = QFileDialog.getOpenFileName(self)[0]
+        self.initializing(manual=True)
+
         try:
             target = pickle.load(open(name, 'rb'))
-        except FileNotFoundError:
-            print('seqLoad:')
-            print('FileNotFound.')
-            pass
-        else:
-            self.initializing(manual=True)
             for i in target:
                 self.addMethodMain(tgt=i)
+
+        except FileNotFoundError:
+            print('seqLoad:')
+            print('File doesn\'t exist.')
+
+        except TypeError:
+            print('seqLoad:')
+            print('File is Damaged.')
+
+        else:
+            # This is too expensive.. Might be better generate ordered dict.
+            last = type(self.seqStorage[-1]).__name__
+            self.methodList.setCurrentRow(MacroMethods.__all__.index(last))
 
     def initializing(self, manual=False):
         if not manual:
@@ -147,22 +166,31 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     def listAvailableMethods(self):
         print('Loading Methods:')
 
+        def iconSet(name):
+            return ICON_ASSIGN.setdefault(name, 'default')
+
         def setItems(item_list):
             for name in item_list:
-                item = QListWidgetItem()
-                item.setText(name)
+                item = QtTools.MethodItemWidget(ICON_LOCATION + iconSet(name), name)
                 yield item
 
         self.methodList.clear()
+
         for i in setItems(MacroMethods.__all__):
-            self.methodList.addItem(i)
+
+            list_item = QListWidgetItem(self.methodList)
+            list_item.setSizeHint(i.sizeHint())
+
+            self.methodList.addItem(list_item)
+            self.methodList.setItemWidget(list_item, i)
 
         self.methodList.setCurrentRow(0)
 
     def addMethodMain(self, tgt=None):
         if tgt is None:
             target = self.selectedMethod()
-            obj = self.configObject(target)
+            self.configObject(target)
+            obj = target
             obj.name = self.nameLine.text()
         else:
             obj = tgt
