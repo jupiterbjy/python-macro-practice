@@ -1,3 +1,4 @@
+
 from PyQt5.QtWidgets import *
 from PyQt5.QtCore import *
 from PyQt5.QtGui import *
@@ -88,7 +89,9 @@ def setPix(image):
     if isinstance(image, str):
         return QPixmap(image)
     else:
-        return QPixmap(ImageQt(image))
+        tmp = ImageQt(image).rgbSwapped()
+        # TransformMode => Qt::SmoothTransformation for better quality is possible.
+        return QPixmap(tmp)
 
 
 def loadImage(self):

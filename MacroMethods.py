@@ -1,3 +1,4 @@
+
 import time
 import functools
 import pyautogui as pgui
@@ -6,7 +7,6 @@ from Toolset import MemberLoader
 
 # TODO: somehow implement coroutine
 # TODO: utilize sys.path.insert?
-# TODO: pickle serialize class? Will use simple txt-based for now.
 
 
 class _Base:

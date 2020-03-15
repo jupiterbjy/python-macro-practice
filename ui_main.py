@@ -1,3 +1,4 @@
+
 import sys
 import pickle
 from PyQt5.QtWidgets import *
@@ -15,12 +16,11 @@ import MacroMethods
 # TODO: give property to base to get remaining time.
 # TODO: fix loaded sequence disabling searchClickGroup
 # TODO; fix sequence variables not loading when loaded.
-# TODO: reorder functions
 # TODO: change color of 'selected:' with TextTools.
 # TODO: add undo
-# TODO: add methods auto selection upon change in seq selection.
 # TODO: implement random offset via option.
 
+IMG_CONVERT = (226, 151, Qt.KeepAspectRatio)
 ICON_LOCATION = './icons/methods/'
 ICON_ASSIGN = {
     MacroMethods.Click: 'click.png',
@@ -71,7 +71,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.actionSave.triggered.connect(self.seqSave)
         self.actionLoad.triggered.connect(self.seqLoad)
         self.initializing()
-        # Create QListWidget
 
     def runSeq(self, full_screen=False):
         MacroMethods.NextSetter(self.seqStorage)
@@ -86,7 +85,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
     def selectedMethod(self):
         out = MacroMethods.class_dict[MacroMethods.__all__[self.methodList.currentRow()]]
-        print('selected:', Tools.ClassNameRip(out))
+        print(f'selected: {type(out).__name__}')
         return out()
 
     def searchImageUpdate(self, obj=None):
@@ -96,7 +95,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.searchImgNameLabel.setText('No Image')
         else:
             self.searchImgNameLabel.setText(obj.name)
-            self.searchImgLabel.setPixmap(QtTools.setPix(obj.targetImage))
+            self.searchImgLabel.setPixmap(
+                QtTools.setPix(obj.targetImage).scaled(*IMG_CONVERT))
 
     def searchLoadImage(self):
         img, file_name = QtTools.loadImage(self)
@@ -112,7 +112,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.countImgNameLabel.setText('No Image')
         else:
             self.countImgNameLabel.setText(obj.name)
-            self.countImgLabel.setPixmap(QtTools.setPix(obj.targetImage))
+            self.countImgLabel.setPixmap(
+                QtTools.setPix(obj.targetImage).scaled(*IMG_CONVERT))
 
     def countLoadImage(self):
         img, file_name = QtTools.loadImage(self)
@@ -132,7 +133,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         except FileNotFoundError:
             print('seqSave:')
             print('save canceled.')
-
 
     # noinspection PyCallByClass,PyArgumentList
     def seqLoad(self):
@@ -194,9 +194,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             obj.name = self.nameLine.text()
         else:
             obj = tgt
-            self.configObject(tgt, new=False)
+            self.updateToSelected(obj)
 
-        print(f'Add: {Tools.ClassNameRip(obj)} object "{obj.name}"')
+        print(f'Add: {type(obj).__name__} object "{obj.name}"')
 
         img = ICON_ASSIGN.setdefault(type(obj), 'default')
 
@@ -224,9 +224,10 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
     def configObject(self, target, new=True):
 
+        print('configObject:')
+
         def defaultBehavior(obj):
-            print('configObject:')
-            print(f'Object {str(obj)} Not dispatched.')
+            print(f'Object {type(obj).__name__} Not dispatched.')
 
         dispatch = ObjectDispatch.dispatcher(defaultBehavior)
 
@@ -237,7 +238,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         @dispatch.register(MacroMethods.ImageSearch)
         def _(obj):
             obj.clickOnMatch = self.searchClickGroup.isEnabled()
-            print(self.searchClickGroup.isEnabled())
             obj.trials = self.trialsCountSpin.value()
             obj.loopDelay = self.trialsIntervalSpin.value()
             obj.clickCount = self.clickCountSpin.value()
@@ -260,27 +260,35 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         @dispatch.register(MacroMethods.Wait)
         def _(obj):
-            obj.delay = self.waitSpin.value()
-            obj.onFail = None
-            obj.onSuccess = None
+            if new:
+                obj.delay = self.waitSpin.value()
+                obj.onFail = None
+                obj.onSuccess = None
 
         return dispatch(target)
 
-    def updateToSelected(self):
-        # Assuming that wrong class will never inserted here.
+    def updateToSelected(self, target=None):
         if not self.seqStorage:
-            print('something went wrong in updateToSelected.')
+            print('self.seqStorage is Empty.')
             return
 
-        obj = self.seqStorage[self.sequenceList.currentRow()]
+        # Assuming that wrong class will never inserted here.
+        # And it did. 'onClick' signal args with trash. Making case for it.
+
+        if target is None or isinstance(target, QModelIndex):
+            obj = self.seqStorage[self.sequenceList.currentRow()]
+        else:
+            obj = target
 
         self.disableOptions(passed_object=obj)
         print('update2selected:')
 
         def default(obj_):
-            print(f'{Tools.ClassNameRip(obj_)} is supplied.')
+            print(f'└ Invalid class: {type(obj_).__name__}')
 
         dispatch = ObjectDispatch.dispatcher(default)
+
+        print(f'└ Dispatching to {type(obj).__name__}.')
 
         @dispatch.register(MacroMethods.Click)
         def _(obj_):
@@ -289,7 +297,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         @dispatch.register(MacroMethods.ImageSearch)
         def _(obj_):
-            print('dispatched to image')
             self.searchClickGroup.setEnabled(obj_.clickOnMatch)
 
             self.trialsCountSpin.setValue(obj_.trials)
@@ -313,7 +320,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         @dispatch.register(MacroMethods.Wait)
         def _(obj_):
-            print('dispatched to wait')
             self.waitSpin.setValue(obj_.delay)
 
         dispatch.dispatch(obj)
@@ -329,11 +335,14 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         groups = [self.waitGroup, self.searchClickGroup, self.clickGroup,
                   self.loopGroup, self.trialsGroup]
 
+        print('disableOptions:')
+
         def default(obj):
-            print('disableOptions:')
-            print(f'Function for {obj} is not designated.')
+            print(f'└ Invalid class: {type(obj).__name__}')
 
         dispatch = ObjectDispatch.dispatcher(default)
+
+        print(f'└ Dispatching to {type(selected).__name__}.')
 
         @dispatch.register(MacroMethods.Click)
         def _(_):
