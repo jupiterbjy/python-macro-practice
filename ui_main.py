@@ -5,7 +5,7 @@ from PyQt5.QtWidgets import *
 from PyQt5.QtCore import *
 from PyQt5.QtGui import *
 
-from Toolset import QtTools, FrozenDetect, ObjectDispatch, Tools
+from Toolset import QtTools, FrozenDetect, ObjectDispatch
 from ImageModule import getCaptureArea
 from Qt_UI.pymacro import Ui_MainWindow
 import MacroMethods
@@ -19,6 +19,7 @@ import MacroMethods
 # TODO: change color of 'selected:' with TextTools.
 # TODO: add undo
 # TODO: implement random offset via option.
+# TODO: connect undo
 
 IMG_CONVERT = (226, 151, Qt.KeepAspectRatio)
 ICON_LOCATION = './icons/methods/'
@@ -52,7 +53,10 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self._stdout.start()
         self._stdout.printOccur.connect(lambda x: self._append_text(x))
 
+        # self.seqUndo = []
         self.seqStorage = []
+        self.seqBackup = []     # Consumes memory!
+
         self.cachedImage = {
             'search': None,
             'count': None
@@ -60,6 +64,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         self.insertButton.released.connect(self.addMethodMain)
         self.methodList.currentRowChanged.connect(self.disableOptions)
+        self.delButton.released.connect(self.remove)
+        self.runButton.released.connect(self.runSeq)
 
         self.searchImgLoadButton.released.connect(self.searchLoadImage)
         self.searchImgClearButton.released.connect(self.searchImageUpdate)
@@ -72,16 +78,40 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.actionLoad.triggered.connect(self.seqLoad)
         self.initializing()
 
+    def remove(self):
+        self.backupSeq()
+        del self.seqStorage[self.sequenceList.currentRow()]
+
+        item = self.sequenceList.currentRow()
+        self.sequenceList.takeItem(item)
+
+    def backupSeq(self):
+        if len(self.seqBackup) >= 4:
+            self.seqBackup.pop(0)
+        self.seqBackup.append(self.seqStorage)
+
+    def undoSeq(self):
+        self.seqStorage = self.seqBackup.pop()
+        # if self.seqBackup:
+        #     source = self.seqBackup.pop()
+        #     self.seqUndo.append(source)
+        #     self.seqStorage = source
+
     def runSeq(self, full_screen=False):
         MacroMethods.NextSetter(self.seqStorage)
         # self.waitProgressBar
         print('runSeq:')
 
-        area = getCaptureArea()
-        for obj in self.seqStorage:
-            obj.SetArea(area)
+        if not full_screen:
+            area = getCaptureArea()
+
+            self.runLine.setText(str(area))
+
+            for obj in self.seqStorage:
+                obj.setArea(area)
 
         self.seqStorage[0].action()
+        self.runLine.setText('Macro finished.')
 
     def selectedMethod(self):
         out = MacroMethods.class_dict[MacroMethods.__all__[self.methodList.currentRow()]]
@@ -207,6 +237,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.configObject(target)
             obj = target
             obj.name = self.nameLine.text()
+            self.nameLine.clear()
         else:
             obj = tgt
             self.updateToSelected(obj)
@@ -215,10 +246,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         img = ICON_ASSIGN.setdefault(type(obj), 'default')
 
-        txt2 = str(type(obj))
-
         item = QtTools.SeqItemWidget()
-        item.setup(txt2, obj.name, ''.join([ICON_LOCATION, img]))
+        item.setup(str(type(obj)), obj.name, ''.join([ICON_LOCATION, img]))
 
         list_item = QListWidgetItem(self.sequenceList)
         list_item.setSizeHint(item.sizeHint())

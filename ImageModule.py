@@ -53,6 +53,12 @@ class Area:
         self.p2 = pos(x2, y2)
         self.sort()
 
+    def __iter__(self):
+        return iter((self.p1, self.p2))
+
+    def __str__(self):
+        return str(tuple(self))
+
     @property
     def pygui(self):
         return *self.p1, *(self.p1 - self.p2)
@@ -110,14 +116,7 @@ def saveImg():
         return str(n) + '.png'
 
     def save(file, name=None):
-        """
-        Saves given image in ordered name.
 
-        :param file: Image to save.
-        :param name: Name to save.
-        :param overwrite: Overwrite if file with same name exist.
-        :return:
-        """
         nonlocal order
 
         if name is None:

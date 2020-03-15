@@ -38,7 +38,7 @@ class _Base:
     def action(self):
         return True
 
-    def SetArea(self, x1, y1, x2, y2):
+    def setArea(self, x1, y1, x2, y2):
         self.screenArea = ImgM.Area(x1, y1, x2, y2)
 
 # --------------------------------------------------------
