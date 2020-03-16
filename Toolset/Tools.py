@@ -31,3 +31,17 @@ def imageCheck(file_dir):
             if temp.size == 0:
                 return False
             return temp
+
+
+def nameCaller(print_out=True):
+    # https://stackoverflow.com/a/5067654/10909029
+    # print(inspect.stack()[0][3]) <- this prints current stack's name
+
+    import inspect
+
+    caller = inspect.stack()[1][3]
+
+    if print_out:
+        print('\n' + caller + ':')
+
+    return caller

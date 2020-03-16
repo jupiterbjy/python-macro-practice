@@ -54,7 +54,7 @@ class Area:
         self.sort()
 
     def __iter__(self):
-        return iter((self.p1, self.p2))
+        return iter((*self.p1, *self.p2))
 
     def __str__(self):
         return str(tuple(self))

@@ -8,6 +8,10 @@ import sys
 
 from Toolset import Tools
 
+"""
+Module to store all necessary Qt-Related tools.
+"""
+
 
 class StdoutRedirect(QObject):
     # Codes from below.

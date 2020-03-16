@@ -8,6 +8,7 @@ from PyQt5.QtGui import *
 from Toolset import QtTools, FrozenDetect, ObjectDispatch
 from ImageModule import getCaptureArea
 from Qt_UI.pymacro import Ui_MainWindow
+from Toolset.Tools import nameCaller
 import MacroMethods
 
 # TODO: disable 'insert' button if condition is not met.
@@ -51,7 +52,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         self._stdout = QtTools.StdoutRedirect()
         self._stdout.start()
-        self._stdout.printOccur.connect(lambda x: self._append_text(x))
+        self._stdout.printOccur.connect(lambda x: self._appendText(x))
 
         # self.seqUndo = []
         self.seqStorage = []
@@ -72,7 +73,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         self.countImgLoadButton.released.connect(self.countLoadImage)
         self.countImgClearButton.released.connect(self.countImageUpdate)
-        self.sequenceList.clicked.connect(self.updateToSelected)
+        self.sequenceList.clicked.connect(self._updateToSelected)
 
         self.actionSave.triggered.connect(self.seqSave)
         self.actionLoad.triggered.connect(self.seqLoad)
@@ -108,76 +109,56 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.runLine.setText(str(area))
 
             for obj in self.seqStorage:
-                obj.setArea(area)
+                obj.setArea(*area)
 
-        self.seqStorage[0].action()
-        self.runLine.setText('Macro finished.')
+        try:
+            self.runLine.setText('Macro started.')
+            obj = self.seqStorage[0].action()
+
+        except IndexError:
+            print('└ sequence Empty')
+            self.runLine.setText('Nothing To play.')
+            return False
+        else:
+            while obj:
+                self.runLine.setText(f'running {obj.name}.')
+                obj = obj()
+        finally:
+            self.runLine.setText('Macro finished.')
 
     def selectedMethod(self):
         out = MacroMethods.class_dict[MacroMethods.__all__[self.methodList.currentRow()]]
-        print(f'selected: {type(out).__name__}')
+        print(f'\nselected: {out.__name__}')
         return out()
 
     def searchImageUpdate(self, obj=None):
-        # Clears image when arg are not given.
-        if obj is None:
-            self.searchImgLabel.clear()
-            self.searchImgLabel.setStyleSheet('background-color: rgba(240, 240, 240, 255);')
-            self.searchImgNameLabel.setText('No Image')
-        else:
-            self.searchImgNameLabel.setText(obj.name)
-            self.searchImgLabel.setStyleSheet('background-color: rgba(40, 40, 40, 255);')
-            self.searchImgLabel.setPixmap(
-                QtTools.setPix(obj.targetImage).scaled(*IMG_CONVERT))
-
-    def searchLoadImage(self):
-        try:
-            img, file_name = QtTools.loadImage(self)
-        except TypeError:
-            return
-        else:
-            self.cachedImage['search'] = img
-
-            if img is not None:
-                self.searchImgLabel.setPixmap(QtTools.setPix(img).scaled(*IMG_CONVERT))
-                self.searchImgNameLabel.setText(file_name)
+        self._ImageUpdate(self.searchImgLabel, self.searchImgNameLabel, obj)
 
     def countImageUpdate(self, obj=None):
-        if obj is None:
-            self.countImgLabel.clear()
-            self.countImgLabel.setStyleSheet('background-color: rgba(240, 240, 240, 255);')
-            self.countImgNameLabel.setText('No Image')
-        else:
-            self.countImgNameLabel.setText(obj.name)
-            self.countImgLabel.setStyleSheet('background-color: rgba(40, 40, 40, 255);')
-            self.countImgLabel.setPixmap(
-                QtTools.setPix(obj.targetImage).scaled(*IMG_CONVERT))
+        self._ImageUpdate(self.countImgLabel, self.countImgNameLabel, obj)
+
+    def searchLoadImage(self):
+        self._LoadImage(self.searchImgLabel, self.searchImgNameLabel, 'search')
 
     def countLoadImage(self):
-        try:
-            img, file_name = QtTools.loadImage(self)
-        except TypeError:
-            return
-        else:
-            self.cachedImage['count'] = img
-
-            if img is not None:
-                self.countImgLabel.setPixmap(QtTools.setPix(img).scaled(*IMG_CONVERT))
-                self.countImgNameLabel.setText(file_name)
+        self._LoadImage(self.countImgLabel, self.countImgNameLabel, 'count')
 
     # noinspection PyCallByClass,PyArgumentList
     def seqSave(self):
+        nameCaller()
         name = QFileDialog.getSaveFileName(self, 'Save file')[0]
         MacroMethods.NextSetter(self.seqStorage)
+
         try:
             pickle.dump(self.seqStorage, open(name, 'wb'), protocol=pickle.HIGHEST_PROTOCOL)
 
         except FileNotFoundError:
-            print('seqSave:')
-            print('save canceled.')
+            print('└ save canceled.')
 
     # noinspection PyCallByClass,PyArgumentList
     def seqLoad(self):
+        nameCaller()
+
         name = QFileDialog.getOpenFileName(self)[0]
         self.initializing(manual=True)
 
@@ -187,12 +168,10 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 self.addMethodMain(tgt=i)
 
         except FileNotFoundError:
-            print('seqLoad:')
-            print('File doesn\'t exist.')
+            print('└ File doesn\'t exist.')
 
         except TypeError:
-            print('seqLoad:')
-            print('File is Damaged.')
+            print('└ File is Damaged.')
 
         else:
             # This is too expensive.. Might be better generate ordered dict.
@@ -209,7 +188,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.disableOptions(passed_object=MacroMethods.Click())
 
     def listAvailableMethods(self):
-        print('Loading Methods:')
+        nameCaller()
 
         def iconSet(name):
             return ICON_ASSIGN.setdefault(name, 'default')
@@ -232,17 +211,19 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.methodList.setCurrentRow(0)
 
     def addMethodMain(self, tgt=None):
+        nameCaller()
+
         if tgt is None:
             target = self.selectedMethod()
-            self.configObject(target)
+            self._configObject(target)
             obj = target
             obj.name = self.nameLine.text()
             self.nameLine.clear()
         else:
             obj = tgt
-            self.updateToSelected(obj)
+            self._updateToSelected(obj)
 
-        print(f'Add: {type(obj).__name__} object "{obj.name}"')
+        print(f'└ Add: {type(obj).__name__} object "{obj.name}"')
 
         img = ICON_ASSIGN.setdefault(type(obj), 'default')
 
@@ -254,26 +235,47 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         self.sequenceList.addItem(list_item)
         self.sequenceList.setItemWidget(list_item, item)
-
         self.seqStorage.append(obj)
-        print(self.seqStorage)
 
-    def setXYFromImage(self):
+    def _setXYFromImage(self):
         pass
 
-    def _append_text(self, msg):
+    def _appendText(self, msg):
         self.outputTextEdit.moveCursor(QTextCursor.End)
         self.outputTextEdit.insertPlainText(msg)
         QApplication.processEvents(QEventLoop.ExcludeUserInputEvents)
 
-    def configObject(self, target, new=True):
+    def _LoadImage(self, img_label, name_label, cache_name):
+        try:
+            img, file_name = QtTools.loadImage(self)
+        except TypeError:
+            return False
+        else:
+            if img is not None:
+                self.cachedImage[cache_name] = img
+                name_label.setText(file_name)
+                img_label.setPixmap(QtTools.setPix(img).scaled(*IMG_CONVERT))
 
-        print('configObject:')
+    @staticmethod
+    def _ImageUpdate(img_label, name_label, obj):
+        """
+        Clears image when arg are not given.
+        Assuming only MacroMethods._Image subclasses to be passed.
+        """
+        if obj is None:
+            img_label.clear()
+            name_label.setText('No Image')
+            img_label.setStyleSheet('background-color: rgba(240, 240, 240, 255);')
 
-        def defaultBehavior(obj):
-            print(f'Object {type(obj).__name__} Not dispatched.')
+        else:
+            img_label.setPixmap(QtTools.setPix(obj.targetImage).scaled(*IMG_CONVERT))
+            name_label.setText(obj.name)
+            img_label.setStyleSheet('background-color: rgba(40, 40, 40, 255);')
 
-        dispatch = ObjectDispatch.dispatcher(defaultBehavior)
+    def _configObject(self, target, new=True):
+
+        # Can I utilize 'with' context manager here?
+        dispatch = ObjectDispatch.preset()
 
         @dispatch.register(MacroMethods.Click)
         def _(obj):
@@ -311,10 +313,10 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         return dispatch(target)
 
-    def updateToSelected(self, target=None):
+    def _updateToSelected(self, target=None):
         if not self.seqStorage:
             print('self.seqStorage is Empty.')
-            return
+            return False
 
         # Assuming that wrong class will never inserted here.
         # And it did. 'onClick' signal args with trash. Making case for it.
@@ -325,14 +327,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             obj = target
 
         self.disableOptions(passed_object=obj)
-        print('update2selected:')
 
-        def default(obj_):
-            print(f'└ Invalid class: {type(obj_).__name__}')
-
-        dispatch = ObjectDispatch.dispatcher(default)
-
-        print(f'└ Dispatching to {type(obj).__name__}.')
+        dispatch = ObjectDispatch.preset()
 
         @dispatch.register(MacroMethods.Click)
         def _(obj_):
@@ -379,14 +375,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         groups = [self.waitGroup, self.searchClickGroup, self.clickGroup,
                   self.loopGroup, self.trialsGroup]
 
-        print('disableOptions:')
-
-        def default(obj):
-            print(f'└ Invalid class: {type(obj).__name__}')
-
-        dispatch = ObjectDispatch.dispatcher(default)
-
-        print(f'└ Dispatching to {type(selected).__name__}.')
+        dispatch = ObjectDispatch.preset()
 
         @dispatch.register(MacroMethods.Click)
         def _(_):

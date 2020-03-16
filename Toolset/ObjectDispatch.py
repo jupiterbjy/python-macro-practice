@@ -4,6 +4,20 @@ use decorator function 'register' to do what that name implies.
 """
 
 
+def preset():
+    try:
+        from Toolset.Tools import nameCaller
+    except Exception:
+        pass
+    else:
+        nameCaller()
+
+    def defaultBehavior(obj):
+        print(f'└ {type(obj).__name__} Not listed.')
+
+    return dispatcher(defaultBehavior)
+
+
 class dispatcher:
     def __init__(self, default=None):
         self.function_map = {}
@@ -17,7 +31,8 @@ class dispatcher:
         raise RuntimeError('Default function is not assigned to function_map.')
 
     def dispatch(self, obj, *args, **kwargs):
-        return self.function_map.get(type(obj), self.default)(obj)
+        func = self.function_map.get(type(obj), self.default)
+        return func(obj)
 
     def register(self, type_obj):
 
