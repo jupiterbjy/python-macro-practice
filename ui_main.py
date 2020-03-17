@@ -1,15 +1,18 @@
 
-import sys
-import pickle
 from PyQt5.QtWidgets import *
 from PyQt5.QtCore import *
 from PyQt5.QtGui import *
+import pyautogui
+import sys
+import pickle
 
 from Toolset import QtTools, FrozenDetect, ObjectDispatch
 from ImageModule import getCaptureArea
 from Qt_UI.pymacro import Ui_MainWindow
 from Toolset.Tools import nameCaller
 import MacroMethods
+from Qt_UI.Runner import Ui_MainWindow as runner
+import ui_run
 
 # TODO: disable 'insert' button if condition is not met.
 # TODO: separate 'edit' and 'insert'
@@ -100,31 +103,12 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
     def runSeq(self, full_screen=False):
         MacroMethods.NextSetter(self.seqStorage)
-        # self.waitProgressBar
-        print('runSeq:')
+        nameCaller()
 
-        if not full_screen:
-            area = getCaptureArea()
-
-            self.runLine.setText(str(area))
-
-            for obj in self.seqStorage:
-                obj.setArea(*area)
-
-        try:
-            self.runLine.setText('Macro started.')
-            obj = self.seqStorage[0].action()
-
-        except IndexError:
-            print('└ sequence Empty')
-            self.runLine.setText('Nothing To play.')
-            return False
-        else:
-            while obj:
-                self.runLine.setText(f'running {obj.name}.')
-                obj = obj()
-        finally:
-            self.runLine.setText('Macro finished.')
+        window = ui_run.Ui_MainWindow.__init__(self)
+        self.hide()
+        window.show()
+        self.show()
 
     def selectedMethod(self):
         out = MacroMethods.class_dict[MacroMethods.__all__[self.methodList.currentRow()]]
