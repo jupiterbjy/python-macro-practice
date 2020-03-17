@@ -11,8 +11,7 @@ from ImageModule import getCaptureArea
 from Qt_UI.pymacro import Ui_MainWindow
 from Toolset.Tools import nameCaller
 import MacroMethods
-from Qt_UI.Runner import Ui_MainWindow as runner
-import ui_run
+from Qt_UI.Runner import Ui_MainWindow as Ui_Runner
 
 # TODO: disable 'insert' button if condition is not met.
 # TODO: separate 'edit' and 'insert'
@@ -46,6 +45,49 @@ ICON_ASSIGN = {
     'default': 'template.png',
     'SearchOccurrence': 'count.png',
 }
+
+
+class SubWindow(QMainWindow, Ui_Runner):
+    def __init__(self, parent=None, seq=None):
+        super(SubWindow, self).__init__(parent)
+        self.setupUi(self)
+
+        self.runButton.released.connect(self.runSeq)
+        self.source = list(seq)
+
+    def runSeq(self, full_screen=False):
+
+        nameCaller()
+
+        if not full_screen:
+            area = getCaptureArea()
+
+            self.runLine.setText(str(area))
+
+            for obj in self.source:
+                obj.setArea(*area)
+
+        try:
+            self.runLine.setText('Macro started.')
+            obj = self.source[0].action()
+
+        except IndexError:
+            print('└ sequence Empty')
+            self.runLine.setText('Nothing To play.')
+            return False
+        except pyautogui.FailSafeException:
+            print('└ FailSafe Trigger')
+            self.runLine.setText('Cannot Click (0,0), Aborted.')
+
+        else:
+            seq_count = 0
+            while obj:
+                self.runLine.setText(f'running {obj.name}.')
+                obj = obj()
+                seq_count += 1
+
+            self.runLine.setText('Macro finished.')
+
 
 
 class MainWindow(QMainWindow, Ui_MainWindow):
@@ -105,10 +147,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         MacroMethods.NextSetter(self.seqStorage)
         nameCaller()
 
-        window = ui_run.Ui_MainWindow.__init__(self)
-        self.hide()
+        window = SubWindow(self, self.seqStorage)
+        # self.hide()
         window.show()
-        self.show()
 
     def selectedMethod(self):
         out = MacroMethods.class_dict[MacroMethods.__all__[self.methodList.currentRow()]]
