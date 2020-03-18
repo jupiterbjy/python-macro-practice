@@ -14,15 +14,14 @@ import MacroMethods
 from Qt_UI.Runner import Ui_MainWindow as Ui_Runner
 
 # TODO: disable 'insert' button if condition is not met.
-# TODO: separate 'edit' and 'insert'
 # TODO: assign progress bar to time left for action.
 # TODO: give property to base to get remaining time.
-# TODO: fix loaded sequence disabling searchClickGroup
-# TODO; fix sequence variables not loading when loaded.
 # TODO: change color of 'selected:' with TextTools.
 # TODO: add undo
 # TODO: implement random offset via option.
 # TODO: connect undo
+# TODO: Check Sequence and find if CaptureCoverage call is needed.
+# TODO: clear up PIL -> QPixmap -> cv2 madness in ImageModule.
 
 IMG_CONVERT = (226, 151, Qt.KeepAspectRatio)
 ICON_LOCATION = './icons/methods/'
@@ -47,6 +46,18 @@ ICON_ASSIGN = {
 }
 
 
+class CaptureCoverage(QDialog):
+    def __init__(self, flags, *args, **kwargs):
+        super().__init__(flags, *args, **kwargs)
+
+        self.setWindowFlag(
+            self.windowFlags() |
+            Qt.FramelessWindowHint
+        )
+
+        self.setWindowOpacity(0.7)
+
+
 class SubWindow(QMainWindow, Ui_Runner):
     def __init__(self, parent=None, seq=None):
         super(SubWindow, self).__init__(parent)
@@ -55,9 +66,7 @@ class SubWindow(QMainWindow, Ui_Runner):
         self.runButton.released.connect(self.runSeq)
         self.source = list(seq)
 
-    def runSeq(self, full_screen=False):
-
-        nameCaller()
+    def areaInject(self, full_screen=False):
 
         if not full_screen:
             area = getCaptureArea()
@@ -66,6 +75,15 @@ class SubWindow(QMainWindow, Ui_Runner):
 
             for obj in self.source:
                 obj.setArea(*area)
+
+    def callCaptureCoverage(self):
+        sub_window = SubWindow(self, self.seqStorage)
+        sub_window.show()
+
+    def runSeq(self, full_screen=False):
+
+        nameCaller()
+        self.areaInject()
 
         try:
             self.runLine.setText('Macro started.')
@@ -88,6 +106,8 @@ class SubWindow(QMainWindow, Ui_Runner):
 
             self.runLine.setText('Macro finished.')
 
+    def _getPos(self):
+        pass
 
 
 class MainWindow(QMainWindow, Ui_MainWindow):
@@ -148,7 +168,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         nameCaller()
 
         window = SubWindow(self, self.seqStorage)
-        # self.hide()
+        self.setWindowOpacity(0.7)
         window.show()
 
     def selectedMethod(self):

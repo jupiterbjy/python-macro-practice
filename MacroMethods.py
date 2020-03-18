@@ -220,7 +220,7 @@ class ImageSearch(_Image, _ClickBase):
 
     def ImageSearch(self):
         self.matchPoint, self.capturedImage = \
-            ImgM.imageSearch(self.targetImage, self.screenArea.pygui, self.precision)
+            ImgM.imageSearch(self.targetImage, self.screenArea.region, self.precision)
         if self.matchPoint[0] == -1:
             self._foundFlag = False
 
@@ -240,7 +240,11 @@ class ImageSearch(_Image, _ClickBase):
     def action(self):
         self.actionState = -1
 
-        self.ImageSearchMultiple()
+        try:
+            self.ImageSearchMultiple()
+        except TypeError:
+            raise AttributeError('C')
+
         if self._foundFlag:
             if self.clickOnMatch:
                 self.target = self.matchPoint
@@ -262,7 +266,7 @@ class SearchOccurrence(_Image, _ClickBase):
 
     def ScanOccurrence(self):
         self.matchCount, self.capturedImage = \
-            ImgM.scanOccurrence(self.targetImage, self.screenArea.pygui, self.precision)
+            ImgM.scanOccurrence(self.targetImage, self.screenArea.region, self.precision)
 
     def action(self):
         self.actionState = -1

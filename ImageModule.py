@@ -60,7 +60,7 @@ class Area:
         return str(tuple(self))
 
     @property
-    def pygui(self):
+    def region(self):
         return *self.p1, *(self.p1 - self.p2)
 
     @functools.lru_cache(maxsize=128, typed=False)
@@ -79,7 +79,8 @@ def getCaptureArea():
     kill_key = 'f2'
     
     def breakKeyInput(input_key):     # delay until key is up, to prevent input skipping
-        while keyboard.is_pressed(input_key):
+        while not keyboard.is_pressed(input_key):
+            print('Waiting for key:')
             time.sleep(0.05)
     
     def getPos(p):
@@ -100,8 +101,10 @@ def getCaptureArea():
         getPos(p1)
         getPos(p2)
 
-    getArea()
-    return Area(*p1, *p2)
+    # getArea()
+    # return Area(*p1, *p2)
+
+    return Area(80, 80, 600, 600)
 
     
 def saveImg():
@@ -128,15 +131,24 @@ def saveImg():
     return save
 
 
-def imageSearch(target, corner_pos, xy, precision=0.85):
+def imageSearch(target, area, precision=0.85):
     """
     position will use tuple(pos(), pos())!
     """
-    
-    img = np.array(pgui.screenshot(region=(*corner_pos, *xy)))
+    img = cv2.cvtColor(np.array(pgui.screenshot(region=area)), cv2.COLOR_RGB2BGR)
+    cv2.imwrite('test.png', img)
+
     img_gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-    template = cv2.imread(target, 0)
+    cv2.imwrite('test2.png', img_gray)
+
+    template = cv2.cvtColor(np.array(target.convert("RGB")), cv2.COLOR_RGB2BGR)
+    # Above having issue with zero-filled array.
     img_wh = template.shape[::-1]
+
+    # pgui.locateOnScreen(target, minSearchTime=5, confidence=0.9)
+    # didn't know this existed, but I'm sure this is slower per run.
+
+    #https://stackoverflow.com/questions/44955656/how-to-convert-rgb-pil-image-to-numpy-array-with-3-channels
 
     res = cv2.matchTemplate(img_gray, template, cv2.TM_CCOEFF_NORMED)
     min_val, max_val, min_loc, max_loc = cv2.minMaxLoc(res)
@@ -145,6 +157,7 @@ def imageSearch(target, corner_pos, xy, precision=0.85):
         return (-1, -1), img
     else:
         cv2.rectangle(img, max_loc, list(x+y for x, y in zip(img_wh, max_loc)), (0, 0, 255), 2)
+        cv2.imwrite('test3.png', img_gray)
         return max_loc, img
 
 
