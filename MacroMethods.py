@@ -1,5 +1,4 @@
 
-import time
 import functools
 import pyautogui as pgui
 import ImageModule as ImgM
@@ -50,12 +49,12 @@ class _ClickBase:
     # __slots__ = ('target', 'clickCount', 'clickDelay', 'preDelay')
 
     def __init__(self):
-        self.target = ImgM.pos()
+        self.target = ImgM.Pos()
         self.clickCount = 0
         self.clickDelay = 0.01
         self.preDelay = 0
 
-    def _click(self, abs_target=ImgM.pos()):
+    def _click(self, abs_target=ImgM.Pos()):
         QtTools.QSleep(self.preDelay)
 
         for i in range(self.clickCount - 1):
@@ -196,7 +195,7 @@ class _Image(_Base):
         self.targetImage = None
         self.targetName = None
         self.capturedImage = None
-        self.matchPoint = ImgM.pos()
+        self.matchPoint = ImgM.Pos()
         self.precision = 0.85
         self.offsetMax = 5
 

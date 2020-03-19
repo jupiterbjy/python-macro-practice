@@ -1,10 +1,7 @@
 import cv2
-import os
-import time
 import functools
 import numpy as np
 import pyautogui as pgui
-import keyboard
 from math import sqrt
 
 """
@@ -14,7 +11,7 @@ especially Image-related functions.
 # TODO: add exception handler for functions here.
 
 
-class pos:
+class Pos:
     # referenced vector2d_v0.py from 'Fluent Python' by Luciano.
 
     def __init__(self, x=0, y=0):
@@ -49,8 +46,8 @@ class pos:
 class Area:
 
     def __init__(self, x1=0, y1=0, x2=0, y2=0):
-        self.p1 = pos(x1, y1)
-        self.p2 = pos(x2, y2)
+        self.p1 = Pos(x1, y1)
+        self.p2 = Pos(x2, y2)
         self.sort()
 
     def __iter__(self):
@@ -72,39 +69,9 @@ class Area:
     def set(self, x1, y1, x2, y2):
         self.__init__(x1, y1, x2, y2)
 
-
-def getCaptureArea():
-    p1 = pos()
-    p2 = pos()
-    kill_key = 'f2'
-    
-    def breakKeyInput(input_key):     # delay until key is up, to prevent input skipping
-        while not keyboard.is_pressed(input_key):
-            print('Waiting for key:')
-            time.sleep(0.05)
-    
-    def getPos(p):
-        nonlocal kill_key
-
-        breakKeyInput(kill_key)
-        p.set(*pgui.position())
-        breakKeyInput(kill_key)
-        
-    def getArea():
-
-        # all_clear = False
-        # while all_clear:
-        #     getPos(p1)
-        #     getPos(p2)
-        # TODO: add confirmation
-
-        getPos(p1)
-        getPos(p2)
-
-    # getArea()
-    # return Area(*p1, *p2)
-
-    return Area(80, 80, 600, 600)
+    @staticmethod
+    def fromPos(p1, p2):
+        return Area(*p1, *p2)
 
     
 def saveImg():
@@ -141,7 +108,8 @@ def imageSearch(target, area, precision=0.85):
     img_gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
     cv2.imwrite('test2.png', img_gray)
 
-    template = cv2.cvtColor(np.array(target.convert("RGB")), cv2.COLOR_RGB2BGR)
+    tmp = np.array(target).reshape((target.size[1], target.size[0]))
+    template = cv2.cvtColor(tmp, cv2.COLOR_RGB2BGR)
     # Above having issue with zero-filled array.
     img_wh = template.shape[::-1]
 

@@ -5,12 +5,14 @@ from PyQt5.QtGui import *
 import pyautogui
 import sys
 import pickle
+import keyboard
+import os
 
 from Toolset import QtTools, FrozenDetect, ObjectDispatch
 from Toolset.QtTools import IMG_CONVERT, ICON_LOCATION, ICON_ASSIGN
-from ImageModule import getCaptureArea
 from Qt_UI.pymacro import Ui_MainWindow
 from Toolset.Tools import nameCaller
+from ImageModule import Pos, Area
 import MacroMethods
 from Qt_UI.Runner import Ui_MainWindow as Ui_Runner
 
@@ -53,7 +55,7 @@ class SubWindow(QMainWindow, Ui_Runner):
     def areaInject(self, full_screen=False):
 
         if not full_screen:
-            area = getCaptureArea()
+            area = QtTools.getCaptureArea()
 
             self.runLine.setText(str(area))
 
@@ -88,9 +90,9 @@ class SubWindow(QMainWindow, Ui_Runner):
         else:
             seq_count = 0
             while obj:
-                self.runLine.setText(f'running {obj.name}.')
+                self.runLine.setText(f'running "{obj.name}".')
                 self.updateCurrentItem(obj)
-                obj = obj()
+                obj = obj.run()
                 seq_count += 1
 
             self.runLine.setText('Macro finished.')

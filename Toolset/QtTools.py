@@ -5,9 +5,12 @@ from PyQt5.QtGui import *
 from PIL import Image
 from PIL.ImageQt import ImageQt
 import sys
+import pyautogui
+import keyboard
 
 from Toolset import Tools
 from Toolset.Tools import nameCaller
+from ImageModule import Pos, Area
 import MacroMethods
 
 """
@@ -88,7 +91,6 @@ class SeqItemWidget(QWidget):
                 ''')
 
     def setup(self, t_up, t_down, img_path):
-        print(img_path)
         self.textUpLabel.setText(t_up)
         self.textDownLabel.setText(t_down)
         self.iconLabel.setPixmap(setPix(img_path))
@@ -123,7 +125,7 @@ def setPix(image):
 
 
 def loadImage(self):
-    print('loadImage:')
+    nameCaller()
 
     file_dir = QFileDialog.getOpenFileName(self)[0]
     file_name = Tools.fileNameExtract(file_dir)
@@ -164,7 +166,48 @@ def AddToListWidget(tgt, item_list_widget):
     item_list_widget.setItemWidget(list_item, item)
 
 
-def QSleep(delay):
-    loop = QEventLoop()
-    QTimer.singleShot(delay, loop.quit)
-    loop.exec_()
+def QSleep(delay, progress_bar=None):
+    nameCaller()
+    # Not sure just checking progress_bar is None at start is worse than try-except..
+
+    class context:
+        def __enter__(self):
+            print(f'└ Wait {delay} start')
+
+        def __exit__(self, exc_type, exc_val, exc_tb):
+            print(f'└ Finish')
+
+    with context():
+        loop = QEventLoop()
+        QTimer.singleShot(delay * 1000, loop.quit)
+        loop.exec_()
+
+
+def getCaptureArea():
+    p1 = Pos()
+    p2 = Pos()
+    kill_key = 'f2'
+
+    class breakKeyInput:
+        # Delays until key is up, to prevent next input skipping.
+        def __enter__(self):
+            nameCaller()
+            print(f'└ Waiting for press:{kill_key}')
+            while not keyboard.is_pressed(kill_key):
+                QSleep(0.05)
+
+        def __exit__(self, exc_type, exc_val, exc_tb):
+            print(f'└ Waiting for release:{kill_key}')
+            while keyboard.is_pressed(kill_key):
+                QSleep(0.05)
+
+    def getPos(p):
+        nonlocal kill_key
+
+        with breakKeyInput():
+            p.set(*pyautogui.position())
+
+    getPos(p1)
+    getPos(p2)
+
+    return Area.fromPos(p1, p2)
