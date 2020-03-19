@@ -4,6 +4,7 @@ import functools
 import pyautogui as pgui
 import ImageModule as ImgM
 from Toolset import MemberLoader
+from Toolset import QtTools
 
 # TODO: somehow implement coroutine
 # TODO: utilize sys.path.insert?
@@ -22,18 +23,19 @@ class _Base:
         self.screenArea = ImgM.Area()
 
     def run(self):
+
         if self.action():
-            # self.onSuccess.run()          <- this might trigger depth limit..?
+            # self.onSuccess.run()          <- this might trigger stack limit..?
             if self.onSuccess is None:
-                return self.next.run
+                return self.next
             else:
-                return self.onSuccess.run
+                return self.onSuccess
 
         else:
             if self.onFail is None:
-                return self.next.run
+                return self.next
             else:
-                return self.onFail.run
+                return self.onFail
 
     def action(self):
         return True
@@ -54,11 +56,11 @@ class _ClickBase:
         self.preDelay = 0
 
     def _click(self, abs_target=ImgM.pos()):
-        time.sleep(self.preDelay)
+        QtTools.QSleep(self.preDelay)
 
         for i in range(self.clickCount - 1):
             pgui.click(*(self.target + abs_target))
-            time.sleep(self.clickDelay)
+            QtTools.QSleep(self.clickDelay)
 
         pgui.click(*self.target)
 
@@ -152,7 +154,7 @@ class Wait(_Base):
     def action(self):
         self.actionState = -1
 
-        time.sleep(self.delay)
+        QtTools.QSleep(self.delay)
         self.actionState = 1
         return True
 

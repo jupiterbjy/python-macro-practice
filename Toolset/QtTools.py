@@ -7,10 +7,34 @@ from PIL.ImageQt import ImageQt
 import sys
 
 from Toolset import Tools
+from Toolset.Tools import nameCaller
+import MacroMethods
 
 """
 Module to store all necessary Qt-Related tools.
 """
+
+IMG_CONVERT = (226, 151, Qt.KeepAspectRatio)
+ICON_LOCATION = './icons/methods/'
+ICON_ASSIGN = {
+    MacroMethods.Click: 'click.png',
+    MacroMethods.Loop: 'loop.png',
+    MacroMethods.sLoopEnd: 'loopEnd.png',
+    MacroMethods.sLoopStart: 'loopStart.png',
+    MacroMethods.ImageSearch: 'imageSearch.png',
+    MacroMethods.Variable: 'variable.png',
+    MacroMethods.Wait: 'wait.png',
+    MacroMethods.SearchOccurrence: 'count.png',
+    'Click': 'click.png',
+    'Loop': 'loop.png',
+    'sLoopEnd': 'loopEnd.png',
+    'sLoopStart': 'loopStart.png',
+    'ImageSearch': 'imageSearch.png',
+    'Variable': 'variable.png',
+    'Wait': 'wait.png',
+    'default': 'template.png',
+    'SearchOccurrence': 'count.png',
+}
 
 
 class StdoutRedirect(QObject):
@@ -121,3 +145,26 @@ def loadImage(self):
 
     else:
         return img, file_name
+
+
+def AddToListWidget(tgt, item_list_widget):
+    nameCaller()
+
+    print(f'└ Add: {type(tgt).__name__} object "{tgt.name}"')
+
+    img = ICON_ASSIGN.setdefault(type(tgt), 'default')
+
+    item = SeqItemWidget()
+    item.setup(str(type(tgt)), tgt.name, ''.join([ICON_LOCATION, img]))
+
+    list_item = QListWidgetItem(item_list_widget)
+    list_item.setSizeHint(item.sizeHint())
+
+    item_list_widget.addItem(list_item)
+    item_list_widget.setItemWidget(list_item, item)
+
+
+def QSleep(delay):
+    loop = QEventLoop()
+    QTimer.singleShot(delay, loop.quit)
+    loop.exec_()

@@ -227,12 +227,14 @@ class Ui_MainWindow(object):
         self.coordFromImg.setObjectName("coordFromImg")
         self.ySpin = QtWidgets.QSpinBox(self.clickGroup)
         self.ySpin.setGeometry(QtCore.QRect(10, 90, 71, 21))
+        self.ySpin.setMaximum(10000)
         self.ySpin.setObjectName("ySpin")
         self.label_6 = QtWidgets.QLabel(self.clickGroup)
         self.label_6.setGeometry(QtCore.QRect(10, 70, 81, 20))
         self.label_6.setObjectName("label_6")
         self.xSpin = QtWidgets.QSpinBox(self.clickGroup)
         self.xSpin.setGeometry(QtCore.QRect(10, 40, 71, 21))
+        self.xSpin.setMaximum(10000)
         self.xSpin.setObjectName("xSpin")
         self.label_5 = QtWidgets.QLabel(self.clickGroup)
         self.label_5.setGeometry(QtCore.QRect(10, 20, 81, 20))
@@ -351,7 +353,7 @@ class Ui_MainWindow(object):
         self.menubar.addAction(self.menuMenu.menuAction())
 
         self.retranslateUi(MainWindow)
-        self.tabWidget.setCurrentIndex(0)
+        self.tabWidget.setCurrentIndex(2)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
     def retranslateUi(self, MainWindow):

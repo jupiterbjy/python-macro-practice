@@ -7,6 +7,7 @@ import sys
 import pickle
 
 from Toolset import QtTools, FrozenDetect, ObjectDispatch
+from Toolset.QtTools import IMG_CONVERT, ICON_LOCATION, ICON_ASSIGN
 from ImageModule import getCaptureArea
 from Qt_UI.pymacro import Ui_MainWindow
 from Toolset.Tools import nameCaller
@@ -22,28 +23,7 @@ from Qt_UI.Runner import Ui_MainWindow as Ui_Runner
 # TODO: connect undo
 # TODO: Check Sequence and find if CaptureCoverage call is needed.
 # TODO: clear up PIL -> QPixmap -> cv2 madness in ImageModule.
-
-IMG_CONVERT = (226, 151, Qt.KeepAspectRatio)
-ICON_LOCATION = './icons/methods/'
-ICON_ASSIGN = {
-    MacroMethods.Click: 'click.png',
-    MacroMethods.Loop: 'loop.png',
-    MacroMethods.sLoopEnd: 'loopEnd.png',
-    MacroMethods.sLoopStart: 'loopStart.png',
-    MacroMethods.ImageSearch: 'imageSearch.png',
-    MacroMethods.Variable: 'variable.png',
-    MacroMethods.Wait: 'wait.png',
-    MacroMethods.SearchOccurrence: 'count.png',
-    'Click': 'click.png',
-    'Loop': 'loop.png',
-    'sLoopEnd': 'loopEnd.png',
-    'sLoopStart': 'loopStart.png',
-    'ImageSearch': 'imageSearch.png',
-    'Variable': 'variable.png',
-    'Wait': 'wait.png',
-    'default': 'template.png',
-    'SearchOccurrence': 'count.png',
-}
+# TODO: add docs to confusing-named functions.
 
 
 class CaptureCoverage(QDialog):
@@ -63,6 +43,10 @@ class SubWindow(QMainWindow, Ui_Runner):
         super(SubWindow, self).__init__(parent)
         self.setupUi(self)
 
+        self._stdout = QtTools.StdoutRedirect()
+        self._stdout.start()
+        self._stdout.printOccur.connect(lambda x: self._appendText(x))
+
         self.runButton.released.connect(self.runSeq)
         self.source = list(seq)
 
@@ -80,6 +64,9 @@ class SubWindow(QMainWindow, Ui_Runner):
         sub_window = SubWindow(self, self.seqStorage)
         sub_window.show()
 
+    def updateCurrentItem(self, item):
+        QtTools.AddToListWidget(item, self.currentSeq)
+
     def runSeq(self, full_screen=False):
 
         nameCaller()
@@ -87,7 +74,8 @@ class SubWindow(QMainWindow, Ui_Runner):
 
         try:
             self.runLine.setText('Macro started.')
-            obj = self.source[0].action()
+            self.updateCurrentItem(self.source[0])
+            obj = self.source[0].run()
 
         except IndexError:
             print('└ sequence Empty')
@@ -101,6 +89,7 @@ class SubWindow(QMainWindow, Ui_Runner):
             seq_count = 0
             while obj:
                 self.runLine.setText(f'running {obj.name}.')
+                self.updateCurrentItem(obj)
                 obj = obj()
                 seq_count += 1
 
@@ -108,6 +97,11 @@ class SubWindow(QMainWindow, Ui_Runner):
 
     def _getPos(self):
         pass
+
+    def _appendText(self, msg):
+        self.outputTextEdit.moveCursor(QTextCursor.End)
+        self.outputTextEdit.insertPlainText(msg)
+        QApplication.processEvents(QEventLoop.ExcludeUserInputEvents)
 
 
 class MainWindow(QMainWindow, Ui_MainWindow):
@@ -128,7 +122,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             'count': None
         }
 
-        self.insertButton.released.connect(self.addMethodMain)
+        self.insertButton.released.connect(self.AddToSequence)
         self.methodList.currentRowChanged.connect(self.disableOptions)
         self.delButton.released.connect(self.remove)
         self.runButton.released.connect(self.runSeq)
@@ -168,7 +162,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         nameCaller()
 
         window = SubWindow(self, self.seqStorage)
-        self.setWindowOpacity(0.7)
+        # self.setWindowOpacity(0.7)
         window.show()
 
     def selectedMethod(self):
@@ -210,7 +204,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         try:
             target = pickle.load(open(name, 'rb'))
             for i in target:
-                self.addMethodMain(tgt=i)
+                self.AddToSequence(tgt=i)
 
         except FileNotFoundError:
             print('└ File doesn\'t exist.')
@@ -255,8 +249,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         self.methodList.setCurrentRow(0)
 
-    def addMethodMain(self, tgt=None):
-        nameCaller()
+    def AddToSequence(self, tgt=None):
 
         if tgt is None:
             target = self.selectedMethod()
@@ -268,18 +261,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             obj = tgt
             self._updateToSelected(obj)
 
-        print(f'└ Add: {type(obj).__name__} object "{obj.name}"')
-
-        img = ICON_ASSIGN.setdefault(type(obj), 'default')
-
-        item = QtTools.SeqItemWidget()
-        item.setup(str(type(obj)), obj.name, ''.join([ICON_LOCATION, img]))
-
-        list_item = QListWidgetItem(self.sequenceList)
-        list_item.setSizeHint(item.sizeHint())
-
-        self.sequenceList.addItem(list_item)
-        self.sequenceList.setItemWidget(list_item, item)
+        QtTools.AddToListWidget(obj, self.sequenceList)
         self.seqStorage.append(obj)
 
     def _setXYFromImage(self):
