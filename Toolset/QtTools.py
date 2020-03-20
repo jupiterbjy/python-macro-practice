@@ -135,7 +135,7 @@ def loadImage(self):
         return False
 
     try:
-        img = Image.open(file_dir).convert('RGB')
+        img = Image.open(file_dir)
 
     except NameError:
         print(f'{file_name} not found.')

@@ -1,6 +1,8 @@
 
 import functools
 import pyautogui as pgui
+from PIL import Image
+
 import ImageModule as ImgM
 from Toolset import MemberLoader
 from Toolset import QtTools
@@ -192,7 +194,7 @@ class _Image(_Base):
     def __init__(self):
         super().__init__()
 
-        self.targetImage = None
+        self._targetImage = None
         self.targetName = None
         self.capturedImage = None
         self.matchPoint = ImgM.Pos()
@@ -207,6 +209,25 @@ class _Image(_Base):
 
     def DumpCoordinates(self):      # Do I need this?
         return self.screenArea, self.matchPoint
+
+    @property           # not sure if this use-case is for class method.
+    def targetImage(self):
+        return self._targetImage
+
+    @targetImage.setter
+    def targetImage(self, img):
+
+        img.convert('RGB')
+
+        if img.format != 'PNG':     # Non-png images has trouble with cv2 conversion
+            from io import BytesIO
+
+            byte_io = BytesIO()
+            img.save(byte_io, 'PNG')
+            self._targetImage = Image.open(byte_io)
+
+        else:
+            self._targetImage = img
 
 
 class ImageSearch(_Image, _ClickBase):
@@ -241,10 +262,7 @@ class ImageSearch(_Image, _ClickBase):
     def action(self):
         self.actionState = -1
 
-        try:
-            self.ImageSearchMultiple()
-        except TypeError:
-            raise AttributeError('C')
+        self.ImageSearchMultiple()
 
         if self._foundFlag:
             if self.clickOnMatch:

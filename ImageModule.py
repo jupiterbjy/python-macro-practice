@@ -108,8 +108,8 @@ def imageSearch(target, area, precision=0.85):
     img_gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
     cv2.imwrite('test2.png', img_gray)
 
-    tmp = np.array(target).reshape((target.size[1], target.size[0]))
-    template = cv2.cvtColor(tmp, cv2.COLOR_RGB2BGR)
+    # tmp = np.array(target).reshape((target.size[1], target.size[0]))
+    template = cv2.cvtColor(np.array(target), cv2.COLOR_RGB2GRAY)
     # Above having issue with zero-filled array.
     img_wh = template.shape[::-1]
 
@@ -124,8 +124,9 @@ def imageSearch(target, area, precision=0.85):
     if max_val < precision:
         return (-1, -1), img
     else:
-        cv2.rectangle(img, max_loc, list(x+y for x, y in zip(img_wh, max_loc)), (0, 0, 255), 2)
-        cv2.imwrite('test3.png', img_gray)
+        pt2 = tuple(x+y for x, y in zip(img_wh, max_loc))
+        cv2.rectangle(img, max_loc, pt2, (0, 0, 255), 2)
+        cv2.imwrite('test3.png', img)
         return max_loc, img
 
 

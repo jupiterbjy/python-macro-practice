@@ -5,14 +5,11 @@ from PyQt5.QtGui import *
 import pyautogui
 import sys
 import pickle
-import keyboard
-import os
 
 from Toolset import QtTools, FrozenDetect, ObjectDispatch
 from Toolset.QtTools import IMG_CONVERT, ICON_LOCATION, ICON_ASSIGN
 from Qt_UI.pymacro import Ui_MainWindow
 from Toolset.Tools import nameCaller
-from ImageModule import Pos, Area
 import MacroMethods
 from Qt_UI.Runner import Ui_MainWindow as Ui_Runner
 
@@ -26,6 +23,9 @@ from Qt_UI.Runner import Ui_MainWindow as Ui_Runner
 # TODO: Check Sequence and find if CaptureCoverage call is needed.
 # TODO: clear up PIL -> QPixmap -> cv2 madness in ImageModule.
 # TODO: add docs to confusing-named functions.
+# TODO: update nameLine to selected object's name.
+# TODO: update methodList to select according to selected sequence object.
+# TODO: fix ImageModule not drawing rectangle
 
 
 class CaptureCoverage(QDialog):
@@ -208,6 +208,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             for i in target:
                 self.AddToSequence(tgt=i)
 
+        except pickle.UnpicklingError:
+            print('└ Wrong file is supplied.')
+
         except FileNotFoundError:
             print('└ File doesn\'t exist.')
 
@@ -327,7 +330,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         @dispatch.register(MacroMethods.SearchOccurrence)
         def _(obj):
             if new:
-                obj.target = self.cachedImage['count']
+                obj.targetImage = self.cachedImage['count']
 
         @dispatch.register(MacroMethods.Variable)
         def _(obj):
