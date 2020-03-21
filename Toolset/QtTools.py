@@ -129,11 +129,11 @@ def loadImage(self):
         img = Image.open(file_dir)
 
     except NameError:
-        print(f'{file_name} not found.')
+        print(f'└ {file_name} not found.')
         return None, None
 
     except Image.UnidentifiedImageError:
-        print(f'{file_name} is not image.')
+        print(f'└ {file_name} is not image.')
         return None, None
 
     else:
@@ -157,18 +157,24 @@ def AddToListWidget(tgt, item_list_widget):
     item_list_widget.setItemWidget(list_item, item)
 
 
-def QSleep(delay, progress_bar=None):
-    nameCaller()
+def QSleep(delay, progress_bar=None, output=False):
     # Not sure just checking progress_bar is None at start is worse than try-except..
 
     class context:
         def __enter__(self):
+            nameCaller()
             print(f'└ Wait {delay} start')
 
         def __exit__(self, exc_type, exc_val, exc_tb):
             print(f'└ Finish')
 
-    with context():
+    if output:
+        with context():
+            loop = QEventLoop()
+            QTimer.singleShot(delay * 1000, loop.quit)
+            loop.exec_()
+
+    else:
         loop = QEventLoop()
         QTimer.singleShot(delay * 1000, loop.quit)
         loop.exec_()
@@ -184,11 +190,13 @@ def getCaptureArea():
         def __enter__(self):
             nameCaller()
             print(f'└ Waiting for press:{kill_key}')
+
             while not keyboard.is_pressed(kill_key):
                 QSleep(0.05)
 
         def __exit__(self, exc_type, exc_val, exc_tb):
             print(f'└ Waiting for release:{kill_key}')
+
             while keyboard.is_pressed(kill_key):
                 QSleep(0.05)
 

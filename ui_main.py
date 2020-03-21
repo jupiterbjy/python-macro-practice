@@ -19,12 +19,14 @@ from Qt_UI.Runner import Ui_MainWindow as Ui_Runner
 # TODO: change color of 'selected:' with TextTools.
 # TODO: add undo
 # TODO: implement random offset via option.
-# TODO: connect undo
 # TODO: Check Sequence and find if CaptureCoverage call is needed.
 # TODO: clear up PIL -> QPixmap -> cv2 madness in ImageModule.
 # TODO: add docs to confusing-named functions.
 # TODO: update nameLine to selected object's name.
 # TODO: update methodList to select according to selected sequence object.
+# TODO: fix checkbox not changing properly between imageSearch.
+# TODO: add about screen.
+# TODO: generate icon with target image.
 
 
 class CaptureCoverage(QDialog):
@@ -50,10 +52,11 @@ class SubWindow(QMainWindow, Ui_Runner):
 
         self.runButton.released.connect(self.runSeq)
         self.source = list(seq)
+        self.updateCurrentItem(self.source[0])
 
-    def areaInject(self, full_screen=False):
+    def areaInject(self):
 
-        if not full_screen:
+        if not self.fullScreenCheck.isChecked():
             area = QtTools.getCaptureArea()
 
             self.runLine.setText(str(area))
@@ -66,22 +69,25 @@ class SubWindow(QMainWindow, Ui_Runner):
         sub_window.show()
 
     def updateCurrentItem(self, item):
+        _ = self.currentSeq.takeItem(0)
+        QtTools.AddToListWidget(item, self.sequenceList)
         QtTools.AddToListWidget(item, self.currentSeq)
 
     def runSeq(self, full_screen=False):
 
         nameCaller()
+
+        self.sequenceList.clear()
+
+        self.runButton.setDisabled(True)
+        self.StopButton.setEnabled(True)
+
         self.areaInject()
+        self.runLine.setText('Macro started.')
 
         try:
-            self.runLine.setText('Macro started.')
-            self.updateCurrentItem(self.source[0])
             obj = self.source[0].run()
 
-        except IndexError:
-            print('└ sequence Empty')
-            self.runLine.setText('Nothing To play.')
-            return False
         except pyautogui.FailSafeException:
             print('└ FailSafe Trigger')
             self.runLine.setText('Cannot Click (0,0), Aborted.')
@@ -95,6 +101,8 @@ class SubWindow(QMainWindow, Ui_Runner):
                 seq_count += 1
 
             self.runLine.setText('Macro finished.')
+            self.runButton.setEnabled(True)
+            self.StopButton.setDisabled(True)
 
     def _getPos(self):
         pass
@@ -160,11 +168,20 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
     def runSeq(self, full_screen=False):
         MacroMethods.NextSetter(self.seqStorage)
-        nameCaller()
 
-        window = SubWindow(self, self.seqStorage)
-        # self.setWindowOpacity(0.7)
-        window.show()
+        try:
+            window = SubWindow(self, self.seqStorage)
+        except IndexError:
+
+            self._stdout = QtTools.StdoutRedirect()
+            self._stdout.start()
+            self._stdout.printOccur.connect(lambda x: self._appendText(x))
+
+            nameCaller()
+            print('└ Nothing To play.')
+        else:
+            window.show()
+            # self.setWindowOpacity(0.7)
 
     def selectedMethod(self):
         out = MacroMethods.class_dict[MacroMethods.__all__[self.methodList.currentRow()]]
@@ -231,7 +248,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.disableOptions(passed_object=MacroMethods.Click())
 
     def listAvailableMethods(self):
-        nameCaller()
 
         def iconSet(name):
             return ICON_ASSIGN.setdefault(name, 'default')

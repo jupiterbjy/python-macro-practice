@@ -58,12 +58,14 @@ class _ClickBase:
 
     def _click(self, abs_target=ImgM.Pos()):
         QtTools.QSleep(self.preDelay)
+        p = self.target + abs_target
 
         for i in range(self.clickCount - 1):
-            pgui.click(*(self.target + abs_target))
+            pgui.click(p)
+            print(f'Click: {p}')
             QtTools.QSleep(self.clickDelay)
 
-        pgui.click(*self.target)
+        pgui.click(p)
 
 
 class Click(_Base, _ClickBase):
@@ -155,7 +157,7 @@ class Wait(_Base):
     def action(self):
         self.actionState = -1
 
-        QtTools.QSleep(self.delay)
+        QtTools.QSleep(self.delay, output=True)
         self.actionState = 1
         return True
 
@@ -242,8 +244,8 @@ class ImageSearch(_Image, _ClickBase):
     def ImageSearch(self):
         self.matchPoint, self.capturedImage = \
             ImgM.imageSearch(self.targetImage, self.screenArea.region, self.precision)
-        if self.matchPoint[0] == -1:
-            self._foundFlag = False
+        if self.matchPoint[0] != -1:
+            self._foundFlag = True
 
     def ImageSearchMultiple(self):
         for i in range(self.trials):
@@ -258,6 +260,12 @@ class ImageSearch(_Image, _ClickBase):
     def ImageClick(self):
         pgui.click(ImgM.RandomOffset(self.matchPoint, self.offsetMax))
 
+    @property
+    def ImageCenter(self):
+        w, h = self.targetImage.size
+
+        return self.matchPoint[0] + w//2, self.matchPoint[1] + h//2
+
     def action(self):
         self.actionState = -1
 
@@ -265,8 +273,8 @@ class ImageSearch(_Image, _ClickBase):
 
         if self._foundFlag:
             if self.clickOnMatch:
-                self.target = self.matchPoint
-                self._click()
+                self.target.set(*self.ImageCenter)
+                self._click(self.screenArea.p1)
 
             self.actionState = 1
             return True

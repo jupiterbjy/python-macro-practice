@@ -63,7 +63,7 @@
        <enum>QTabWidget::Rounded</enum>
       </property>
       <property name="currentIndex">
-       <number>1</number>
+       <number>0</number>
       </property>
       <property name="elideMode">
        <enum>Qt::ElideNone</enum>
@@ -105,16 +105,6 @@
         <property name="selectionRectVisible">
          <bool>true</bool>
         </property>
-        <item>
-         <property name="text">
-          <string>placeholder1</string>
-         </property>
-        </item>
-        <item>
-         <property name="text">
-          <string>placeholder2</string>
-         </property>
-        </item>
        </widget>
       </widget>
       <widget class="QWidget" name="Log">
@@ -249,6 +239,9 @@
        </item>
        <item row="3" column="0">
         <layout class="QGridLayout" name="gridLayout">
+         <item row="2" column="1">
+          <widget class="QSpinBox" name="randOffsetSpin"/>
+         </item>
          <item row="2" column="0">
           <widget class="QCheckBox" name="randOffsetCheck">
            <property name="text">
@@ -256,8 +249,18 @@
            </property>
           </widget>
          </item>
-         <item row="2" column="1">
-          <widget class="QSpinBox" name="randOffsetSpin"/>
+         <item row="0" column="0">
+          <widget class="QPushButton" name="runButton">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="text">
+            <string>Run</string>
+           </property>
+          </widget>
          </item>
          <item row="0" column="1">
           <widget class="QPushButton" name="StopButton">
@@ -275,48 +278,10 @@
            </property>
           </widget>
          </item>
-         <item row="0" column="0">
-          <widget class="QPushButton" name="runButton">
-           <property name="sizePolicy">
-            <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-             <horstretch>0</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
-           </property>
-           <property name="text">
-            <string>Run</string>
-           </property>
-          </widget>
-         </item>
          <item row="1" column="0">
-          <widget class="QPushButton" name="skipButton">
-           <property name="enabled">
-            <bool>false</bool>
-           </property>
-           <property name="sizePolicy">
-            <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-             <horstretch>0</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
-           </property>
+          <widget class="QCheckBox" name="fullScreenCheck">
            <property name="text">
-            <string>Skip</string>
-           </property>
-          </widget>
-         </item>
-         <item row="1" column="1">
-          <widget class="QPushButton" name="pauseButton">
-           <property name="enabled">
-            <bool>false</bool>
-           </property>
-           <property name="sizePolicy">
-            <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-             <horstretch>0</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
-           </property>
-           <property name="text">
-            <string>Pause</string>
+            <string>Full Screen</string>
            </property>
           </widget>
          </item>
