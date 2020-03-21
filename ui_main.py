@@ -2,7 +2,6 @@
 from PyQt5.QtWidgets import *
 from PyQt5.QtCore import *
 from PyQt5.QtGui import *
-import pyautogui
 import sys
 import pickle
 
@@ -10,107 +9,18 @@ from Toolset import QtTools, FrozenDetect, ObjectDispatch
 from Toolset.QtTools import IMG_CONVERT, ICON_LOCATION, ICON_ASSIGN
 from Qt_UI.pymacro import Ui_MainWindow
 from Toolset.Tools import nameCaller
+from SubWindow import SubWindow
 import MacroMethods
-from Qt_UI.Runner import Ui_MainWindow as Ui_Runner
 
-# TODO: disable 'insert' button if condition is not met.
 # TODO: assign progress bar to time left for action.
 # TODO: give property to base to get remaining time.
 # TODO: change color of 'selected:' with TextTools.
 # TODO: add undo
 # TODO: implement random offset via option.
 # TODO: Check Sequence and find if CaptureCoverage call is needed.
-# TODO: clear up PIL -> QPixmap -> cv2 madness in ImageModule.
-# TODO: add docs to confusing-named functions.
-# TODO: update nameLine to selected object's name.
-# TODO: update methodList to select according to selected sequence object.
-# TODO: fix checkbox not changing properly between imageSearch.
 # TODO: add about screen.
 # TODO: generate icon with target image.
-
-
-class CaptureCoverage(QDialog):
-    def __init__(self, flags, *args, **kwargs):
-        super().__init__(flags, *args, **kwargs)
-
-        self.setWindowFlag(
-            self.windowFlags() |
-            Qt.FramelessWindowHint
-        )
-
-        self.setWindowOpacity(0.7)
-
-
-class SubWindow(QMainWindow, Ui_Runner):
-    def __init__(self, parent=None, seq=None):
-        super(SubWindow, self).__init__(parent)
-        self.setupUi(self)
-
-        self._stdout = QtTools.StdoutRedirect()
-        self._stdout.start()
-        self._stdout.printOccur.connect(lambda x: self._appendText(x))
-
-        self.runButton.released.connect(self.runSeq)
-        self.source = list(seq)
-        self.updateCurrentItem(self.source[0])
-
-    def areaInject(self):
-
-        if not self.fullScreenCheck.isChecked():
-            area = QtTools.getCaptureArea()
-
-            self.runLine.setText(str(area))
-
-            for obj in self.source:
-                obj.setArea(*area)
-
-    def callCaptureCoverage(self):
-        sub_window = SubWindow(self, self.seqStorage)
-        sub_window.show()
-
-    def updateCurrentItem(self, item):
-        _ = self.currentSeq.takeItem(0)
-        QtTools.AddToListWidget(item, self.sequenceList)
-        QtTools.AddToListWidget(item, self.currentSeq)
-
-    def runSeq(self, full_screen=False):
-
-        nameCaller()
-
-        self.sequenceList.clear()
-
-        self.runButton.setDisabled(True)
-        self.StopButton.setEnabled(True)
-
-        self.areaInject()
-        self.runLine.setText('Macro started.')
-
-        try:
-            obj = self.source[0].run()
-
-        except pyautogui.FailSafeException:
-            print('└ FailSafe Trigger')
-            self.runLine.setText('Cannot Click (0,0), Aborted.')
-
-        else:
-            seq_count = 0
-            while obj:
-                self.runLine.setText(f'running "{obj.name}".')
-                self.updateCurrentItem(obj)
-                obj = obj.run()
-                seq_count += 1
-
-            self.runLine.setText('Macro finished.')
-            self.runButton.setEnabled(True)
-            self.StopButton.setDisabled(True)
-
-    def _getPos(self):
-        pass
-
-    def _appendText(self, msg):
-        self.outputTextEdit.moveCursor(QTextCursor.End)
-        self.outputTextEdit.insertPlainText(msg)
-        QApplication.processEvents(QEventLoop.ExcludeUserInputEvents)
+# https://devblogs.microsoft.com/python/idiomatic-python-eafp-versus-lbyl/
 
 
 class MainWindow(QMainWindow, Ui_MainWindow):
@@ -132,7 +42,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         }
 
         self.insertButton.released.connect(self.AddToSequence)
-        self.methodList.currentRowChanged.connect(self.disableOptions)
+        self.methodList.currentRowChanged.connect(self._disableOptions)
         self.delButton.released.connect(self.remove)
         self.runButton.released.connect(self.runSeq)
 
@@ -148,6 +58,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.initializing()
 
     def remove(self):
+        """
+        When called, removes selected item from both seqStorage & GUI.
+        """
         self.backupSeq()
         del self.seqStorage[self.sequenceList.currentRow()]
 
@@ -155,11 +68,17 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.sequenceList.takeItem(item)
 
     def backupSeq(self):
+        """
+        Planing to support proper undo functionality, but not complete yet.
+        """
         if len(self.seqBackup) >= 4:
             self.seqBackup.pop(0)
         self.seqBackup.append(self.seqStorage)
 
     def undoSeq(self):
+        """
+        Planing to support proper undo functionality, but not complete yet.
+        """
         self.seqStorage = self.seqBackup.pop()
         # if self.seqBackup:
         #     source = self.seqBackup.pop()
@@ -167,6 +86,10 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         #     self.seqStorage = source
 
     def runSeq(self, full_screen=False):
+        """
+        Prepares and Calls subWindow to run macro.
+        :param full_screen: Not implemented yet.
+        """
         MacroMethods.NextSetter(self.seqStorage)
 
         try:
@@ -202,6 +125,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
     # noinspection PyCallByClass,PyArgumentList
     def seqSave(self):
+        """
+        Saves current sequence into Pickle byte file.
+        """
         nameCaller()
         name = QFileDialog.getSaveFileName(self, 'Save file')[0]
         MacroMethods.NextSetter(self.seqStorage)
@@ -214,6 +140,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
     # noinspection PyCallByClass,PyArgumentList
     def seqLoad(self):
+        """
+        Loads Saved sequence stored as Bytes - aka HIGHEST_PROTOCOL - pickle file.
+        """
         nameCaller()
 
         name = QFileDialog.getOpenFileName(self)[0]
@@ -228,7 +157,10 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             print('└ Wrong file is supplied.')
 
         except FileNotFoundError:
-            print('└ File doesn\'t exist.')
+            print('└ File does not exist.')
+
+        except AttributeError:
+            print('└ File is Outdated.')
 
         except TypeError:
             print('└ File is Damaged.')
@@ -239,22 +171,36 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.methodList.setCurrentRow(MacroMethods.__all__.index(last))
 
     def initializing(self, manual=False):
+        """
+        Clears up program state, but not all yet. Ran upon program startup.
+        :param manual: Set to True when loading from saved pickle file.
+        """
         if not manual:
             self.listAvailableMethods()
         else:
             self.seqStorage.clear()
 
         self.sequenceList.clear()
-        self.disableOptions(passed_object=MacroMethods.Click())
+        self._disableOptions(MacroMethods.Click())
 
     def listAvailableMethods(self):
+        """
+        Looks for MacroMethods's usable classes and list those on MethodList.
+        Only runs once per program execution.
+        """
 
         def iconSet(name):
-            return ICON_ASSIGN.setdefault(name, 'default')
+            """
+            Find corresponding icon in image dict with method name.
+            """
+            return ICON_LOCATION + ICON_ASSIGN.setdefault(name, 'default')
 
         def setItems(item_list):
+            """
+            Coroutine to generate respective items from given method lists.
+            """
             for name in item_list:
-                item = QtTools.MethodItemWidget(ICON_LOCATION + iconSet(name), name)
+                item = QtTools.MethodItemWidget(iconSet(name), name)
                 yield item
 
         self.methodList.clear()
@@ -270,6 +216,10 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.methodList.setCurrentRow(0)
 
     def AddToSequence(self, tgt=None):
+        """
+        store object in seqStorage AND call AddToListWidget to display it on ListWidget.
+        :param tgt: If not specified, will create new object from selected method.
+        """
 
         if tgt is None:
             target = self.selectedMethod()
@@ -295,6 +245,12 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.seqStorage.append(obj)
 
     def _setXYFromImage(self):
+        """
+        Set coordinates from given Image.
+        Not cemented how click method will act - Absolute or Relative?
+        Unlike freps, on PC one might not use full screen capture at all due to speed.
+        Therefore nothing is concrete clear about what this function will be.
+        """
         pass
 
     def _appendText(self, msg):
@@ -303,6 +259,14 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         QApplication.processEvents(QEventLoop.ExcludeUserInputEvents)
 
     def _LoadImage(self, img_label, name_label, cache_name):
+        """
+        Subroutine of countLoadImage & searchLoadImage.
+        Loads from external images and config widgets accordingly.
+        :param img_label: QLabel to display image.
+        :param name_label: QLabel to display image name.
+        :param cache_name: string key for cached image name.
+        :return: return false on TypeError.
+        """
         try:
             img, file_name = QtTools.loadImage(self)
         except TypeError:
@@ -316,8 +280,11 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     @staticmethod
     def _ImageUpdate(img_label, name_label, obj):
         """
-        Clears image when arg are not given.
-        Assuming only MacroMethods._Image subclasses to be passed.
+        Update image from image inside object.
+        Similar roles with _LoadImage.
+        :param img_label: QLabel to display image.
+        :param name_label: QLabel to display image name.
+        :param obj: MacroMethod _Image subclasses. Expects PIL type Image inside.
         """
         if obj is None:
             img_label.clear()
@@ -329,8 +296,11 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             name_label.setText(obj.name)
             img_label.setStyleSheet('background-color: rgba(40, 40, 40, 255);')
 
-    def _configObject(self, target, new=True):
-
+    def _configObject(self, target):
+        """
+        Configs given object with values from GUI.
+        :param target: Instance of one of methods from MacroMethods.
+        """
         dispatch = ObjectDispatch.preset()
 
         @dispatch.register(MacroMethods.Click)
@@ -339,18 +309,16 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         @dispatch.register(MacroMethods.ImageSearch)
         def _(obj):
-            # https://devblogs.microsoft.com/python/idiomatic-python-eafp-versus-lbyl/
-            if new:
-                try:
-                    obj.targetImage = self.cachedImage['search']
-                except AttributeError:
-                    raise AttributeError('└ No Image specified.')
+            try:
+                obj.targetImage = self.cachedImage['search']
+            except AttributeError:
+                raise AttributeError('└ No Image specified.')
 
             obj.clickOnMatch = self.searchClickGroup.isEnabled()
             obj.trials = self.trialsCountSpin.value()
             obj.loopDelay = self.trialsIntervalSpin.value()
-            obj.clickCount = self.clickCountSpin.value()
-            obj.clickDelay = self.clickIntervalSpin.value()
+            obj.clickCount = self.searchClickCount.value()
+            obj.clickDelay = self.searchClickInterval.value()
 
         @dispatch.register(MacroMethods.Loop)
         def _(obj):
@@ -358,8 +326,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         @dispatch.register(MacroMethods.SearchOccurrence)
         def _(obj):
-            if new:
-                obj.targetImage = self.cachedImage['count']
+            obj.targetImage = self.cachedImage['count']
 
         @dispatch.register(MacroMethods.Variable)
         def _(obj):
@@ -367,27 +334,34 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         @dispatch.register(MacroMethods.Wait)
         def _(obj):
-            if new:
-                obj.delay = self.waitSpin.value()
-                obj.onFail = None
-                obj.onSuccess = None
+            obj.delay = self.waitSpin.value()
+            obj.onFail = None
+            obj.onSuccess = None
 
         return dispatch(target)
 
     def _updateToSelected(self, target=None):
-        if not self.seqStorage:
-            nameCaller()
-            print('└ Sequence is Empty.')
-            return False
+        """
+        Updates configuration GUI with selected object.
+        :param target: If specified, will try to update with given object.
+        """
 
-        # And it did. 'onClick' signal args with QModel. Making case for it.
-
+        # 'onClick' signal args with QModel. Making case for it.
         if target is None or isinstance(target, QModelIndex):
-            obj = self.seqStorage[self.sequenceList.currentRow()]
+            try:
+                obj = self.seqStorage[self.sequenceList.currentRow()]
+            except IndexError:
+                nameCaller()
+                print('└ Sequence is Empty.')
+                return
+            else:
+                src = type(obj).__name__
+                self.methodList.setCurrentRow(MacroMethods.__all__.index(src))
         else:
             obj = target
 
-        self.disableOptions(passed_object=obj)
+        self.nameLine.setText(obj.name)
+        self._disableOptions(obj)
 
         dispatch = ObjectDispatch.preset()
 
@@ -398,26 +372,30 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         @dispatch.register(MacroMethods.ImageSearch)
         def _(obj_):
-            self.searchClickGroup.setEnabled(obj_.clickOnMatch)
+            self.searchClickGroup.setChecked(obj_.clickOnMatch)
+
+            self.searchClickCount.setValue(obj_.clickCount)
+            self.searchClickInterval.setValue(obj_.clickDelay)
 
             self.trialsCountSpin.setValue(obj_.trials)
             self.trialsIntervalSpin.setValue(obj_.loopDelay)
+
             self.cachedImage['search'] = obj_.targetImage
             self.searchImgNameLabel.setText(obj_.targetName)
             self.searchImageUpdate(obj_)
 
         @dispatch.register(MacroMethods.Loop)
         def _(obj_):
-            return obj_
+            pass
 
         @dispatch.register(MacroMethods.SearchOccurrence)
         def _(obj_):
             self.countImageUpdate(obj_)
-            return obj_
+            pass
 
         @dispatch.register(MacroMethods.Variable)
         def _(obj_):
-            return obj_
+            pass
 
         @dispatch.register(MacroMethods.Wait)
         def _(obj_):
@@ -425,16 +403,28 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         dispatch.dispatch(obj)
 
-    def disableOptions(self, _=None, passed_object=None):
-        # Seems like release-connect args with row index for currentRowChanged.
+    def _disableOptions(self, target=None):
+        """
+        Subroutine of _updateToSelected.
+        Setup GUI according to given target object or selected Methods,
+        or triggered upon change of selection in Method List.
+        :param target: If not specified, will config with selection from method list.
+        """
 
-        if passed_object is None:
+        # release-connect args with row index for currentRowChanged.
+        if target is None or isinstance(target, int):
             selected = self.selectedMethod()
         else:
-            selected = passed_object
+            selected = target
 
         groups = [self.waitGroup, self.searchClickGroup, self.clickGroup,
                   self.loopGroup, self.trialsGroup]
+
+        for g in groups:
+            g.setEnabled(False)
+
+        for i in range(3):
+            self.tabWidget.setTabEnabled(i, False)
 
         dispatch = ObjectDispatch.preset()
 
@@ -472,12 +462,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.tabWidget.setCurrentIndex(2)
             self.tabWidget.setTabEnabled(2, True)
             self.waitGroup.setEnabled(True)
-
-        for g in groups:
-            g.setEnabled(False)
-
-        for i in range(3):
-            self.tabWidget.setTabEnabled(i, False)
 
         dispatch.dispatch(selected)
 

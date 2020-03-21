@@ -54,18 +54,15 @@ class _ClickBase:
         self.target = ImgM.Pos()
         self.clickCount = 0
         self.clickDelay = 0.01
-        self.preDelay = 0
 
     def _click(self, abs_target=ImgM.Pos()):
-        QtTools.QSleep(self.preDelay)
         p = self.target + abs_target
 
-        for i in range(self.clickCount - 1):
+        for i in range(self.clickCount):
+            QtTools.QSleep(self.clickDelay)
             pgui.click(p)
             print(f'Click: {p}')
-            QtTools.QSleep(self.clickDelay)
 
-        pgui.click(p)
 
 
 class Click(_Base, _ClickBase):

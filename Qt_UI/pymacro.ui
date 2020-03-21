@@ -162,7 +162,7 @@
            </size>
           </property>
           <property name="currentIndex">
-           <number>2</number>
+           <number>0</number>
           </property>
           <property name="usesScrollButtons">
            <bool>true</bool>
@@ -327,7 +327,7 @@ color: rgb(255, 255, 255);</string>
              <string>Click</string>
             </property>
             <property name="checkable">
-             <bool>true</bool>
+             <bool>false</bool>
             </property>
             <property name="checked">
              <bool>false</bool>
@@ -345,7 +345,7 @@ color: rgb(255, 255, 255);</string>
               <string>Count</string>
              </property>
             </widget>
-            <widget class="QSpinBox" name="clickCountSpin">
+            <widget class="QSpinBox" name="searchClickCount">
              <property name="geometry">
               <rect>
                <x>20</x>
@@ -368,7 +368,7 @@ color: rgb(255, 255, 255);</string>
               <string>Interval</string>
              </property>
             </widget>
-            <widget class="QDoubleSpinBox" name="clickIntervalSpin">
+            <widget class="QDoubleSpinBox" name="searchClickInterval">
              <property name="geometry">
               <rect>
                <x>20</x>
@@ -514,6 +514,86 @@ color: rgb(255, 255, 255);</string>
              <string>Clear Img</string>
             </property>
            </widget>
+           <widget class="QGroupBox" name="countClickGroup">
+            <property name="enabled">
+             <bool>true</bool>
+            </property>
+            <property name="geometry">
+             <rect>
+              <x>10</x>
+              <y>200</y>
+              <width>111</width>
+              <height>131</height>
+             </rect>
+            </property>
+            <property name="title">
+             <string>Click</string>
+            </property>
+            <property name="checkable">
+             <bool>false</bool>
+            </property>
+            <property name="checked">
+             <bool>false</bool>
+            </property>
+            <widget class="QLabel" name="label_7">
+             <property name="geometry">
+              <rect>
+               <x>20</x>
+               <y>20</y>
+               <width>81</width>
+               <height>20</height>
+              </rect>
+             </property>
+             <property name="text">
+              <string>Count</string>
+             </property>
+            </widget>
+            <widget class="QSpinBox" name="clickCountSpin_2">
+             <property name="geometry">
+              <rect>
+               <x>20</x>
+               <y>40</y>
+               <width>71</width>
+               <height>21</height>
+              </rect>
+             </property>
+            </widget>
+            <widget class="QLabel" name="label_8">
+             <property name="geometry">
+              <rect>
+               <x>20</x>
+               <y>70</y>
+               <width>81</width>
+               <height>20</height>
+              </rect>
+             </property>
+             <property name="text">
+              <string>Interval</string>
+             </property>
+            </widget>
+            <widget class="QDoubleSpinBox" name="clickIntervalSpin_2">
+             <property name="geometry">
+              <rect>
+               <x>20</x>
+               <y>90</y>
+               <width>71</width>
+               <height>21</height>
+              </rect>
+             </property>
+             <property name="suffix">
+              <string>s</string>
+             </property>
+             <property name="maximum">
+              <double>10000.000000000000000</double>
+             </property>
+             <property name="singleStep">
+              <double>0.050000000000000</double>
+             </property>
+             <property name="value">
+              <double>0.200000000000000</double>
+             </property>
+            </widget>
+           </widget>
           </widget>
           <widget class="QWidget" name="funcTab">
            <attribute name="title">
@@ -611,7 +691,7 @@ color: rgb(255, 255, 255);</string>
               <x>10</x>
               <y>130</y>
               <width>91</width>
-              <height>161</height>
+              <height>151</height>
              </rect>
             </property>
             <property name="title">
@@ -727,8 +807,17 @@ color: rgb(255, 255, 255);</string>
           </widget>
          </widget>
         </item>
-        <item row="1" column="0">
+        <item row="2" column="0">
          <layout class="QHBoxLayout" name="horizontalLayout">
+          <property name="spacing">
+           <number>10</number>
+          </property>
+          <property name="sizeConstraint">
+           <enum>QLayout::SetDefaultConstraint</enum>
+          </property>
+          <property name="topMargin">
+           <number>15</number>
+          </property>
           <item>
            <widget class="QPushButton" name="runButton">
             <property name="sizePolicy">
@@ -770,6 +859,39 @@ color: rgb(255, 255, 255);</string>
              <string>Edit</string>
             </property>
            </widget>
+          </item>
+         </layout>
+        </item>
+        <item row="1" column="0">
+         <layout class="QGridLayout" name="gridLayout_5">
+          <property name="sizeConstraint">
+           <enum>QLayout::SetMinimumSize</enum>
+          </property>
+          <item row="0" column="0">
+           <widget class="QLabel" name="label_9">
+            <property name="maximumSize">
+             <size>
+              <width>16777215</width>
+              <height>20</height>
+             </size>
+            </property>
+            <property name="text">
+             <string>On Success</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="1">
+           <widget class="QLabel" name="label_10">
+            <property name="text">
+             <string>On Fail</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="0">
+           <widget class="QComboBox" name="onSuccessCombo"/>
+          </item>
+          <item row="1" column="1">
+           <widget class="QComboBox" name="onFailCombo"/>
           </item>
          </layout>
         </item>
