@@ -25,7 +25,6 @@ from Qt_UI.Runner import Ui_MainWindow as Ui_Runner
 # TODO: add docs to confusing-named functions.
 # TODO: update nameLine to selected object's name.
 # TODO: update methodList to select according to selected sequence object.
-# TODO: fix ImageModule not drawing rectangle
 
 
 class CaptureCoverage(QDialog):
@@ -258,10 +257,20 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         if tgt is None:
             target = self.selectedMethod()
-            self._configObject(target)
+
+            try:
+                self._configObject(target)
+
+            except AttributeError as err:
+                nameCaller()
+                print(*err.args)
+                print('└ Object config Failed.')
+                return
+
             obj = target
             obj.name = self.nameLine.text()
             self.nameLine.clear()
+
         else:
             obj = tgt
             self._updateToSelected(obj)
@@ -306,7 +315,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
     def _configObject(self, target, new=True):
 
-        # Can I utilize 'with' context manager here?
         dispatch = ObjectDispatch.preset()
 
         @dispatch.register(MacroMethods.Click)
@@ -315,13 +323,18 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         @dispatch.register(MacroMethods.ImageSearch)
         def _(obj):
+            # https://devblogs.microsoft.com/python/idiomatic-python-eafp-versus-lbyl/
+            if new:
+                try:
+                    obj.targetImage = self.cachedImage['search']
+                except AttributeError:
+                    raise AttributeError('└ No Image specified.')
+
             obj.clickOnMatch = self.searchClickGroup.isEnabled()
             obj.trials = self.trialsCountSpin.value()
             obj.loopDelay = self.trialsIntervalSpin.value()
             obj.clickCount = self.clickCountSpin.value()
             obj.clickDelay = self.clickIntervalSpin.value()
-            if new:
-                obj.targetImage = self.cachedImage['search']
 
         @dispatch.register(MacroMethods.Loop)
         def _(obj):
@@ -347,11 +360,11 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
     def _updateToSelected(self, target=None):
         if not self.seqStorage:
-            print('self.seqStorage is Empty.')
+            nameCaller()
+            print('└ Sequence is Empty.')
             return False
 
-        # Assuming that wrong class will never inserted here.
-        # And it did. 'onClick' signal args with trash. Making case for it.
+        # And it did. 'onClick' signal args with QModel. Making case for it.
 
         if target is None or isinstance(target, QModelIndex):
             obj = self.seqStorage[self.sequenceList.currentRow()]

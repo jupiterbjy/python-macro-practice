@@ -216,7 +216,6 @@ class _Image(_Base):
 
     @targetImage.setter
     def targetImage(self, img):
-
         img.convert('RGB')
 
         if img.format != 'PNG':     # Non-png images has trouble with cv2 conversion

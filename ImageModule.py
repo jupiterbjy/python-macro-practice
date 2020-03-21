@@ -151,7 +151,7 @@ def scanOccurrence(target, corner_pos, xy, precision=0.8, threshold=0.3):
         else:
             print(last_pt := pt)
             count = count + 1
-            cv2.rectangle(img, pt, tuple(map(sum, zip(pt, image_wh))), (0, 0, 255), 2)
+            cv2.rectangle(img, pt, tuple(map(sum, zip(pt, image_wh))), (0, 0, 255), 1)
     
     return count, img
 

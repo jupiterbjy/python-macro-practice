@@ -5,14 +5,9 @@ use decorator function 'register' to do what that name implies.
 
 
 def preset():
-    try:
-        from Toolset.Tools import nameCaller
-    except Exception:
-        pass
-    else:
-        nameCaller()
 
     def defaultBehavior(obj):
+        print('preset:')
         print(f'└ {type(obj).__name__} Not listed.')
 
     return dispatcher(defaultBehavior)

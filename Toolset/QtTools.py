@@ -11,7 +11,6 @@ import keyboard
 from Toolset import Tools
 from Toolset.Tools import nameCaller
 from ImageModule import Pos, Area
-import MacroMethods
 
 """
 Module to store all necessary Qt-Related tools.
@@ -20,14 +19,6 @@ Module to store all necessary Qt-Related tools.
 IMG_CONVERT = (226, 151, Qt.KeepAspectRatio)
 ICON_LOCATION = './icons/methods/'
 ICON_ASSIGN = {
-    MacroMethods.Click: 'click.png',
-    MacroMethods.Loop: 'loop.png',
-    MacroMethods.sLoopEnd: 'loopEnd.png',
-    MacroMethods.sLoopStart: 'loopStart.png',
-    MacroMethods.ImageSearch: 'imageSearch.png',
-    MacroMethods.Variable: 'variable.png',
-    MacroMethods.Wait: 'wait.png',
-    MacroMethods.SearchOccurrence: 'count.png',
     'Click': 'click.png',
     'Loop': 'loop.png',
     'sLoopEnd': 'loopEnd.png',
@@ -154,7 +145,7 @@ def AddToListWidget(tgt, item_list_widget):
 
     print(f'└ Add: {type(tgt).__name__} object "{tgt.name}"')
 
-    img = ICON_ASSIGN.setdefault(type(tgt), 'default')
+    img = ICON_ASSIGN.setdefault(type(tgt).__name__, 'default')
 
     item = SeqItemWidget()
     item.setup(str(type(tgt)), tgt.name, ''.join([ICON_LOCATION, img]))
