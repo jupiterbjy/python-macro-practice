@@ -234,7 +234,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 return
 
             obj = target
-            obj.name = self.nameLine.text()
+            text = self.nameLine.text()
+            obj.name = type(obj).__name__ if text == '' else text
             self.nameLine.clear()
 
         else:
@@ -243,6 +244,12 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         QtTools.AddToListWidget(obj, self.sequenceList)
         self.seqStorage.append(obj)
+        self.comboBoxUpdate()
+
+    def comboBoxUpdate(self):
+        for i in self.seqStorage:
+            self.onSuccessCombo.addItem(i.name)
+            self.onFailCombo.addItem(i.name)
 
     def _setXYFromImage(self):
         """
