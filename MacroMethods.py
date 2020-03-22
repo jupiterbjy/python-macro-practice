@@ -200,6 +200,30 @@ class Variable(_Base):
     # TODO: complete below parts. Will support simple variable calculation with these.
     # TODO: implement variable assign
 
+    def __iadd__(self, other):
+        self.value = self.value + other.value
+        return self
+
+    def __isub__(self, other):
+        self.value = self.value - other.value
+        return self
+
+    def __imul__(self, other):
+        self.value = self.value * other.value
+        return self
+
+    def __idiv__(self, other):
+        self.value = self.value / other.value
+        return self
+
+    def __ifloordiv__(self, other):
+        self.value = self.value // other.value
+        return self
+
+    def __imod__(self, other):
+        self.value = self.value // other.value
+        return self
+
     @functools.singledispatch
     def valueType(self):
         pass
@@ -214,6 +238,9 @@ class Variable(_Base):
 
     @valueType.register(str)
     def _(self):
+        pass
+
+    def action(self):
         pass
 
 

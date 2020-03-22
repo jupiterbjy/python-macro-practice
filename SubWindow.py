@@ -65,21 +65,30 @@ class SubWindow(QMainWindow, Ui_Runner):
         self.areaInject()
         self.runLine.setText('Macro started.')
 
-        try:
-            obj = self.source[0].run()
+        obj = self.source[0]
+        seq_count = 0
 
-        except pyautogui.FailSafeException:
-            print('└ FailSafe Trigger')
-            self.runLine.setText('Cannot Click (0,0), Aborted.')
+        while obj:
+            self.runLine.setText(f'running "{obj.name}".')
+            self.updateCurrentItem(obj)
 
-        else:
-            seq_count = 0
-            while obj:
-                self.runLine.setText(f'running "{obj.name}".')
-                self.updateCurrentItem(obj)
+            try:
                 obj = obj.run()
+
+            except pyautogui.FailSafeException:
+                print('└ FailSafe Trigger')
+                self.runLine.setText('Cannot Click (0,0), Aborted.')
+                break
+
+            except ZeroDivisionError:
+                print('└ Division by Zero')
+                self.runLine.setText('Tried to divide by 0.')
+                break
+
+            else:
                 seq_count += 1
 
+        else:
             self.runLine.setText('Macro finished.')
             self.runButton.setEnabled(True)
             self.StopButton.setDisabled(True)
