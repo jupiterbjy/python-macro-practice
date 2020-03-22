@@ -12,6 +12,9 @@ from Toolset import QtTools
 
 
 class _Base:
+    """
+    Super class for all, success-fail-next is at this level.
+    """
     # __slots__ = ('name', 'order')
 
     def __init__(self):
@@ -48,6 +51,10 @@ class _Base:
 
 
 class _ClickBase:
+    """
+    Super class for click operation.
+    Separated from click object to prevent diamond inherit.
+    """
     # __slots__ = ('target', 'clickCount', 'clickDelay', 'preDelay')
 
     def __init__(self):
@@ -64,8 +71,11 @@ class _ClickBase:
             print(f'Click: {p}')
 
 
-
 class Click(_Base, _ClickBase):
+    """
+    Interface of Simple Click method.
+    I barely used click on frep too, so I'm not putting empathise on this for now.
+    """
     @property
     def absoluteTarget(self):
         return self.target
@@ -79,6 +89,10 @@ class Click(_Base, _ClickBase):
 
 
 class Loop:
+    """
+    Interface. Internally generate loopStart, LoopEnd.
+    LoopEnd set next to
+    """
     # __slots__ = ('loopTime', 'endOrder', 'currentLoop', 'startOrder', 'loopName')
 
     def __init__(self):
@@ -103,6 +117,10 @@ class Loop:
 
 
 class sLoopStart(_Base, Loop):
+    """
+    Placeholder for Loop. No special functionality is needed for loop start.
+    Not for standalone usage.
+    """
     def __init__(self):
         super().__init__()
 
@@ -114,6 +132,10 @@ class sLoopStart(_Base, Loop):
 
 
 class sLoopEnd(_Base, Loop):
+    """
+    Implements Loop via setting next/onSuccess to LoopStart Object.
+    Not for standalone usage.
+    """
     def __init__(self):
         super().__init__()
 
@@ -144,6 +166,11 @@ class sLoopEnd(_Base, Loop):
 
 
 class Wait(_Base):
+    """
+    Simple waiting Macro Class.
+    Using Asynchronous sleep for Qt - using QtTools.QSleep for now,
+    but will support normal time.sleep in case this is used on CLI.
+    """
     # __slots__ = ('delay', 'actionState')
 
     def __init__(self):
@@ -160,6 +187,11 @@ class Wait(_Base):
 
 
 class Variable(_Base):
+    """
+    Class that trying to mimic what makes fRep different from plain macros.
+    Will expand to simple add, subtract, multiply, divide, mod operation between variables.
+    Not worked yet.
+    """
     def __init__(self):
         super().__init__()
         self.name = 'variable'
@@ -186,8 +218,9 @@ class Variable(_Base):
 
 
 class _Image(_Base):
-    # TODO: add weakref for Image, by adding all targets in single dict.
-    
+    """
+    superclass of all Macro classes dealing with image.
+    """
     imgSaver = ImgM.saveImg()
     
     def __init__(self):
@@ -229,6 +262,10 @@ class _Image(_Base):
 
 
 class ImageSearch(_Image, _ClickBase):
+    """
+    Find Image on given screen area.
+    Can decide whether to click or not, or how much trials before fail.
+    """
 
     def __init__(self):
         super(ImageSearch, self).__init__()
@@ -281,6 +318,11 @@ class ImageSearch(_Image, _ClickBase):
 
 
 class SearchOccurrence(_Image, _ClickBase):
+    """
+    Counts occurrences of target image.
+    Not solid about what then I should do.
+    Expecting variable assign or clicking each occurrences.
+    """
 
     def __init__(self):
         super(SearchOccurrence, self).__init__()
@@ -304,10 +346,18 @@ class SearchOccurrence(_Image, _ClickBase):
 
 
 class sActions(Wait, Variable, Click, SearchOccurrence, ImageSearch, Loop):
+    """
+    Unused yet. Only exists to display clean on UML diagram.
+    """
     pass
 
 
 def NextSetter(sequence):
+    """
+    Set next for respective object in sequence.
+    Will need special case for loop class.
+    :param sequence: List containing macro objects.
+    """
     if sequence:
         # This is waste of memory
         for idx, i in enumerate(sequence):
