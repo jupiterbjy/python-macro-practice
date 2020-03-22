@@ -185,6 +185,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.seqStorage.clear()
 
         self.sequenceList.clear()
+        self._comboBoxUpdate()
         self._disableOptions(MacroMethods.Click())
 
     def listAvailableMethods(self):
@@ -248,11 +249,14 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         QtTools.AddToListWidget(obj, self.sequenceList)
         self.seqStorage.append(obj)
-        self.comboBoxUpdate()
+        self._comboBoxUpdate()
 
-    def comboBoxUpdate(self):
+    def _comboBoxUpdate(self):
         self.onSuccessCombo.clear()
         self.onFailCombo.clear()
+
+        self.onSuccessCombo.addItem('Default')
+        self.onFailCombo.addItem('Default')
 
         for i in self.seqStorage:
             self.onSuccessCombo.addItem(i.name)
@@ -333,6 +337,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             obj.loopDelay = self.trialsIntervalSpin.value()
             obj.clickCount = self.searchClickCount.value()
             obj.clickDelay = self.searchClickInterval.value()
+            obj.precision = self.searchPrecisionSpin.value() / 100
 
         @dispatch.register(MacroMethods.Loop)
         def _(obj):
@@ -341,6 +346,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         @dispatch.register(MacroMethods.SearchOccurrence)
         def _(obj):
             obj.targetImage = self.cachedImage['count']
+            obj.precision = self.countPrecisionSpin.value() / 100
 
         @dispatch.register(MacroMethods.Variable)
         def _(obj):

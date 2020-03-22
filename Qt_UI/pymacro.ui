@@ -162,7 +162,7 @@
            </size>
           </property>
           <property name="currentIndex">
-           <number>3</number>
+           <number>2</number>
           </property>
           <property name="usesScrollButtons">
            <bool>true</bool>
@@ -830,6 +830,153 @@ color: rgb(255, 255, 255);</string>
              </property>
              <property name="text">
               <string>X</string>
+             </property>
+            </widget>
+           </widget>
+           <widget class="QGroupBox" name="groupBox">
+            <property name="geometry">
+             <rect>
+              <x>110</x>
+              <y>10</y>
+              <width>127</width>
+              <height>294</height>
+             </rect>
+            </property>
+            <property name="title">
+             <string>Variable</string>
+            </property>
+            <widget class="QRadioButton" name="integerRadioButon">
+             <property name="geometry">
+              <rect>
+               <x>10</x>
+               <y>20</y>
+               <width>90</width>
+               <height>16</height>
+              </rect>
+             </property>
+             <property name="text">
+              <string>Integer</string>
+             </property>
+            </widget>
+            <widget class="QRadioButton" name="doubleRadioButton">
+             <property name="geometry">
+              <rect>
+               <x>10</x>
+               <y>70</y>
+               <width>90</width>
+               <height>16</height>
+              </rect>
+             </property>
+             <property name="text">
+              <string>Double</string>
+             </property>
+            </widget>
+            <widget class="QDoubleSpinBox" name="doubleSpin">
+             <property name="geometry">
+              <rect>
+               <x>30</x>
+               <y>90</y>
+               <width>81</width>
+               <height>22</height>
+              </rect>
+             </property>
+            </widget>
+            <widget class="QSpinBox" name="integerSpin">
+             <property name="geometry">
+              <rect>
+               <x>30</x>
+               <y>40</y>
+               <width>81</width>
+               <height>22</height>
+              </rect>
+             </property>
+            </widget>
+            <widget class="QComboBox" name="variableArg2">
+             <property name="geometry">
+              <rect>
+               <x>10</x>
+               <y>200</y>
+               <width>101</width>
+               <height>22</height>
+              </rect>
+             </property>
+             <property name="currentText">
+              <string/>
+             </property>
+            </widget>
+            <widget class="QComboBox" name="variableArg1">
+             <property name="geometry">
+              <rect>
+               <x>10</x>
+               <y>140</y>
+               <width>101</width>
+               <height>22</height>
+              </rect>
+             </property>
+             <property name="currentText">
+              <string/>
+             </property>
+            </widget>
+            <widget class="QComboBox" name="operatorArg1">
+             <property name="geometry">
+              <rect>
+               <x>40</x>
+               <y>170</y>
+               <width>41</width>
+               <height>22</height>
+              </rect>
+             </property>
+             <property name="currentText">
+              <string/>
+             </property>
+            </widget>
+            <widget class="QComboBox" name="variableArg3">
+             <property name="geometry">
+              <rect>
+               <x>10</x>
+               <y>260</y>
+               <width>101</width>
+               <height>22</height>
+              </rect>
+             </property>
+             <property name="currentText">
+              <string/>
+             </property>
+            </widget>
+            <widget class="QComboBox" name="operatorArg2">
+             <property name="geometry">
+              <rect>
+               <x>40</x>
+               <y>230</y>
+               <width>41</width>
+               <height>22</height>
+              </rect>
+             </property>
+             <property name="currentText">
+              <string>=</string>
+             </property>
+             <item>
+              <property name="text">
+               <string/>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>=</string>
+              </property>
+             </item>
+            </widget>
+            <widget class="QRadioButton" name="doubleRadioButton_2">
+             <property name="geometry">
+              <rect>
+               <x>10</x>
+               <y>120</y>
+               <width>90</width>
+               <height>16</height>
+              </rect>
+             </property>
+             <property name="text">
+              <string>Calculation</string>
              </property>
             </widget>
            </widget>
