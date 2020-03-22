@@ -20,6 +20,7 @@ import MacroMethods
 # TODO: Check Sequence and find if CaptureCoverage call is needed.
 # TODO: add about screen.
 # TODO: generate icon with target image.
+# TODO: change how debugging images are generated.
 # https://devblogs.microsoft.com/python/idiomatic-python-eafp-versus-lbyl/
 
 
@@ -177,6 +178,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         """
         if not manual:
             self.listAvailableMethods()
+            MacroMethods.SLEEP_FUNCTION = QtTools.QSleep
         else:
             self.seqStorage.clear()
 

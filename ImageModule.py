@@ -106,7 +106,6 @@ def imageSearch(target, area, precision=0.85):
     cv2.imwrite('test.png', img)
 
     img_gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-    cv2.imwrite('test2.png', img_gray)
 
     # tmp = np.array(target).reshape((target.size[1], target.size[0]))
     template = cv2.cvtColor(np.array(target), cv2.COLOR_RGB2GRAY)

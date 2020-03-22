@@ -1,14 +1,15 @@
 
 import functools
+import time
 import pyautogui as pgui
 from PIL import Image
 
 import ImageModule as ImgM
 from Toolset import MemberLoader
-from Toolset import QtTools
 
-# TODO: somehow implement coroutine
 # TODO: utilize sys.path.insert?
+
+SLEEP_FUNCTION = time.sleep     # Will be override-d by ui_main.
 
 
 class _Base:
@@ -66,7 +67,7 @@ class _ClickBase:
         p = self.target + abs_target
 
         for i in range(self.clickCount):
-            QtTools.QSleep(self.clickDelay)
+            SLEEP_FUNCTION(self.clickDelay)
             pgui.click(p)
             print(f'Click: {p}')
 
@@ -168,7 +169,7 @@ class sLoopEnd(_Base, Loop):
 class Wait(_Base):
     """
     Simple waiting Macro Class.
-    Using Asynchronous sleep for Qt - using QtTools.QSleep for now,
+    Using Asynchronous sleep for Qt - using SLEEP_FUNCTION for now,
     but will support normal time.sleep in case this is used on CLI.
     """
     # __slots__ = ('delay', 'actionState')
@@ -179,10 +180,11 @@ class Wait(_Base):
         self.actionState = -2
 
     def action(self):
-        self.actionState = -1
 
-        QtTools.QSleep(self.delay, output=True)
+        self.actionState = -1
+        SLEEP_FUNCTION(self.delay)
         self.actionState = 1
+
         return True
 
 
