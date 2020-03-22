@@ -8,7 +8,10 @@ from math import sqrt
 This module will provide any necessary components required by MacroMethod,
 especially Image-related functions.
 """
-# TODO: add exception handler for functions here.
+
+# https://stackoverflow.com/questions/44955656/how-to-convert-rgb-pil-image-to-numpy-array-with-3-channels
+
+IMG_PATH = './testingEnv/'
 
 
 class Pos:
@@ -81,21 +84,21 @@ def saveImg():
     :return: returns closure function save().
     """
     order = 0
-    
-    def nameIt(n):
-        return str(n) + '.png'
 
-    def save(file, name=None):
+    def save(img, name=None):
 
         nonlocal order
 
         if name is None:
-            name = nameIt(order)
+            name = ''
 
-        cv2.imwrite(name + '.png', file)
+        cv2.imwrite(f'{IMG_PATH}{str(order)}_{name}.png', img)
         order += 1
 
     return save
+
+
+IMG_SAVE = saveImg()      # can't move this up..
 
 
 def imageSearch(target, area, precision=0.85):
@@ -103,29 +106,26 @@ def imageSearch(target, area, precision=0.85):
     position will use tuple(pos(), pos())!
     """
     img = cv2.cvtColor(np.array(pgui.screenshot(region=area)), cv2.COLOR_RGB2BGR)
-    cv2.imwrite('test.png', img)
 
     img_gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 
-    # tmp = np.array(target).reshape((target.size[1], target.size[0]))
     template = cv2.cvtColor(np.array(target), cv2.COLOR_RGB2GRAY)
-    # Above having issue with zero-filled array.
     img_wh = template.shape[::-1]
 
     # pgui.locateOnScreen(target, minSearchTime=5, confidence=0.9)
-    # didn't know this existed, but I'm sure this is slower per run.
-
-    #https://stackoverflow.com/questions/44955656/how-to-convert-rgb-pil-image-to-numpy-array-with-3-channels
+    # didn't know this existed, but can't customize it anyway.
 
     res = cv2.matchTemplate(img_gray, template, cv2.TM_CCOEFF_NORMED)
     min_val, max_val, min_loc, max_loc = cv2.minMaxLoc(res)
     
     if max_val < precision:
+        IMG_SAVE('fail', img)
         return (-1, -1), img
     else:
         pt2 = tuple(x+y for x, y in zip(img_wh, max_loc))
         cv2.rectangle(img, max_loc, pt2, (0, 0, 255), 2)
-        cv2.imwrite('test3.png', img)
+
+        IMG_SAVE('success', img)
         return max_loc, img
 
 
@@ -151,6 +151,7 @@ def scanOccurrence(target, corner_pos, xy, precision=0.8, threshold=0.3):
             print(last_pt := pt)
             count = count + 1
             cv2.rectangle(img, pt, tuple(map(sum, zip(pt, image_wh))), (0, 0, 255), 1)
+            IMG_SAVE('found', img)
     
     return count, img
 
@@ -160,3 +161,4 @@ def RandomOffset(corner_pos, offset):
     x_offset = random.randrange(0, offset)
     corner_pos.x = corner_pos.x + offset
     corner_pos.y = corner_pos.y + offset - x_offset
+

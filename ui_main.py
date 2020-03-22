@@ -21,6 +21,8 @@ import MacroMethods
 # TODO: add about screen.
 # TODO: generate icon with target image.
 # TODO: change how debugging images are generated.
+# TODO: cleanup unnecessary properties in MacroMethods.
+# TODO: add precision tab.
 # https://devblogs.microsoft.com/python/idiomatic-python-eafp-versus-lbyl/
 
 
@@ -249,6 +251,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.comboBoxUpdate()
 
     def comboBoxUpdate(self):
+        self.onSuccessCombo.clear()
+        self.onFailCombo.clear()
+
         for i in self.seqStorage:
             self.onSuccessCombo.addItem(i.name)
             self.onFailCombo.addItem(i.name)
@@ -419,6 +424,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         or triggered upon change of selection in Method List.
         :param target: If not specified, will config with selection from method list.
         """
+        if self.lockLogCheck.isChecked():
+            # Assuming users are in log tab as they have toggled checkbox.
+            return
 
         # release-connect args with row index for currentRowChanged.
         if target is None or isinstance(target, int):

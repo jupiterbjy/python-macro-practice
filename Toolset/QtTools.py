@@ -148,7 +148,7 @@ def AddToListWidget(tgt, item_list_widget):
     img = ICON_ASSIGN.setdefault(type(tgt).__name__, 'default')
 
     item = SeqItemWidget()
-    item.setup(tgt.name, str(type(tgt)), ''.join([ICON_LOCATION, img]))
+    item.setup(tgt.name, str(type(tgt).__name__ + 'Object'), ''.join([ICON_LOCATION, img]))
 
     list_item = QListWidgetItem(item_list_widget)
     list_item.setSizeHint(item.sizeHint())
