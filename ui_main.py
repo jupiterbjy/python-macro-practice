@@ -12,18 +12,34 @@ from Toolset.Tools import nameCaller
 from SubWindow import SubWindow
 import MacroMethods
 
+# <Implementation>
 # TODO: assign progress bar to time left for action.
 # TODO: give property to base to get remaining time.
-# TODO: change color of 'selected:' with TextTools.
 # TODO: add undo
-# TODO: implement random offset via option.
-# TODO: Check Sequence and find if CaptureCoverage call is needed.
 # TODO: add about screen.
-# TODO: generate icon with target image.
-# TODO: change how debugging images are generated.
-# TODO: cleanup unnecessary properties in MacroMethods.
 # TODO: add precision tab.
+# TODO: Check Sequence and find if CaptureCoverage call is needed.
+# TODO: connect onFail / onSuccess to object
+
+# <Improvement>
+# TODO: change color of 'selected:' with TextTools.
+# TODO: implement random offset via option.
+# TODO: rework scanOccurrence function in ImageModule.
+# TODO: hide edit window while runner window is up and running.
+# TODO: change how debugging images are generated.
+# TODO: generate icon with target image.
+
+# <Optimization TO-DO>
+# TODO: Rewrite runner code to utilize QThread.
+# TODO: cleanup unnecessary properties in MacroMethods.
+
+# <Bug fix>
+# TODO: fix font color reset upon print event.
+
+# <References>
+# https://doc.qt.io/qt-5/qthread.html
 # https://devblogs.microsoft.com/python/idiomatic-python-eafp-versus-lbyl/
+# https://stackoverflow.com/questions/44955656/how-to-convert-rgb-pil-image-to-numpy-array-with-3-channels
 
 
 class MainWindow(QMainWindow, Ui_MainWindow):
@@ -48,6 +64,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.methodList.currentRowChanged.connect(self._disableOptions)
         self.delButton.released.connect(self.remove)
         self.runButton.released.connect(self.runSeq)
+        self.editButton.released.connect(self.editSelected)
 
         self.searchImgLoadButton.released.connect(self.searchLoadImage)
         self.searchImgClearButton.released.connect(self.searchImageUpdate)
@@ -109,10 +126,12 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             window.show()
             # self.setWindowOpacity(0.7)
 
-    def selectedMethod(self):
+    def selectedClass(self):
         out = MacroMethods.class_dict[MacroMethods.__all__[self.methodList.currentRow()]]
-        print(f'\nselected: {out.__name__}')
         return out()
+
+    def selectedSequence(self):
+        return self.seqStorage[self.sequenceList.currentRow()]
 
     def searchImageUpdate(self, obj=None):
         self._ImageUpdate(self.searchImgLabel, self.searchImgNameLabel, obj)
@@ -125,6 +144,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
     def countLoadImage(self):
         self._LoadImage(self.countImgLabel, self.countImgNameLabel, 'count')
+
+    def editSelected(self):
+        self._configObject(self.selectedSequence())
 
     # noinspection PyCallByClass,PyArgumentList
     def seqSave(self):
@@ -227,7 +249,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         """
 
         if tgt is None:
-            target = self.selectedMethod()
+            target = self.selectedClass()
 
             try:
                 self._configObject(target)
@@ -273,7 +295,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
     def _appendText(self, msg):
         self.outputTextEdit.moveCursor(QTextCursor.End)
-        self.outputTextEdit.insertPlainText(msg)
+        self.outputTextEdit.append(msg)
         QApplication.processEvents(QEventLoop.ExcludeUserInputEvents)
 
     def _LoadImage(self, img_label, name_label, cache_name):
@@ -400,9 +422,12 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.trialsCountSpin.setValue(obj_.trials)
             self.trialsIntervalSpin.setValue(obj_.loopDelay)
 
-            self.cachedImage['search'] = obj_.targetImage
             self.searchImgNameLabel.setText(obj_.targetName)
             self.searchImageUpdate(obj_)
+
+            self.searchPrecisionSpin.setValue(int(obj_.precision * 100))
+
+            self.cachedImage['search'] = obj_.targetImage
 
         @dispatch.register(MacroMethods.Loop)
         def _(obj_):
@@ -436,12 +461,12 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         # release-connect args with row index for currentRowChanged.
         if target is None or isinstance(target, int):
-            selected = self.selectedMethod()
+            selected = self.selectedClass()
         else:
             selected = target
 
         groups = [self.waitGroup, self.searchClickGroup, self.clickGroup,
-                  self.loopGroup, self.trialsGroup]
+                  self.loopGroup, self.trialsGroup, self.varGroup]
 
         for g in groups:
             g.setEnabled(False)
@@ -479,6 +504,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         def _(_):
             self.tabWidget.setCurrentIndex(2)
             self.tabWidget.setTabEnabled(2, True)
+            self.varGroup.setEnabled(True)
 
         @dispatch.register(MacroMethods.Wait)
         def _(_):

@@ -9,8 +9,6 @@ This module will provide any necessary components required by MacroMethod,
 especially Image-related functions.
 """
 
-# https://stackoverflow.com/questions/44955656/how-to-convert-rgb-pil-image-to-numpy-array-with-3-channels
-
 IMG_PATH = './testingEnv/'
 
 
@@ -130,8 +128,6 @@ def imageSearch(target, area, precision=0.85):
 
 
 def scanOccurrence(target, corner_pos, xy, precision=0.8, threshold=0.3):
-    
-    # TODO: Rework these codes
     
     img = np.array(pgui.screenshot(region=(*corner_pos, *xy)))
     img_gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)

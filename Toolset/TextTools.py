@@ -12,11 +12,11 @@ def rgbToHex(r=0, g=0, b=0):
     return '#' + ''.join(out)
 
 
-def QtColorize(text, color='#000000', size=None, weight=None):
+def QtColorize(text, color=(0, 0, 0), size=None, weight=None):
     start = '<span style=\" '
     font = f'font-size:{size}pt; '
     font_weight = f'font-weight:{weight}; '
-    color = f'color:{color}; '
+    color = f'color:{rgbToHex(*color)}; '
     end = '\" >'
     txt = str(text)
     span_complete = '</span>'
@@ -46,16 +46,16 @@ class ANSI_C:
     UNDERLINE = '\033[4m'
     
     table = {
-        "RED" : '\033[91m',
-        "GRN" : '\033[92m',
-        "BLU" : '\033[94m',
-        "YEL" : '\033[93m',
-        "PUR" : '\033[94m',
-        "CYA" : '\033[96m',
-        "END" : '\033[0m',
-        "BOLD" : '\033[1m',
-        "HEADER" : '\033[95m',
-        "UNDERLINE" : '\033[4m',
+        "RED": '\033[91m',
+        "GREEN": '\033[92m',
+        "BLUE": '\033[94m',
+        "YELLOW": '\033[93m',
+        "PURPLE": '\033[94m',
+        "CYAN": '\033[96m',
+        "END": '\033[0m',
+        "BOLD": '\033[1m',
+        "HEADER": '\033[95m',
+        "UNDERLINE": '\033[4m',
     }
 
 

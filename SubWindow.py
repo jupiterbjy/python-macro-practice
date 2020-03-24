@@ -98,5 +98,5 @@ class SubWindow(QMainWindow, Ui_Runner):
 
     def _appendText(self, msg):
         self.outputTextEdit.moveCursor(QTextCursor.End)
-        self.outputTextEdit.insertPlainText(msg)
+        self.outputTextEdit.append(msg)
         QApplication.processEvents(QEventLoop.ExcludeUserInputEvents)

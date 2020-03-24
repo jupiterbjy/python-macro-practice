@@ -35,7 +35,7 @@ class StdoutRedirect(QObject):
     # Codes from below.
     # https://4uwingnet.tistory.com/9
 
-    printOccur = pyqtSignal(str, str, name="print")
+    printOccur = pyqtSignal(str, name="print")
 
     def __init__(self):
         QObject.__init__(self, None)
@@ -49,11 +49,11 @@ class StdoutRedirect(QObject):
 
     def start(self):
         sys.stdout.write = self.write
-        sys.stderr.write = lambda msg: self.write(msg, color="red")
+        sys.stderr.write = lambda msg: self.write(msg)
 
-    def write(self, s, color="black"):
+    def write(self, s):
         sys.stdout.flush()
-        self.printOccur.emit(s, color)
+        self.printOccur.emit(s)
 
 
 # https://stackoverflow.com/questions/25187444/pyqt-qlistwidget-custom-items
@@ -141,7 +141,7 @@ def loadImage(self):
 
 
 def AddToListWidget(tgt, item_list_widget):
-    nameCaller()
+    nameCaller((100, 100, 100))
 
     print(f'└ Add: {type(tgt).__name__} object "{tgt.name}"')
 

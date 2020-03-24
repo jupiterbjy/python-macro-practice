@@ -162,7 +162,7 @@
            </size>
           </property>
           <property name="currentIndex">
-           <number>2</number>
+           <number>3</number>
           </property>
           <property name="usesScrollButtons">
            <bool>true</bool>
@@ -833,7 +833,7 @@ color: rgb(255, 255, 255);</string>
              </property>
             </widget>
            </widget>
-           <widget class="QGroupBox" name="groupBox">
+           <widget class="QGroupBox" name="varGroup">
             <property name="geometry">
              <rect>
               <x>110</x>
@@ -845,7 +845,7 @@ color: rgb(255, 255, 255);</string>
             <property name="title">
              <string>Variable</string>
             </property>
-            <widget class="QRadioButton" name="integerRadioButon">
+            <widget class="QRadioButton" name="intRadio">
              <property name="geometry">
               <rect>
                <x>10</x>
@@ -858,7 +858,7 @@ color: rgb(255, 255, 255);</string>
               <string>Integer</string>
              </property>
             </widget>
-            <widget class="QRadioButton" name="doubleRadioButton">
+            <widget class="QRadioButton" name="doubleRadio">
              <property name="geometry">
               <rect>
                <x>10</x>
@@ -953,7 +953,7 @@ color: rgb(255, 255, 255);</string>
               </rect>
              </property>
              <property name="currentText">
-              <string>=</string>
+              <string/>
              </property>
              <item>
               <property name="text">
@@ -966,7 +966,7 @@ color: rgb(255, 255, 255);</string>
               </property>
              </item>
             </widget>
-            <widget class="QRadioButton" name="doubleRadioButton_2">
+            <widget class="QRadioButton" name="calRadio">
              <property name="geometry">
               <rect>
                <x>10</x>
@@ -990,7 +990,7 @@ color: rgb(255, 255, 255);</string>
              <widget class="QTextEdit" name="outputTextEdit">
               <property name="styleSheet">
                <string notr="true">background-color: rgb(30, 30, 30);
-color: rgb(255, 255, 255);</string>
+color: rgb(230, 230, 230);</string>
               </property>
               <property name="frameShape">
                <enum>QFrame::NoFrame</enum>
@@ -1023,7 +1023,7 @@ color: rgb(255, 255, 255);</string>
                <bool>true</bool>
               </property>
               <property name="placeholderText">
-               <string>test</string>
+               <string>test abcde</string>
               </property>
              </widget>
             </item>

@@ -33,15 +33,17 @@ def imageCheck(file_dir):
             return temp
 
 
-def nameCaller(print_out=True):
+def nameCaller(color=None):
     # https://stackoverflow.com/a/5067654/10909029
     # print(inspect.stack()[0][3]) <- this prints current stack's name
+    from inspect import stack
+    from Toolset.TextTools import QtColorize
 
-    import inspect
+    caller = stack()[1][3]
 
-    caller = inspect.stack()[1][3]
+    if color:
+        out = QtColorize(caller, color)
+    else:
+        out = caller
 
-    if print_out:
-        print('\n' + caller + ':')
-
-    return caller
+    print(out + ':')
