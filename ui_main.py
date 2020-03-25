@@ -6,7 +6,7 @@ import sys
 import pickle
 
 from Toolset import QtTools, FrozenDetect, ObjectDispatch
-from Toolset.QtTools import IMG_CONVERT, ICON_LOCATION, ICON_ASSIGN
+from Toolset.QtTools import IMG_CONVERT, ICON_LOCATION, ICON_ASSIGN, appendText
 from Qt_UI.pymacro import Ui_MainWindow
 from Toolset.Tools import nameCaller
 from SubWindow import SubWindow
@@ -22,7 +22,6 @@ import MacroMethods
 # TODO: connect onFail / onSuccess to object
 
 # <Improvement>
-# TODO: change color of 'selected:' with TextTools.
 # TODO: implement random offset via option.
 # TODO: rework scanOccurrence function in ImageModule.
 # TODO: hide edit window while runner window is up and running.
@@ -32,9 +31,12 @@ import MacroMethods
 # <Optimization TO-DO>
 # TODO: Rewrite runner code to utilize QThread.
 # TODO: cleanup unnecessary properties in MacroMethods.
+# TODO: change extremely inefficient function 'rgbToHex' in TextTools.
+# TODO: get widget from Main Ui to runner ui without generating new within runner ui.
 
 # <Bug fix>
 # TODO: fix font color reset upon print event.
+# TODO: fix edit not setting new value to target object.
 
 # <References>
 # https://doc.qt.io/qt-5/qthread.html
@@ -49,7 +51,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         self._stdout = QtTools.StdoutRedirect()
         self._stdout.start()
-        self._stdout.printOccur.connect(lambda x: self._appendText(x))
+        self._stdout.printOccur.connect(lambda x: appendText(self.outputTextEdit, x))
 
         # self.seqUndo = []
         self.seqStorage = []
@@ -153,7 +155,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         """
         Saves current sequence into Pickle byte file.
         """
-        nameCaller()
+        nameCaller((225, 8, 0))
         name = QFileDialog.getSaveFileName(self, 'Save file')[0]
         MacroMethods.NextSetter(self.seqStorage)
 
@@ -168,7 +170,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         """
         Loads Saved sequence stored as Bytes - aka HIGHEST_PROTOCOL - pickle file.
         """
-        nameCaller()
+        nameCaller((225, 8, 0))
 
         name = QFileDialog.getOpenFileName(self)[0]
         self.initializing(manual=True)
@@ -293,11 +295,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         """
         pass
 
-    def _appendText(self, msg):
-        self.outputTextEdit.moveCursor(QTextCursor.End)
-        self.outputTextEdit.append(msg)
-        QApplication.processEvents(QEventLoop.ExcludeUserInputEvents)
-
     def _LoadImage(self, img_label, name_label, cache_name):
         """
         Subroutine of countLoadImage & searchLoadImage.
@@ -401,6 +398,10 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 self.methodList.setCurrentRow(MacroMethods.__all__.index(src))
         else:
             obj = target
+
+        # Temporary fix
+        if self.sequenceList.currentItem() is not None:
+            self.editButton.setEnabled(True)
 
         self.nameLine.setText(obj.name)
         self._disableOptions(obj)
@@ -523,5 +524,17 @@ def main():
 
 
 if __name__ == '__main__':
+
+    sys._excepthook = sys.excepthook
+
+
+    def exception_hook(exctype, value, traceback):
+        print(exctype, value, traceback)
+        sys._excepthook(exctype, value, traceback)
+        sys.exit(1)
+
+
+    sys.excepthook = exception_hook
+
     FrozenDetect.IsFrozen()
     main()

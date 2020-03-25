@@ -1,10 +1,10 @@
 
 from PyQt5.QtWidgets import *
 from PyQt5.QtCore import *
-from PyQt5.QtGui import *
 import pyautogui
 
 from Toolset import QtTools
+from Toolset.QtTools import appendText
 from Toolset.Tools import nameCaller
 from Qt_UI.Runner import Ui_MainWindow as Ui_Runner
 
@@ -28,15 +28,16 @@ class SubWindow(QMainWindow, Ui_Runner):
 
         self._stdout = QtTools.StdoutRedirect()
         self._stdout.start()
-        self._stdout.printOccur.connect(lambda x: self._appendText(x))
+        self._stdout.printOccur.connect(lambda x: appendText(self.outputTextEdit, x))
 
         self.runButton.released.connect(self.runSeq)
         self.source = list(seq)
-        self.updateCurrentItem(self.source[0])
+        self.updateHistory(self.source[0])
 
     def areaInject(self):
 
         if not self.fullScreenCheck.isChecked():
+            self.runLine.setText('Press f2 at 2 diagonal corner.')
             area = QtTools.getCaptureArea()
 
             self.runLine.setText(str(area))
@@ -53,11 +54,29 @@ class SubWindow(QMainWindow, Ui_Runner):
         QtTools.AddToListWidget(item, self.sequenceList)
         QtTools.AddToListWidget(item, self.currentSeq)
 
+    def updateHistory(self, item=None):
+        # https://stackoverflow.com/questions/52522218/getting-qtwidgets-from-my-custom-qlistwidgetitem
+        try:
+            widget = self.currentSeq.itemWidget(self.currentSeq.item(0))
+        except:
+            print('ERROR')
+            return
+        else:
+            previous = self.currentSeq.takeItem(0)
+
+        if previous:
+            self.sequenceList.addItem(previous)
+            self.sequenceList.setItemWidget(previous, widget)
+
+        if item:
+            QtTools.AddToListWidget(item, self.currentSeq)
+
     def runSeq(self):
 
         nameCaller()
 
         self.sequenceList.clear()
+        self.currentSeq.clear()
 
         self.runButton.setDisabled(True)
         self.StopButton.setEnabled(True)
@@ -70,7 +89,7 @@ class SubWindow(QMainWindow, Ui_Runner):
 
         while obj:
             self.runLine.setText(f'running "{obj.name}".')
-            self.updateCurrentItem(obj)
+            self.updateHistory(obj)
 
             try:
                 obj = obj.run()
@@ -92,11 +111,7 @@ class SubWindow(QMainWindow, Ui_Runner):
             self.runLine.setText('Macro finished.')
             self.runButton.setEnabled(True)
             self.StopButton.setDisabled(True)
+            self.updateHistory()
 
     def _getPos(self):
         pass
-
-    def _appendText(self, msg):
-        self.outputTextEdit.moveCursor(QTextCursor.End)
-        self.outputTextEdit.append(msg)
-        QApplication.processEvents(QEventLoop.ExcludeUserInputEvents)

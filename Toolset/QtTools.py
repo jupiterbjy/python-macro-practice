@@ -10,6 +10,7 @@ import keyboard
 
 from Toolset import Tools
 from Toolset.Tools import nameCaller
+from Toolset.TextTools import QtColorize
 from ImageModule import Pos, Area
 
 """
@@ -143,7 +144,7 @@ def loadImage(self):
 def AddToListWidget(tgt, item_list_widget):
     nameCaller((100, 100, 100))
 
-    print(f'└ Add: {type(tgt).__name__} object "{tgt.name}"')
+    print(f'└ Add: {type(tgt).__name__} "{QtColorize(tgt.name, (0, 217, 127))}"')
 
     img = ICON_ASSIGN.setdefault(type(tgt).__name__, 'default')
 
@@ -155,6 +156,8 @@ def AddToListWidget(tgt, item_list_widget):
 
     item_list_widget.addItem(list_item)
     item_list_widget.setItemWidget(list_item, item)
+
+
 
 
 def QSleep(delay, progress_bar=None, output=False):
@@ -210,3 +213,9 @@ def getCaptureArea():
     getPos(p2)
 
     return Area.fromPos(p1, p2)
+
+
+def appendText(text_edit, msg, newline=True):
+    text_edit.moveCursor(QTextCursor.End)
+    text_edit.insertHtml(msg + '<br>' if newline else msg)
+    QApplication.processEvents(QEventLoop.ExcludeUserInputEvents)
