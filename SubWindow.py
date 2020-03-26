@@ -1,12 +1,16 @@
 
 from PyQt5.QtWidgets import *
 from PyQt5.QtCore import *
+from copy import deepcopy
 import pyautogui
 
 from Toolset import QtTools
 from Toolset.QtTools import appendText
 from Toolset.Tools import nameCaller
 from Qt_UI.Runner import Ui_MainWindow as Ui_Runner
+
+DEBUG = True
+GARBAGE_PREVENT = []
 
 
 class CaptureCoverage(QDialog):
@@ -26,9 +30,10 @@ class SubWindow(QMainWindow, Ui_Runner):
         super(SubWindow, self).__init__(parent)
         self.setupUi(self)
 
-        self._stdout = QtTools.StdoutRedirect()
-        self._stdout.start()
-        self._stdout.printOccur.connect(lambda x: appendText(self.outputTextEdit, x))
+        if not DEBUG:
+            self._stdout = QtTools.StdoutRedirect()
+            self._stdout.start()
+            self._stdout.printOccur.connect(lambda x: appendText(self.outputTextEdit, x))
 
         self.runButton.released.connect(self.runSeq)
         self.source = list(seq)
@@ -54,16 +59,19 @@ class SubWindow(QMainWindow, Ui_Runner):
         QtTools.AddToListWidget(item, self.sequenceList)
         QtTools.AddToListWidget(item, self.currentSeq)
 
-    def updateHistory(self, item=None):
+    def updateHistory(self, item=None, end=False):
         # https://stackoverflow.com/questions/52522218/getting-qtwidgets-from-my-custom-qlistwidgetitem
-        try:
+        # Fix crashing due to garbage collection.
+        if end:
+
             widget = self.currentSeq.itemWidget(self.currentSeq.item(0))
-        except:
-            print('ERROR')
-            return
+            previous = self.currentSeq.item(0)
         else:
+
+            widget = self.currentSeq.itemWidget(self.currentSeq.item(0))
             previous = self.currentSeq.takeItem(0)
 
+        GARBAGE_PREVENT.append((widget, previous))
         if previous:
             self.sequenceList.addItem(previous)
             self.sequenceList.setItemWidget(previous, widget)
@@ -71,7 +79,13 @@ class SubWindow(QMainWindow, Ui_Runner):
         if item:
             QtTools.AddToListWidget(item, self.currentSeq)
 
+    @staticmethod
+    def garbageCollect():
+        GARBAGE_PREVENT.clear()
+
     def runSeq(self):
+
+        self.garbageCollect()
 
         nameCaller()
 
@@ -95,7 +109,7 @@ class SubWindow(QMainWindow, Ui_Runner):
                 obj = obj.run()
 
             except pyautogui.FailSafeException:
-                print('└ FailSafe Trigger')
+                print('└ PyAutoGui FailSafe')
                 self.runLine.setText('Cannot Click (0,0), Aborted.')
                 break
 
@@ -111,7 +125,7 @@ class SubWindow(QMainWindow, Ui_Runner):
             self.runLine.setText('Macro finished.')
             self.runButton.setEnabled(True)
             self.StopButton.setDisabled(True)
-            self.updateHistory()
+            self.updateHistory(end=True)
 
     def _getPos(self):
         pass

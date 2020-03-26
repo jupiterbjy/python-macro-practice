@@ -16,13 +16,17 @@ def IsFrozen(change_dir=True):
     :param change_dir: If true, will set working directory where exe is.
     :return: Returns True-False according to frozen state.
     """
-
     if getattr(sys, 'frozen', False):
         if change_dir:
             SetWorkingDirectory(sys.executable)
         return True
     else:
-        os.chdir(os.path.dirname(sys.argv[0]))
+        file_dir = os.path.dirname(sys.argv[0])
+        # Fail-safe in terminal path showing relative path.
+        try:
+            os.chdir(file_dir)
+        except OSError:
+            print('In relative path')
         return False
 
 

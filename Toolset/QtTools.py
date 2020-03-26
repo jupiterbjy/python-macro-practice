@@ -158,8 +158,6 @@ def AddToListWidget(tgt, item_list_widget):
     item_list_widget.setItemWidget(list_item, item)
 
 
-
-
 def QSleep(delay, progress_bar=None, output=False):
     # Not sure just checking progress_bar is None at start is worse than try-except..
 

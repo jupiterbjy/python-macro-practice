@@ -1,7 +1,6 @@
 
 from PyQt5.QtWidgets import *
 from PyQt5.QtCore import *
-from PyQt5.QtGui import *
 import sys
 import pickle
 
@@ -27,6 +26,7 @@ import MacroMethods
 # TODO: hide edit window while runner window is up and running.
 # TODO: change how debugging images are generated.
 # TODO: generate icon with target image.
+# TODO: add button to toggle stdout redirect.
 
 # <Optimization TO-DO>
 # TODO: Rewrite runner code to utilize QThread.
@@ -37,11 +37,14 @@ import MacroMethods
 # <Bug fix>
 # TODO: fix font color reset upon print event.
 # TODO: fix edit not setting new value to target object.
+# TODO: fix list not actually removing object from seqStorage.
 
 # <References>
 # https://doc.qt.io/qt-5/qthread.html
 # https://devblogs.microsoft.com/python/idiomatic-python-eafp-versus-lbyl/
 # https://stackoverflow.com/questions/44955656/how-to-convert-rgb-pil-image-to-numpy-array-with-3-channels
+
+DEBUG = True
 
 
 class MainWindow(QMainWindow, Ui_MainWindow):
@@ -49,9 +52,10 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         super(MainWindow, self).__init__(*args, **kwargs)
         self.setupUi(self)
 
-        self._stdout = QtTools.StdoutRedirect()
-        self._stdout.start()
-        self._stdout.printOccur.connect(lambda x: appendText(self.outputTextEdit, x))
+        if not DEBUG:
+            self._stdout = QtTools.StdoutRedirect()
+            self._stdout.start()
+            self._stdout.printOccur.connect(lambda x: appendText(self.outputTextEdit, x))
 
         # self.seqUndo = []
         self.seqStorage = []
