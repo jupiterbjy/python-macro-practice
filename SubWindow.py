@@ -2,16 +2,15 @@
 from PyQt5.QtWidgets import *
 from PyQt5.QtCore import *
 import pyautogui
-import gc
+import copy
 
 from Toolset import QtTools
 from Toolset.QtTools import appendText
 from Toolset.Tools import nameCaller
 from Qt_UI.Runner import Ui_MainWindow as Ui_Runner
 
-DEBUG = True
+DEBUG = False
 GARBAGE_PREVENT = []
-gc.disable()
 
 
 class CaptureCoverage(QDialog):
@@ -62,35 +61,27 @@ class SubWindow(QMainWindow, Ui_Runner):
         QtTools.AddToListWidget(item, self.sequenceList)
         QtTools.AddToListWidget(item, self.currentSeq)
 
-    def updateHistory(self, item=None, end=False):
-        # https://stackoverflow.com/questions/52522218/getting-qtwidgets-from-my-custom-qlistwidgetitem
-        # Fix crashing due to garbage collection.
-        if end:
+# https://stackoverflow.com/questions/52522218/getting-qtwidgets-from-my-custom-qlistwidgetitem
 
-            widget = self.currentSeq.itemWidget(self.currentSeq.item(0))
-            previous = self.currentSeq.item(0)
+    def updateHistory(self, item=None):
+        widget = self.currentSeq.itemWidget(self.currentSeq.item(0))
+
+        try:
+            size = widget.sizeHint()
+        except AttributeError:
+            pass
         else:
+            new = QListWidgetItem(self.sequenceList)
+            new.setSizeHint(size)
 
-            widget = self.currentSeq.itemWidget(self.currentSeq.item(0))
-            previous = self.currentSeq.takeItem(0)
-
-        GARBAGE_PREVENT.append((widget, previous))
-
-        if previous:
-            self.sequenceList.addItem(previous)
-            self.sequenceList.setItemWidget(previous, widget)
+            self.sequenceList.addItem(new)
+            self.sequenceList.setItemWidget(new, widget)
+            self.currentSeq.clear()
 
         if item:
             QtTools.AddToListWidget(item, self.currentSeq)
 
-    @staticmethod
-    def garbageCollect():
-        GARBAGE_PREVENT.clear()
-
     def runSeq(self):
-
-        self.garbageCollect()
-
         nameCaller()
 
         self.sequenceList.clear()
@@ -129,7 +120,7 @@ class SubWindow(QMainWindow, Ui_Runner):
             self.runLine.setText('Macro finished.')
             self.runButton.setEnabled(True)
             self.StopButton.setDisabled(True)
-            self.updateHistory(end=True)
+            # self.updateHistory()
 
     def _getPos(self):
         pass

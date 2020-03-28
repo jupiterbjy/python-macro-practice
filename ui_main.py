@@ -16,18 +16,18 @@ import MacroMethods
 # TODO: give property to base to get remaining time.
 # TODO: add undo
 # TODO: add about screen.
-# TODO: add precision tab.
 # TODO: Check Sequence and find if CaptureCoverage call is needed.
 # TODO: connect onFail / onSuccess to object
+# TODO: subwindow stop functionality
 
 # <Improvement>
 # TODO: implement random offset via option.
 # TODO: rework scanOccurrence function in ImageModule.
 # TODO: hide edit window while runner window is up and running.
-# TODO: change how debugging images are generated.
 # TODO: generate icon with target image.
 # TODO: add button to toggle stdout redirect.
 # TODO: store directories from Qdialog for pickle load / image load separately.
+# TODO: prevent element name being cleared when edit is signaled
 
 # <Optimization TO-DO>
 # TODO: Rewrite runner code to utilize QThread.
@@ -43,7 +43,7 @@ import MacroMethods
 # https://devblogs.microsoft.com/python/idiomatic-python-eafp-versus-lbyl/
 # https://stackoverflow.com/questions/44955656/how-to-convert-rgb-pil-image-to-numpy-array-with-3-channels
 
-DEBUG = True
+DEBUG = False
 
 
 class MainWindow(QMainWindow, Ui_MainWindow):
