@@ -91,6 +91,7 @@ def saveImg():
             name = ''
 
         cv2.imwrite(f'{IMG_PATH}{str(order)}_{name}.png', img)
+
         order += 1
 
     return save
@@ -117,13 +118,11 @@ def imageSearch(target, area, precision=0.85):
     min_val, max_val, min_loc, max_loc = cv2.minMaxLoc(res)
     
     if max_val < precision:
-        IMG_SAVE(img, 'fail')
         return (-1, -1), img
     else:
         pt2 = tuple(x+y for x, y in zip(img_wh, max_loc))
         cv2.rectangle(img, max_loc, pt2, (0, 0, 255), 2)
 
-        IMG_SAVE(img, 'success')
         return max_loc, img
 
 

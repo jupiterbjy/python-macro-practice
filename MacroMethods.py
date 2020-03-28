@@ -2,6 +2,7 @@
 import functools
 import time
 import pyautogui as pgui
+import cv2
 from PIL import Image
 
 import ImageModule as ImgM
@@ -10,6 +11,7 @@ from Toolset import MemberLoader
 # TODO: utilize sys.path.insert?
 
 SLEEP_FUNCTION = time.sleep     # Will be override-d by ui_main.
+imgSaver = ImgM.saveImg()
 
 
 class _Base:
@@ -250,7 +252,6 @@ class _Image(_Base):
     """
     superclass of all Macro classes dealing with image.
     """
-    imgSaver = ImgM.saveImg()
     
     def __init__(self):
         super().__init__()
@@ -263,10 +264,10 @@ class _Image(_Base):
         self.offsetMax = 5
 
     def DumpCaptured(self, name=None):
-        self.imgSaver(self.capturedImage, name)
-        
+        imgSaver(self.capturedImage, str(name))
+
     def DumpTarget(self):
-        self.imgSaver(self.targetImage, self.targetName)
+        imgSaver(self.targetImage, self.targetName)
 
     def DumpCoordinates(self):      # Do I need this?
         return self.screenArea, self.matchPoint
@@ -319,6 +320,8 @@ class ImageSearch(_Image, _ClickBase):
 
         else:
             self.actionState = 0
+
+        self.DumpCaptured(self._foundFlag)
 
     def ImageClick(self):
         pgui.click(ImgM.RandomOffset(self.matchPoint, self.offsetMax))
