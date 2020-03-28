@@ -28,6 +28,7 @@ import MacroMethods
 # TODO: add button to toggle stdout redirect.
 # TODO: store directories from Qdialog for pickle load / image load separately.
 # TODO: prevent element name being cleared when edit is signaled
+# TODO: limit number of failed image count to 1.
 
 # <Optimization TO-DO>
 # TODO: Rewrite runner code to utilize QThread.
