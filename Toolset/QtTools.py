@@ -58,7 +58,6 @@ class StdoutRedirect(QObject):
 
 
 # https://stackoverflow.com/questions/25187444/pyqt-qlistwidget-custom-items
-# Everyone should accept Nyaruko as a symbol of cuteness.
 class SeqItemWidget(QWidget):
     def __init__(self):
         super().__init__()
