@@ -27,6 +27,7 @@ import MacroMethods
 # TODO: change how debugging images are generated.
 # TODO: generate icon with target image.
 # TODO: add button to toggle stdout redirect.
+# TODO: store directories from Qdialog for pickle load / image load separately.
 
 # <Optimization TO-DO>
 # TODO: Rewrite runner code to utilize QThread.
@@ -36,9 +37,6 @@ import MacroMethods
 # TODO: change SubWindow methods into something signal-based.
 
 # <Bug fix>
-# TODO: fix font color reset upon print event.
-# TODO: fix edit not setting new value to target object.
-# TODO: fix list not actually removing object from seqStorage.
 
 # <References>
 # https://doc.qt.io/qt-5/qthread.html
@@ -165,6 +163,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
     def editSelected(self):
         self._configObject(self.selectedSequence())
+        item = QtTools.GenerateWidget(self.selectedSequence(), self.sequenceList)
+
+        self.sequenceList.setItemWidget(self.sequenceList.currentItem(), item[1])
 
     # noinspection PyCallByClass,PyArgumentList
     def seqSave(self):
@@ -280,9 +281,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
             else:
                 obj = target
-                text = self.nameLine.text()
-                obj.name = type(obj).__name__ if text == '' else text
-                self.nameLine.clear()
 
         else:
             obj = tgt
@@ -355,6 +353,11 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         Configs given object with values from GUI.
         :param target: Instance of one of methods from MacroMethods.
         """
+
+        text = self.nameLine.text()
+        target.name = type(target).__name__ if text == '' else text
+        self.nameLine.clear()
+
         dispatch = ObjectDispatch.preset()
 
         @dispatch.register(MacroMethods.Click)

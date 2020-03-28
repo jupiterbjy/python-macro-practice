@@ -141,6 +141,17 @@ def loadImage(self):
         return img, file_name
 
 
+def GenerateWidget(tgt, item_list_widget):
+    img = ICON_ASSIGN.setdefault(type(tgt).__name__, 'default')
+
+    item = SeqItemWidget()
+    item.setup(tgt.name, str(type(tgt).__name__ + 'Object'), ''.join([ICON_LOCATION, img]))
+
+    list_item = QListWidgetItem(item_list_widget)
+    list_item.setSizeHint(item.sizeHint())
+    return list_item, item
+
+
 def AddToListWidget(tgt, item_list_widget):
     """
     Adds macro object to given QItemListWidget.
@@ -151,16 +162,10 @@ def AddToListWidget(tgt, item_list_widget):
 
     print(f'└ Add: {type(tgt).__name__} "{QtColorize(tgt.name, (0, 217, 127))}"')
 
-    img = ICON_ASSIGN.setdefault(type(tgt).__name__, 'default')
+    item = GenerateWidget(tgt, item_list_widget)
 
-    item = SeqItemWidget()
-    item.setup(tgt.name, str(type(tgt).__name__ + 'Object'), ''.join([ICON_LOCATION, img]))
-
-    list_item = QListWidgetItem(item_list_widget)
-    list_item.setSizeHint(item.sizeHint())
-
-    item_list_widget.addItem(list_item)
-    item_list_widget.setItemWidget(list_item, item)
+    item_list_widget.addItem(item[0])
+    item_list_widget.setItemWidget(*item)
 
 
 def QSleep(delay, progress_bar=None, output=False):
