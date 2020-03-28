@@ -163,9 +163,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
     def editSelected(self):
         self._configObject(self.selectedSequence())
-        item = QtTools.GenerateWidget(self.selectedSequence(), self.sequenceList)
+        item = QtTools.GenerateWidget(self.selectedSequence())
 
-        self.sequenceList.setItemWidget(self.sequenceList.currentItem(), item[1])
+        self.sequenceList.setItemWidget(self.sequenceList.currentItem(), item)
 
     # noinspection PyCallByClass,PyArgumentList
     def seqSave(self):
