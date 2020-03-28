@@ -5,7 +5,7 @@ import pyautogui
 import gc
 
 from Toolset import QtTools
-from Toolset.QtTools import appendText
+from Toolset.QtTools import append
 from Toolset.Tools import nameCaller
 from Qt_UI.Runner import Ui_MainWindow as Ui_Runner
 
@@ -34,11 +34,13 @@ class SubWindow(QMainWindow, Ui_Runner):
         if not DEBUG:
             self._stdout = QtTools.StdoutRedirect()
             self._stdout.start()
-            self._stdout.printOccur.connect(lambda x: appendText(self.outputTextEdit, x))
+            self._stdout.printOccur.connect(lambda x: append(self.outputTextEdit, x))
 
         self.runButton.released.connect(self.runSeq)
         self.source = list(seq)
         self.updateHistory(self.source[0])
+
+        print('GOT: ', self.source)
 
     def areaInject(self):
 

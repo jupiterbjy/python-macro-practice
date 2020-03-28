@@ -142,6 +142,11 @@ def loadImage(self):
 
 
 def AddToListWidget(tgt, item_list_widget):
+    """
+    Adds macro object to given QItemListWidget.
+    :param tgt: macro object to Add
+    :param item_list_widget: QItemListWidget
+    """
     nameCaller((100, 100, 100))
 
     print(f'└ Add: {type(tgt).__name__} "{QtColorize(tgt.name, (0, 217, 127))}"')
@@ -217,3 +222,21 @@ def appendText(text_edit, msg, newline=True):
     text_edit.moveCursor(QTextCursor.End)
     text_edit.insertHtml(msg + '<br>' if newline else msg)
     QApplication.processEvents(QEventLoop.ExcludeUserInputEvents)
+
+
+def returnRow(q_list):
+    """
+    Simple Wrapper for QListWidget.currentRow().
+    Qt consider -1 as false, but List count it as last element. So this exist.
+    :param q_list: QListWidgetItem
+    """
+    try:
+        row = q_list.currentRow()
+    except AttributeError:
+        raise AttributeError(f'Expected QListWidget, got {type(q_list)}.')
+
+    else:
+        if row == -1:
+            raise IndexError('Nothing Selected.')
+        else:
+            return row

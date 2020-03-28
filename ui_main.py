@@ -91,12 +91,15 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.backupSeq()
 
         try:
-            del self.seqStorage[self.sequenceList.currentRow()]
-            print(self.sequenceList.currentRow(), self.seqStorage)
-        except IndexError:
-            return
-        else:
+            del self.seqStorage[QtTools.returnRow(self.sequenceList)]
 
+        except IndexError as err:
+            print(err)
+
+        except AttributeError as err:
+            print(err)
+
+        else:
             item = self.sequenceList.currentRow()
             self.sequenceList.takeItem(item)
 
@@ -275,10 +278,11 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 print('└ Object config Failed.')
                 return
 
-            obj = target
-            text = self.nameLine.text()
-            obj.name = type(obj).__name__ if text == '' else text
-            self.nameLine.clear()
+            else:
+                obj = target
+                text = self.nameLine.text()
+                obj.name = type(obj).__name__ if text == '' else text
+                self.nameLine.clear()
 
         else:
             obj = tgt
@@ -537,17 +541,17 @@ def main():
 
 
 if __name__ == '__main__':
-
-    sys._excepthook = sys.excepthook
-
-
-    def exception_hook(exctype, value, traceback):
-        print(exctype, value, traceback)
-        sys._excepthook(exctype, value, traceback)
-        sys.exit(1)
-
-
-    sys.excepthook = exception_hook
+    #
+    # sys._excepthook = sys.excepthook
+    #
+    #
+    # def exception_hook(exctype, value, traceback):
+    #     print(exctype, value, traceback)
+    #     sys._excepthook(exctype, value, traceback)
+    #     sys.exit(1)
+    #
+    #
+    # sys.excepthook = exception_hook
 
     FrozenDetect.IsFrozen()
     main()
