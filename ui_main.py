@@ -33,6 +33,7 @@ import MacroMethods
 # TODO: cleanup unnecessary properties in MacroMethods.
 # TODO: change extremely inefficient function 'rgbToHex' in TextTools.
 # TODO: get widget from Main Ui to runner ui without generating new within runner ui.
+# TODO: change SubWindow methods into something signal-based.
 
 # <Bug fix>
 # TODO: fix font color reset upon print event.
@@ -88,10 +89,16 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         When called, removes selected item from both seqStorage & GUI.
         """
         self.backupSeq()
-        del self.seqStorage[self.sequenceList.currentRow()]
 
-        item = self.sequenceList.currentRow()
-        self.sequenceList.takeItem(item)
+        try:
+            del self.seqStorage[self.sequenceList.currentRow()]
+            print(self.sequenceList.currentRow(), self.seqStorage)
+        except IndexError:
+            return
+        else:
+
+            item = self.sequenceList.currentRow()
+            self.sequenceList.takeItem(item)
 
     def backupSeq(self):
         """
@@ -100,6 +107,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         if len(self.seqBackup) >= 4:
             self.seqBackup.pop(0)
         self.seqBackup.append(self.seqStorage)
+        nameCaller()
+        print(f'└ Backup: {len(self.seqBackup)}')
 
     def undoSeq(self):
         """

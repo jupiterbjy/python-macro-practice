@@ -1,8 +1,8 @@
 
 from PyQt5.QtWidgets import *
 from PyQt5.QtCore import *
-from copy import deepcopy
 import pyautogui
+import gc
 
 from Toolset import QtTools
 from Toolset.QtTools import appendText
@@ -11,6 +11,7 @@ from Qt_UI.Runner import Ui_MainWindow as Ui_Runner
 
 DEBUG = True
 GARBAGE_PREVENT = []
+gc.disable()
 
 
 class CaptureCoverage(QDialog):
@@ -72,6 +73,7 @@ class SubWindow(QMainWindow, Ui_Runner):
             previous = self.currentSeq.takeItem(0)
 
         GARBAGE_PREVENT.append((widget, previous))
+
         if previous:
             self.sequenceList.addItem(previous)
             self.sequenceList.setItemWidget(previous, widget)
