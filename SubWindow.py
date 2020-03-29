@@ -2,7 +2,6 @@
 from PyQt5.QtWidgets import *
 from PyQt5.QtCore import *
 import pyautogui
-import copy
 
 from Toolset import QtTools
 from Toolset.QtTools import appendText
@@ -11,6 +10,36 @@ from Qt_UI.Runner import Ui_MainWindow as Ui_Runner
 
 DEBUG = False
 GARBAGE_PREVENT = []
+
+# https://www.learnpyqt.com/courses/concurrent-execution/multithreading-pyqt-applications-qthreadpool/
+
+
+class Worker(QRunnable):
+    """
+    Worker thread
+
+    Inherits from QRunnable to handler worker thread setup, signals and wrap-up.
+
+    :param callback: The function callback to run on this worker thread. Supplied args and
+                     kwargs will be passed through to the runner.
+    :type callback: function
+    :param args: Arguments to pass to the callback function
+    :param kwargs: Keywords to pass to the callback function
+    """
+
+    def __init__(self, fn, *args, **kwargs):
+        super(Worker, self).__init__()
+        # Store constructor arguments (re-used for processing)
+        self.fn = fn
+        self.args = args
+        self.kwargs = kwargs
+
+    @pyqtSlot()
+    def run(self):
+        '''
+        Initialise the runner function with passed args, kwargs.
+        '''
+        self.fn(*self.args, **self.kwargs)
 
 
 class CaptureCoverage(QDialog):
@@ -35,6 +64,8 @@ class SubWindow(QMainWindow, Ui_Runner):
             self._stdout.start()
             self._stdout.printOccur.connect(lambda x: appendText(self.outputTextEdit, x))
 
+        self.threadpool = QThreadPool()
+
         self.runButton.released.connect(self.runSeq)
         self.source = list(seq)
         self.updateHistory(self.source[0])
@@ -56,7 +87,7 @@ class SubWindow(QMainWindow, Ui_Runner):
         sub_window = SubWindow(self, self.seqStorage)
         sub_window.show()
 
-# https://stackoverflow.com/questions/52522218/getting-qtwidgets-from-my-custom-qlistwidgetitem
+# https://stackoverflow.com/questions/52522218/
 
     def updateHistory(self, item=None):
         widget = self.currentSeq.itemWidget(self.currentSeq.item(0))
@@ -76,19 +107,8 @@ class SubWindow(QMainWindow, Ui_Runner):
         if item:
             QtTools.AddToListWidget(item, self.currentSeq)
 
-    def runSeq(self):
-        nameCaller()
+    def runSeq_Threaded(self, obj):
 
-        self.sequenceList.clear()
-        self.currentSeq.clear()
-
-        self.runButton.setDisabled(True)
-        self.StopButton.setEnabled(True)
-
-        self.areaInject()
-        self.runLine.setText('Macro started.')
-
-        obj = self.source[0]
         seq_count = 0
 
         while obj:
@@ -116,6 +136,57 @@ class SubWindow(QMainWindow, Ui_Runner):
             self.runButton.setEnabled(True)
             self.StopButton.setDisabled(True)
             # self.updateHistory()
+            # https://stackoverflow.com/questions/60908741/
+
+    def runSeq(self):
+        nameCaller()
+
+        self.sequenceList.clear()
+        self.currentSeq.clear()
+
+        self.runButton.setDisabled(True)
+        self.StopButton.setEnabled(True)
+
+        self.areaInject()
+        self.runLine.setText('Macro started.')
+
+        # obj = self.source[0]
+        # seq_count = 0
+
+        worker = Worker(self.runSeq_Threaded(self.source[0]))
+
+        # Execute
+        self.threadpool.start(worker)
+
+        # while obj:
+        #     self.runLine.setText(f'running "{obj.name}".')
+        #     self.updateHistory(obj)
+        #
+        #     try:
+        #         obj = obj.run()
+        #
+        #     except pyautogui.FailSafeException:
+        #         print('└ PyAutoGui FailSafe')
+        #         self.runLine.setText('Cannot Click (0,0), Aborted.')
+        #         break
+        #
+        #     except ZeroDivisionError:
+        #         print('└ Division by Zero')
+        #         self.runLine.setText('Tried to divide by 0.')
+        #         break
+        #
+        #     else:
+        #         seq_count += 1
+        #
+        # else:
+        #     self.runLine.setText('Macro finished.')
+        #     self.runButton.setEnabled(True)
+        #     self.StopButton.setDisabled(True)
+        #     # self.updateHistory()
+        #     # https://stackoverflow.com/questions/60908741/
+
+    def stopSeq(self):
+        self.runLine.setText('Aborted.')
 
     def _getPos(self):
         pass

@@ -42,7 +42,6 @@ def testcase_generate():
     return seq
 
 
-
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")

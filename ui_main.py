@@ -18,7 +18,7 @@ import MacroMethods
 # TODO: add about screen.
 # TODO: Check Sequence and find if CaptureCoverage call is needed.
 # TODO: connect onFail / onSuccess to object
-# TODO: subwindow stop functionality
+# TODO: subwindow stop functionality    <
 # TODO: add signal for each object change, so image saving could occur with it.
 
 # <Improvement>
@@ -42,7 +42,8 @@ import MacroMethods
 # <References>
 # https://doc.qt.io/qt-5/qthread.html
 # https://devblogs.microsoft.com/python/idiomatic-python-eafp-versus-lbyl/
-# https://stackoverflow.com/questions/44955656/how-to-convert-rgb-pil-image-to-numpy-array-with-3-channels
+# https://stackoverflow.com/questions/44955656/
+# https://machinekoder.com/how-to-not-shoot-yourself-in-the-foot-using-python-qt/
 
 DEBUG = False
 
