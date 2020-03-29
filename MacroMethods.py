@@ -157,17 +157,6 @@ class sLoopEnd(_Base, Loop):
 # --------------------------------------------------------
 
 
-# class Goto(Base):
-#     def __init__(self):
-#         super().__init__()
-#         self.gotoOrder = None
-#
-#     def action(self):
-#         pass
-#         # loop and goto will be handled by MacroSequencer.py.
-#         # this is placeholder.
-
-
 class Wait(_Base):
     """
     Simple waiting Macro Class.

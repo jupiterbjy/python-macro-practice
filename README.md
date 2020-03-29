@@ -27,4 +27,6 @@ Completely rewriting with GUI, OOP.
 Now has separated Macro Editor - Player window. Many functions are not implemented yet.
 But basic functions - edit/save/load/play - works without significant issue when only using basic components - ImageSearch / Wait / Click.
 
+Use Pickle to save & load macro sequence.
+
 Still working on other macro components.

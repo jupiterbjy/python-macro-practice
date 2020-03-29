@@ -56,11 +56,6 @@ class SubWindow(QMainWindow, Ui_Runner):
         sub_window = SubWindow(self, self.seqStorage)
         sub_window.show()
 
-    def updateCurrentItem(self, item):
-        _ = self.currentSeq.takeItem(0)
-        QtTools.AddToListWidget(item, self.sequenceList)
-        QtTools.AddToListWidget(item, self.currentSeq)
-
 # https://stackoverflow.com/questions/52522218/getting-qtwidgets-from-my-custom-qlistwidgetitem
 
     def updateHistory(self, item=None):
