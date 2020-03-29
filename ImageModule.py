@@ -101,9 +101,6 @@ IMG_SAVE = saveImg()      # can't move this up..
 
 
 def imageSearch(target, area, precision=0.85):
-    """
-    position will use tuple(pos(), pos())!
-    """
     img = cv2.cvtColor(np.array(pgui.screenshot(region=area)), cv2.COLOR_RGB2BGR)
 
     img_gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
