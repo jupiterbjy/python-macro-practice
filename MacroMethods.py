@@ -2,16 +2,29 @@
 import functools
 import time
 import pyautogui as pgui
-import cv2
 from PIL import Image
 
 import ImageModule as ImgM
 from Toolset import MemberLoader
 
-# TODO: utilize sys.path.insert?
-
 SLEEP_FUNCTION = time.sleep     # Will be override-d by ui_main.
 imgSaver = ImgM.saveImg()
+ABORT = False
+
+
+def abort():
+    global ABORT
+    ABORT = True
+
+
+def CLEAR():
+    global ABORT
+    ABORT = False
+
+
+def checkAbort():  # for now call this every action() to implement abort.
+    if ABORT:      # inefficient to check if every run.
+        raise Exception('Abort Signaled.')
 
 
 class _Base:
@@ -30,6 +43,8 @@ class _Base:
         self.screenArea = ImgM.Area()
 
     def run(self):
+
+        checkAbort()
 
         if self.action():
             # self.onSuccess.run()          <- this might trigger stack limit..?
@@ -69,6 +84,7 @@ class _ClickBase:
         p = self.target + abs_target
 
         for i in range(self.clickCount):
+            checkAbort()
             SLEEP_FUNCTION(self.clickDelay)
             pgui.click(p)
             print(f'Click: {p}')

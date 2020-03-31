@@ -168,8 +168,28 @@ def AddToListWidget(tgt, item_list_widget):
     item_list_widget.setItemWidget(list_item, item)
 
 
-def QSleep(delay, progress_bar=None, output=False):
-    # Not sure just checking progress_bar is None at start is worse than try-except..
+TIMER_RUNNING = []
+
+
+def AbortTimers():
+    for timer in TIMER_RUNNING:
+        timer.stop()
+
+
+def QSleep(delay, output=False):
+    # https://stackoverflow.com/questions/21079941
+    # https://stackoverflow.com/questions/41309833
+
+    def wait():
+        # loop = QEventLoop()
+        # QTimer.singleShot(delay * 1000, loop.quit)
+        # loop.exec_()
+
+        timer = QTimer()
+        timer.setSingleShot(True)
+        # timer.timeout.connect()
+        TIMER_RUNNING.append(timer)
+        timer.start(delay * 1000)
 
     class context:
         def __enter__(self):
@@ -181,14 +201,10 @@ def QSleep(delay, progress_bar=None, output=False):
 
     if output:
         with context():
-            loop = QEventLoop()
-            QTimer.singleShot(delay * 1000, loop.quit)
-            loop.exec_()
+            wait()
 
     else:
-        loop = QEventLoop()
-        QTimer.singleShot(delay * 1000, loop.quit)
-        loop.exec_()
+        wait()
 
 
 def getCaptureArea():

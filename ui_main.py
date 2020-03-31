@@ -18,7 +18,7 @@ import MacroMethods
 # TODO: add about screen.
 # TODO: Check Sequence and find if CaptureCoverage call is needed.
 # TODO: connect onFail / onSuccess to object
-# TODO: subwindow stop functionality    <
+# TODO: subwindow stop functionality    <<
 # TODO: add signal for each object change, so image saving could occur with it.
 
 # <Improvement>
@@ -29,6 +29,7 @@ import MacroMethods
 # TODO: add button to toggle stdout redirect.
 # TODO: store directories from Qdialog for pickle load / image load separately.
 # TODO: prevent element name being cleared when edit is signaled
+# TODO: utilize sys.path.insert?
 
 # <Optimization TO-DO>
 # TODO: Rewrite runner code to utilize QThread.
@@ -36,16 +37,17 @@ import MacroMethods
 # TODO: change extremely inefficient function 'rgbToHex' in TextTools.
 # TODO: get widget from Main Ui to runner ui without generating new within runner ui.
 # TODO: change SubWindow methods into something signal-based.
+# TODO: Implement abort inside MacroMethods. - use slot later.
 
 # <Bug fix>
+# TODO: fix QWidget vaporizing on runner ui.
 
 # <References>
 # https://doc.qt.io/qt-5/qthread.html
 # https://devblogs.microsoft.com/python/idiomatic-python-eafp-versus-lbyl/
 # https://stackoverflow.com/questions/44955656/
 # https://machinekoder.com/how-to-not-shoot-yourself-in-the-foot-using-python-qt/
-
-DEBUG = False
+# https://doc.qt.io/qt-5/threads-technologies.html
 
 
 class MainWindow(QMainWindow, Ui_MainWindow):
@@ -53,12 +55,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         super(MainWindow, self).__init__(*args, **kwargs)
         self.setupUi(self)
 
-        if not DEBUG:
-            self._stdout = QtTools.StdoutRedirect()
-            self._stdout.start()
-            self._stdout.printOccur.connect(lambda x: appendText(self.outputTextEdit, x))
-
-        # self.seqUndo = []
+        self._stdout = QtTools.StdoutRedirect()
         self.seqStorage = []
         self.seqBackup = []     # Consumes memory!
 
@@ -69,9 +66,13 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         self.insertButton.released.connect(self.AddToSequence)
         self.methodList.currentRowChanged.connect(self._disableOptions)
+
         self.delButton.released.connect(self.remove)
         self.runButton.released.connect(self.runSeq)
         self.editButton.released.connect(self.editSelected)
+
+        self.debugCheck.stateChanged.connect(self.StdRedirect)
+        self.StdRedirect()
 
         self.searchImgLoadButton.released.connect(self.searchLoadImage)
         self.searchImgClearButton.released.connect(self.searchImageUpdate)
@@ -83,6 +84,13 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.actionSave.triggered.connect(self.seqSave)
         self.actionLoad.triggered.connect(self.seqLoad)
         self.initializing()
+
+    def StdRedirect(self):
+        if self.debugCheck.isChecked():
+            self._stdout.stop()
+        else:
+            self._stdout.start()
+            self._stdout.printOccur.connect(lambda x: appendText(self.outputTextEdit, x))
 
     def remove(self):
         """
@@ -123,20 +131,18 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         #     self.seqUndo.append(source)
         #     self.seqStorage = source
 
-    def runSeq(self, full_screen=False):
+    def runSeq(self):
         """
         Prepares and Calls subWindow to run macro.
-        :param full_screen: Not implemented yet.
         """
         MacroMethods.NextSetter(self.seqStorage)
 
         try:
-            window = SubWindow(self, self.seqStorage)
+            window = SubWindow(self, self.seqStorage, debug=self.debugCheck.isChecked())
         except IndexError:
 
-            self._stdout = QtTools.StdoutRedirect()
-            self._stdout.start()
-            self._stdout.printOccur.connect(lambda x: self._appendText(x))
+            if not self.debugCheck.isChecked():
+                self.StdRedirect()
 
             nameCaller()
             print('└ Nothing To play.')

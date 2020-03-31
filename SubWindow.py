@@ -7,9 +7,8 @@ from Toolset import QtTools
 from Toolset.QtTools import appendText
 from Toolset.Tools import nameCaller
 from Qt_UI.Runner import Ui_MainWindow as Ui_Runner
+import MacroMethods
 
-DEBUG = False
-GARBAGE_PREVENT = []
 
 # https://www.learnpyqt.com/courses/concurrent-execution/multithreading-pyqt-applications-qthreadpool/
 
@@ -39,7 +38,10 @@ class Worker(QRunnable):
         '''
         Initialise the runner function with passed args, kwargs.
         '''
-        self.fn(*self.args, **self.kwargs)
+        try:
+            self.fn(*self.args, **self.kwargs)
+        except Exception as exa:
+            print(exa)
 
 
 class CaptureCoverage(QDialog):
@@ -55,22 +57,27 @@ class CaptureCoverage(QDialog):
 
 
 class SubWindow(QMainWindow, Ui_Runner):
-    def __init__(self, parent=None, seq=None):
+    def __init__(self, parent=None, seq=None, debug=False):
         super(SubWindow, self).__init__(parent)
         self.setupUi(self)
 
-        if not DEBUG:
-            self._stdout = QtTools.StdoutRedirect()
-            self._stdout.start()
-            self._stdout.printOccur.connect(lambda x: appendText(self.outputTextEdit, x))
-
-        self.threadpool = QThreadPool()
+        self.debug = debug
+        self._stdout = QtTools.StdoutRedirect()
+        self.StdRedirect()
 
         self.runButton.released.connect(self.runSeq)
+        self.StopButton.released.connect(self.stopSeq)
         self.source = list(seq)
         self.updateHistory(self.source[0])
 
         print('GOT: ', self.source)
+
+    def StdRedirect(self):
+        if self.debug:
+            self._stdout.start()
+            self._stdout.printOccur.connect(lambda x: appendText(self.outputTextEdit, x))
+        else:
+            self._stdout.stop()
 
     def areaInject(self):
 
@@ -150,42 +157,14 @@ class SubWindow(QMainWindow, Ui_Runner):
         self.areaInject()
         self.runLine.setText('Macro started.')
 
-        # obj = self.source[0]
-        # seq_count = 0
+        self.runSeq_Threaded(self.source[0])
 
-        worker = Worker(self.runSeq_Threaded(self.source[0]))
-
-        # Execute
-        self.threadpool.start(worker)
-
-        # while obj:
-        #     self.runLine.setText(f'running "{obj.name}".')
-        #     self.updateHistory(obj)
-        #
-        #     try:
-        #         obj = obj.run()
-        #
-        #     except pyautogui.FailSafeException:
-        #         print('└ PyAutoGui FailSafe')
-        #         self.runLine.setText('Cannot Click (0,0), Aborted.')
-        #         break
-        #
-        #     except ZeroDivisionError:
-        #         print('└ Division by Zero')
-        #         self.runLine.setText('Tried to divide by 0.')
-        #         break
-        #
-        #     else:
-        #         seq_count += 1
-        #
-        # else:
-        #     self.runLine.setText('Macro finished.')
-        #     self.runButton.setEnabled(True)
-        #     self.StopButton.setDisabled(True)
-        #     # self.updateHistory()
-        #     # https://stackoverflow.com/questions/60908741/
+        # worker = Worker(self.runSeq_Threaded(self.source[0]))
+        # worker.run()
 
     def stopSeq(self):
+        MacroMethods.abort()
+        QtTools.AbortTimers()
         self.runLine.setText('Aborted.')
 
     def _getPos(self):
