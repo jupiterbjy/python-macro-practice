@@ -20,10 +20,10 @@ import MacroMethods
 # TODO: connect onFail / onSuccess to object
 # TODO: subwindow stop functionality    <<
 # TODO: add signal for each object change, so image saving could occur with it.
+# TODO: Decide what scanOccurrence function should do.
 
 # <Improvement>
 # TODO: implement random offset via option.
-# TODO: rework scanOccurrence function in ImageModule.
 # TODO: hide edit window while runner window is up and running.
 # TODO: generate icon with target image.
 # TODO: add button to toggle stdout redirect.
@@ -49,6 +49,9 @@ import MacroMethods
 # https://machinekoder.com/how-to-not-shoot-yourself-in-the-foot-using-python-qt/
 # https://doc.qt.io/qt-5/threads-technologies.html
 
+# <Reference To-Do>
+# https://stackoverflow.com/questions/17129362
+
 
 class MainWindow(QMainWindow, Ui_MainWindow):
     def __init__(self, *args, **kwargs):
@@ -58,6 +61,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self._stdout = QtTools.StdoutRedirect()
         self.seqStorage = []
         self.seqBackup = []     # Consumes memory!
+
+        self.runner_signal = QtTools.runnerSignal()
+        self.runner_signal.signal.connect(self.SeqStopped)
 
         self.cachedImage = {
             'search': None,
@@ -138,7 +144,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         MacroMethods.NextSetter(self.seqStorage)
 
         try:
-            window = SubWindow(self, self.seqStorage, debug=self.debugCheck.isChecked())
+            runner = SubWindow(self, self.seqStorage, self.runner_signal,
+                               self.debugCheck.isChecked())
         except IndexError:
 
             if not self.debugCheck.isChecked():
@@ -147,8 +154,17 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             nameCaller()
             print('└ Nothing To play.')
         else:
-            window.show()
-            # self.setWindowOpacity(0.7)
+            self._stdout.stop()
+            # self.hide()
+            runner.show()
+
+    def SeqStopped(self):
+        """
+        Runs when SubWindow is closed.
+        """
+        self._stdout.start()
+        # self.show()
+        nameCaller()
 
     def selectedClass(self):
         out = MacroMethods.class_dict[MacroMethods.__all__[self.methodList.currentRow()]]

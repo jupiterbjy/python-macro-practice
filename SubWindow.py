@@ -11,8 +11,6 @@ import MacroMethods
 
 
 # https://www.learnpyqt.com/courses/concurrent-execution/multithreading-pyqt-applications-qthreadpool/
-
-
 class Worker(QRunnable):
     """
     Worker thread
@@ -35,9 +33,9 @@ class Worker(QRunnable):
 
     @pyqtSlot()
     def run(self):
-        '''
+        """
         Initialise the runner function with passed args, kwargs.
-        '''
+        """
         try:
             self.fn(*self.args, **self.kwargs)
         except Exception as exa:
@@ -57,13 +55,16 @@ class CaptureCoverage(QDialog):
 
 
 class SubWindow(QMainWindow, Ui_Runner):
-    def __init__(self, parent=None, seq=None, debug=False):
+    def __init__(self, parent, seq, finish_signal, debug):
         super(SubWindow, self).__init__(parent)
         self.setupUi(self)
 
         self.debug = debug
         self._stdout = QtTools.StdoutRedirect()
         self.StdRedirect()
+
+        self.finish_signal = finish_signal
+        self.finish_signal.connect(self.close)
 
         self.runButton.released.connect(self.runSeq)
         self.StopButton.released.connect(self.stopSeq)
@@ -144,6 +145,23 @@ class SubWindow(QMainWindow, Ui_Runner):
             self.StopButton.setDisabled(True)
             # self.updateHistory()
             # https://stackoverflow.com/questions/60908741/
+    #
+    # def runSeq(self):
+    #     nameCaller()
+    #
+    #     self.sequenceList.clear()
+    #     self.currentSeq.clear()
+    #
+    #     self.runButton.setDisabled(True)
+    #     self.StopButton.setEnabled(True)
+    #
+    #     self.areaInject()
+    #     self.runLine.setText('Macro started.')
+    #
+    #     self.runSeq_Threaded(self.source[0])
+    #
+    #     # worker = Worker(self.runSeq_Threaded(self.source[0]))
+    #     # worker.run()
 
     def runSeq(self):
         nameCaller()
@@ -157,10 +175,34 @@ class SubWindow(QMainWindow, Ui_Runner):
         self.areaInject()
         self.runLine.setText('Macro started.')
 
-        self.runSeq_Threaded(self.source[0])
+        obj = self.source[0]
+        seq_count = 0
 
-        # worker = Worker(self.runSeq_Threaded(self.source[0]))
-        # worker.run()
+        while obj:
+            self.runLine.setText(f'running "{obj.name}".')
+            self.updateHistory(obj)
+
+            try:
+                obj = obj.run()
+
+            except pyautogui.FailSafeException:
+                print('└ PyAutoGui FailSafe')
+                self.runLine.setText('Cannot Click (0,0), Aborted.')
+                break
+
+            except ZeroDivisionError:
+                print('└ Division by Zero')
+                self.runLine.setText('Tried to divide by 0.')
+                break
+
+            else:
+                seq_count += 1
+
+        else:
+            self.runLine.setText('Macro finished.')
+            self.runButton.setEnabled(True)
+            self.StopButton.setDisabled(True)
+            # self.updateHistory()
 
     def stopSeq(self):
         MacroMethods.abort()

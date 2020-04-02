@@ -14,7 +14,7 @@ from Toolset.TextTools import QtColorize
 from ImageModule import Pos, Area
 
 """
-Module to store all necessary Qt-Related tools.
+Module to store all necessary Qt-Related tools for UI.
 """
 
 IMG_CONVERT = (226, 151, Qt.KeepAspectRatio)
@@ -30,6 +30,10 @@ ICON_ASSIGN = {
     'default': 'template.png',
     'SearchOccurrence': 'count.png',
 }
+
+
+class runnerSignal(QObject):
+    signal = pyqtSignal()
 
 
 class StdoutRedirect(QObject):
@@ -185,11 +189,13 @@ def QSleep(delay, output=False):
         # QTimer.singleShot(delay * 1000, loop.quit)
         # loop.exec_()
 
+        loop = QEventLoop()
         timer = QTimer()
         timer.setSingleShot(True)
-        # timer.timeout.connect()
+        timer.timeout.connect(loop.quit)
         TIMER_RUNNING.append(timer)
         timer.start(delay * 1000)
+        loop.exec_()
 
     class context:
         def __enter__(self):
