@@ -6,7 +6,7 @@ import pyautogui
 from Toolset import QtTools
 from Toolset.QtTools import appendText
 from Toolset.Tools import nameCaller
-from Qt_UI.Runner import Ui_MainWindow as Ui_Runner
+from qtUI.Runner import Ui_MainWindow as Ui_Runner
 import MacroMethods
 
 

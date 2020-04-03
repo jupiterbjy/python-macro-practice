@@ -6,7 +6,7 @@ import pickle
 
 from Toolset import QtTools, FrozenDetect, ObjectDispatch
 from Toolset.QtTools import IMG_CONVERT, ICON_LOCATION, ICON_ASSIGN, appendText
-from Qt_UI.pymacro import Ui_MainWindow
+from qtUI.pymacro import Ui_MainWindow
 from Toolset.Tools import nameCaller
 from SubWindow import SubWindow
 import MacroMethods
@@ -48,6 +48,7 @@ import MacroMethods
 # https://stackoverflow.com/questions/44955656/
 # https://machinekoder.com/how-to-not-shoot-yourself-in-the-foot-using-python-qt/
 # https://doc.qt.io/qt-5/threads-technologies.html
+# https://wikidocs.net/22413
 
 # <Reference To-Do>
 # https://stackoverflow.com/questions/17129362

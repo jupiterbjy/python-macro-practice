@@ -1,0 +1,1259 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MainWindow</class>
+ <widget class="QMainWindow" name="MainWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>735</width>
+    <height>587</height>
+   </rect>
+  </property>
+  <property name="sizePolicy">
+   <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+    <horstretch>0</horstretch>
+    <verstretch>0</verstretch>
+   </sizepolicy>
+  </property>
+  <property name="maximumSize">
+   <size>
+    <width>735</width>
+    <height>587</height>
+   </size>
+  </property>
+  <property name="windowTitle">
+   <string>Python ImageMacro - Test Build</string>
+  </property>
+  <property name="tabShape">
+   <enum>QTabWidget::Rounded</enum>
+  </property>
+  <property name="dockNestingEnabled">
+   <bool>false</bool>
+  </property>
+  <widget class="QWidget" name="centralwidget">
+   <layout class="QGridLayout" name="gridLayout_4">
+    <item row="1" column="0">
+     <widget class="QSplitter" name="splitter">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Fixed" vsizetype="Expanding">
+        <horstretch>1</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
+      <property name="orientation">
+       <enum>Qt::Horizontal</enum>
+      </property>
+      <widget class="QFrame" name="frame_2">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Fixed" vsizetype="Expanding">
+         <horstretch>1</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>170</width>
+         <height>16777215</height>
+        </size>
+       </property>
+       <property name="frameShape">
+        <enum>QFrame::StyledPanel</enum>
+       </property>
+       <property name="frameShadow">
+        <enum>QFrame::Raised</enum>
+       </property>
+       <layout class="QGridLayout" name="gridLayout_2">
+        <item row="0" column="0">
+         <widget class="QListWidget" name="methodList">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Fixed" vsizetype="Expanding">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="minimumSize">
+           <size>
+            <width>150</width>
+            <height>0</height>
+           </size>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>150</width>
+            <height>16777215</height>
+           </size>
+          </property>
+          <property name="verticalScrollBarPolicy">
+           <enum>Qt::ScrollBarAlwaysOff</enum>
+          </property>
+          <property name="horizontalScrollBarPolicy">
+           <enum>Qt::ScrollBarAlwaysOff</enum>
+          </property>
+          <property name="alternatingRowColors">
+           <bool>true</bool>
+          </property>
+          <property name="isWrapping" stdset="0">
+           <bool>false</bool>
+          </property>
+          <property name="resizeMode">
+           <enum>QListView::Fixed</enum>
+          </property>
+          <property name="layoutMode">
+           <enum>QListView::SinglePass</enum>
+          </property>
+          <property name="spacing">
+           <number>1</number>
+          </property>
+          <property name="selectionRectVisible">
+           <bool>true</bool>
+          </property>
+          <item>
+           <property name="text">
+            <string>test1</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>test2</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>test3</string>
+           </property>
+          </item>
+         </widget>
+        </item>
+        <item row="1" column="0">
+         <widget class="QCheckBox" name="debugCheck">
+          <property name="text">
+           <string>DEBUG</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+      <widget class="QFrame" name="frame_3">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="frameShape">
+        <enum>QFrame::StyledPanel</enum>
+       </property>
+       <property name="frameShadow">
+        <enum>QFrame::Raised</enum>
+       </property>
+       <layout class="QGridLayout" name="gridLayout_3">
+        <item row="0" column="0">
+         <widget class="QTabWidget" name="tabWidget">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="minimumSize">
+           <size>
+            <width>0</width>
+            <height>431</height>
+           </size>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>252</width>
+            <height>16777215</height>
+           </size>
+          </property>
+          <property name="currentIndex">
+           <number>3</number>
+          </property>
+          <property name="usesScrollButtons">
+           <bool>true</bool>
+          </property>
+          <widget class="QWidget" name="imgTab">
+           <attribute name="title">
+            <string>Search</string>
+           </attribute>
+           <widget class="QLabel" name="searchImgLabel">
+            <property name="geometry">
+             <rect>
+              <x>10</x>
+              <y>10</y>
+              <width>226</width>
+              <height>151</height>
+             </rect>
+            </property>
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="maximumSize">
+             <size>
+              <width>226</width>
+              <height>151</height>
+             </size>
+            </property>
+            <property name="autoFillBackground">
+             <bool>true</bool>
+            </property>
+            <property name="frameShape">
+             <enum>QFrame::StyledPanel</enum>
+            </property>
+            <property name="text">
+             <string/>
+            </property>
+            <property name="scaledContents">
+             <bool>false</bool>
+            </property>
+            <property name="alignment">
+             <set>Qt::AlignCenter</set>
+            </property>
+           </widget>
+           <widget class="QLabel" name="searchImgNameLabel">
+            <property name="geometry">
+             <rect>
+              <x>14</x>
+              <y>146</y>
+              <width>218</width>
+              <height>12</height>
+             </rect>
+            </property>
+            <property name="autoFillBackground">
+             <bool>false</bool>
+            </property>
+            <property name="styleSheet">
+             <string notr="true">background-color: rgba(0, 0, 0, 120);
+color: rgb(255, 255, 255);</string>
+            </property>
+            <property name="frameShadow">
+             <enum>QFrame::Plain</enum>
+            </property>
+            <property name="lineWidth">
+             <number>0</number>
+            </property>
+            <property name="text">
+             <string>No Image</string>
+            </property>
+            <property name="textFormat">
+             <enum>Qt::RichText</enum>
+            </property>
+            <property name="wordWrap">
+             <bool>false</bool>
+            </property>
+           </widget>
+           <widget class="QGroupBox" name="trialsGroup">
+            <property name="geometry">
+             <rect>
+              <x>130</x>
+              <y>200</y>
+              <width>103</width>
+              <height>131</height>
+             </rect>
+            </property>
+            <property name="title">
+             <string>Trials</string>
+            </property>
+            <widget class="QLabel" name="label">
+             <property name="geometry">
+              <rect>
+               <x>15</x>
+               <y>20</y>
+               <width>81</width>
+               <height>20</height>
+              </rect>
+             </property>
+             <property name="text">
+              <string>Count</string>
+             </property>
+            </widget>
+            <widget class="QSpinBox" name="trialsCountSpin">
+             <property name="geometry">
+              <rect>
+               <x>15</x>
+               <y>40</y>
+               <width>71</width>
+               <height>21</height>
+              </rect>
+             </property>
+            </widget>
+            <widget class="QLabel" name="label_3">
+             <property name="geometry">
+              <rect>
+               <x>14</x>
+               <y>70</y>
+               <width>81</width>
+               <height>20</height>
+              </rect>
+             </property>
+             <property name="text">
+              <string>Interval</string>
+             </property>
+            </widget>
+            <widget class="QDoubleSpinBox" name="trialsIntervalSpin">
+             <property name="geometry">
+              <rect>
+               <x>14</x>
+               <y>90</y>
+               <width>71</width>
+               <height>21</height>
+              </rect>
+             </property>
+             <property name="suffix">
+              <string>s</string>
+             </property>
+             <property name="maximum">
+              <double>10000.000000000000000</double>
+             </property>
+             <property name="singleStep">
+              <double>0.050000000000000</double>
+             </property>
+             <property name="value">
+              <double>0.200000000000000</double>
+             </property>
+            </widget>
+           </widget>
+           <widget class="QGroupBox" name="searchClickGroup">
+            <property name="enabled">
+             <bool>true</bool>
+            </property>
+            <property name="geometry">
+             <rect>
+              <x>10</x>
+              <y>200</y>
+              <width>111</width>
+              <height>131</height>
+             </rect>
+            </property>
+            <property name="title">
+             <string>Click</string>
+            </property>
+            <property name="checkable">
+             <bool>false</bool>
+            </property>
+            <property name="checked">
+             <bool>false</bool>
+            </property>
+            <widget class="QLabel" name="label_2">
+             <property name="geometry">
+              <rect>
+               <x>20</x>
+               <y>20</y>
+               <width>81</width>
+               <height>20</height>
+              </rect>
+             </property>
+             <property name="text">
+              <string>Count</string>
+             </property>
+            </widget>
+            <widget class="QSpinBox" name="searchClickCount">
+             <property name="geometry">
+              <rect>
+               <x>20</x>
+               <y>40</y>
+               <width>71</width>
+               <height>21</height>
+              </rect>
+             </property>
+            </widget>
+            <widget class="QLabel" name="label_4">
+             <property name="geometry">
+              <rect>
+               <x>20</x>
+               <y>70</y>
+               <width>81</width>
+               <height>20</height>
+              </rect>
+             </property>
+             <property name="text">
+              <string>Interval</string>
+             </property>
+            </widget>
+            <widget class="QDoubleSpinBox" name="searchClickInterval">
+             <property name="geometry">
+              <rect>
+               <x>20</x>
+               <y>90</y>
+               <width>71</width>
+               <height>21</height>
+              </rect>
+             </property>
+             <property name="suffix">
+              <string>s</string>
+             </property>
+             <property name="maximum">
+              <double>10000.000000000000000</double>
+             </property>
+             <property name="singleStep">
+              <double>0.050000000000000</double>
+             </property>
+             <property name="value">
+              <double>0.200000000000000</double>
+             </property>
+            </widget>
+           </widget>
+           <widget class="QPushButton" name="searchImgLoadButton">
+            <property name="geometry">
+             <rect>
+              <x>161</x>
+              <y>164</y>
+              <width>75</width>
+              <height>23</height>
+             </rect>
+            </property>
+            <property name="text">
+             <string>Load Img</string>
+            </property>
+           </widget>
+           <widget class="QPushButton" name="searchImgClearButton">
+            <property name="geometry">
+             <rect>
+              <x>80</x>
+              <y>164</y>
+              <width>75</width>
+              <height>23</height>
+             </rect>
+            </property>
+            <property name="text">
+             <string>Clear Img</string>
+            </property>
+           </widget>
+           <widget class="QLabel" name="label_11">
+            <property name="geometry">
+             <rect>
+              <x>13</x>
+              <y>340</y>
+              <width>81</width>
+              <height>20</height>
+             </rect>
+            </property>
+            <property name="text">
+             <string>Precision</string>
+            </property>
+           </widget>
+           <widget class="QSpinBox" name="searchPrecisionSpin">
+            <property name="geometry">
+             <rect>
+              <x>72</x>
+              <y>340</y>
+              <width>51</width>
+              <height>21</height>
+             </rect>
+            </property>
+            <property name="suffix">
+             <string>%</string>
+            </property>
+            <property name="prefix">
+             <string/>
+            </property>
+            <property name="maximum">
+             <number>100</number>
+            </property>
+            <property name="value">
+             <number>85</number>
+            </property>
+           </widget>
+          </widget>
+          <widget class="QWidget" name="tab">
+           <attribute name="title">
+            <string>Count</string>
+           </attribute>
+           <widget class="QLabel" name="countImgLabel">
+            <property name="geometry">
+             <rect>
+              <x>10</x>
+              <y>10</y>
+              <width>226</width>
+              <height>151</height>
+             </rect>
+            </property>
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="maximumSize">
+             <size>
+              <width>226</width>
+              <height>151</height>
+             </size>
+            </property>
+            <property name="autoFillBackground">
+             <bool>true</bool>
+            </property>
+            <property name="frameShape">
+             <enum>QFrame::StyledPanel</enum>
+            </property>
+            <property name="text">
+             <string/>
+            </property>
+            <property name="scaledContents">
+             <bool>false</bool>
+            </property>
+           </widget>
+           <widget class="QLabel" name="countImgNameLabel">
+            <property name="geometry">
+             <rect>
+              <x>14</x>
+              <y>146</y>
+              <width>218</width>
+              <height>12</height>
+             </rect>
+            </property>
+            <property name="autoFillBackground">
+             <bool>false</bool>
+            </property>
+            <property name="styleSheet">
+             <string notr="true">background-color: rgba(0, 0, 0, 120);
+color: rgb(255, 255, 255);</string>
+            </property>
+            <property name="frameShape">
+             <enum>QFrame::NoFrame</enum>
+            </property>
+            <property name="frameShadow">
+             <enum>QFrame::Plain</enum>
+            </property>
+            <property name="lineWidth">
+             <number>0</number>
+            </property>
+            <property name="text">
+             <string>No Image</string>
+            </property>
+            <property name="textFormat">
+             <enum>Qt::RichText</enum>
+            </property>
+           </widget>
+           <widget class="QPushButton" name="countImgLoadButton">
+            <property name="geometry">
+             <rect>
+              <x>161</x>
+              <y>164</y>
+              <width>75</width>
+              <height>23</height>
+             </rect>
+            </property>
+            <property name="text">
+             <string>Load Img</string>
+            </property>
+           </widget>
+           <widget class="QPushButton" name="countImgClearButton">
+            <property name="geometry">
+             <rect>
+              <x>80</x>
+              <y>164</y>
+              <width>75</width>
+              <height>23</height>
+             </rect>
+            </property>
+            <property name="text">
+             <string>Clear Img</string>
+            </property>
+           </widget>
+           <widget class="QGroupBox" name="countClickGroup">
+            <property name="enabled">
+             <bool>true</bool>
+            </property>
+            <property name="geometry">
+             <rect>
+              <x>10</x>
+              <y>200</y>
+              <width>111</width>
+              <height>131</height>
+             </rect>
+            </property>
+            <property name="title">
+             <string>Click</string>
+            </property>
+            <property name="checkable">
+             <bool>false</bool>
+            </property>
+            <property name="checked">
+             <bool>false</bool>
+            </property>
+            <widget class="QLabel" name="label_7">
+             <property name="geometry">
+              <rect>
+               <x>20</x>
+               <y>20</y>
+               <width>81</width>
+               <height>20</height>
+              </rect>
+             </property>
+             <property name="text">
+              <string>Count</string>
+             </property>
+            </widget>
+            <widget class="QSpinBox" name="clickCountSpin_2">
+             <property name="geometry">
+              <rect>
+               <x>20</x>
+               <y>40</y>
+               <width>71</width>
+               <height>21</height>
+              </rect>
+             </property>
+            </widget>
+            <widget class="QLabel" name="label_8">
+             <property name="geometry">
+              <rect>
+               <x>20</x>
+               <y>70</y>
+               <width>81</width>
+               <height>20</height>
+              </rect>
+             </property>
+             <property name="text">
+              <string>Interval</string>
+             </property>
+            </widget>
+            <widget class="QDoubleSpinBox" name="clickIntervalSpin_2">
+             <property name="geometry">
+              <rect>
+               <x>20</x>
+               <y>90</y>
+               <width>71</width>
+               <height>21</height>
+              </rect>
+             </property>
+             <property name="suffix">
+              <string>s</string>
+             </property>
+             <property name="maximum">
+              <double>10000.000000000000000</double>
+             </property>
+             <property name="singleStep">
+              <double>0.050000000000000</double>
+             </property>
+             <property name="value">
+              <double>0.200000000000000</double>
+             </property>
+            </widget>
+           </widget>
+           <widget class="QLabel" name="label_12">
+            <property name="geometry">
+             <rect>
+              <x>11</x>
+              <y>340</y>
+              <width>81</width>
+              <height>20</height>
+             </rect>
+            </property>
+            <property name="text">
+             <string>Precision</string>
+            </property>
+           </widget>
+           <widget class="QSpinBox" name="countPrecisionSpin">
+            <property name="geometry">
+             <rect>
+              <x>70</x>
+              <y>340</y>
+              <width>51</width>
+              <height>21</height>
+             </rect>
+            </property>
+            <property name="suffix">
+             <string>%</string>
+            </property>
+            <property name="prefix">
+             <string/>
+            </property>
+            <property name="maximum">
+             <number>100</number>
+            </property>
+            <property name="value">
+             <number>85</number>
+            </property>
+           </widget>
+          </widget>
+          <widget class="QWidget" name="funcTab">
+           <attribute name="title">
+            <string>Etc</string>
+           </attribute>
+           <widget class="QPushButton" name="funcButton">
+            <property name="geometry">
+             <rect>
+              <x>320</x>
+              <y>460</y>
+              <width>61</width>
+              <height>21</height>
+             </rect>
+            </property>
+            <property name="text">
+             <string>Insert</string>
+            </property>
+           </widget>
+           <widget class="QGroupBox" name="waitGroup">
+            <property name="enabled">
+             <bool>true</bool>
+            </property>
+            <property name="geometry">
+             <rect>
+              <x>10</x>
+              <y>10</y>
+              <width>91</width>
+              <height>51</height>
+             </rect>
+            </property>
+            <property name="title">
+             <string>Wait</string>
+            </property>
+            <property name="checkable">
+             <bool>false</bool>
+            </property>
+            <widget class="QDoubleSpinBox" name="waitSpin">
+             <property name="geometry">
+              <rect>
+               <x>10</x>
+               <y>20</y>
+               <width>71</width>
+               <height>21</height>
+              </rect>
+             </property>
+             <property name="suffix">
+              <string>s</string>
+             </property>
+             <property name="decimals">
+              <number>1</number>
+             </property>
+             <property name="maximum">
+              <double>100000000000.000000000000000</double>
+             </property>
+             <property name="singleStep">
+              <double>0.500000000000000</double>
+             </property>
+             <property name="value">
+              <double>5.000000000000000</double>
+             </property>
+            </widget>
+           </widget>
+           <widget class="QGroupBox" name="loopGroup">
+            <property name="enabled">
+             <bool>true</bool>
+            </property>
+            <property name="geometry">
+             <rect>
+              <x>10</x>
+              <y>70</y>
+              <width>91</width>
+              <height>51</height>
+             </rect>
+            </property>
+            <property name="title">
+             <string>Loop</string>
+            </property>
+            <property name="checkable">
+             <bool>false</bool>
+            </property>
+            <widget class="QSpinBox" name="loopCountSpin">
+             <property name="geometry">
+              <rect>
+               <x>10</x>
+               <y>20</y>
+               <width>71</width>
+               <height>21</height>
+              </rect>
+             </property>
+            </widget>
+           </widget>
+           <widget class="QGroupBox" name="clickGroup">
+            <property name="geometry">
+             <rect>
+              <x>10</x>
+              <y>130</y>
+              <width>91</width>
+              <height>151</height>
+             </rect>
+            </property>
+            <property name="title">
+             <string>Click</string>
+            </property>
+            <widget class="QPushButton" name="coordFromImg">
+             <property name="geometry">
+              <rect>
+               <x>10</x>
+               <y>120</y>
+               <width>71</width>
+               <height>21</height>
+              </rect>
+             </property>
+             <property name="text">
+              <string>From Img</string>
+             </property>
+            </widget>
+            <widget class="QSpinBox" name="ySpin">
+             <property name="geometry">
+              <rect>
+               <x>10</x>
+               <y>90</y>
+               <width>71</width>
+               <height>21</height>
+              </rect>
+             </property>
+             <property name="maximum">
+              <number>10000</number>
+             </property>
+            </widget>
+            <widget class="QLabel" name="label_6">
+             <property name="geometry">
+              <rect>
+               <x>10</x>
+               <y>70</y>
+               <width>81</width>
+               <height>20</height>
+              </rect>
+             </property>
+             <property name="text">
+              <string>Y</string>
+             </property>
+            </widget>
+            <widget class="QSpinBox" name="xSpin">
+             <property name="geometry">
+              <rect>
+               <x>10</x>
+               <y>40</y>
+               <width>71</width>
+               <height>21</height>
+              </rect>
+             </property>
+             <property name="maximum">
+              <number>10000</number>
+             </property>
+            </widget>
+            <widget class="QLabel" name="label_5">
+             <property name="geometry">
+              <rect>
+               <x>10</x>
+               <y>20</y>
+               <width>81</width>
+               <height>20</height>
+              </rect>
+             </property>
+             <property name="text">
+              <string>X</string>
+             </property>
+            </widget>
+           </widget>
+           <widget class="QGroupBox" name="varGroup">
+            <property name="geometry">
+             <rect>
+              <x>110</x>
+              <y>10</y>
+              <width>127</width>
+              <height>294</height>
+             </rect>
+            </property>
+            <property name="title">
+             <string>Variable</string>
+            </property>
+            <widget class="QRadioButton" name="intRadio">
+             <property name="geometry">
+              <rect>
+               <x>10</x>
+               <y>20</y>
+               <width>90</width>
+               <height>16</height>
+              </rect>
+             </property>
+             <property name="text">
+              <string>Integer</string>
+             </property>
+            </widget>
+            <widget class="QRadioButton" name="doubleRadio">
+             <property name="geometry">
+              <rect>
+               <x>10</x>
+               <y>70</y>
+               <width>90</width>
+               <height>16</height>
+              </rect>
+             </property>
+             <property name="text">
+              <string>Double</string>
+             </property>
+            </widget>
+            <widget class="QDoubleSpinBox" name="doubleSpin">
+             <property name="geometry">
+              <rect>
+               <x>30</x>
+               <y>90</y>
+               <width>81</width>
+               <height>22</height>
+              </rect>
+             </property>
+            </widget>
+            <widget class="QSpinBox" name="integerSpin">
+             <property name="geometry">
+              <rect>
+               <x>30</x>
+               <y>40</y>
+               <width>81</width>
+               <height>22</height>
+              </rect>
+             </property>
+            </widget>
+            <widget class="QComboBox" name="variableArg2">
+             <property name="geometry">
+              <rect>
+               <x>10</x>
+               <y>200</y>
+               <width>101</width>
+               <height>22</height>
+              </rect>
+             </property>
+             <property name="currentText">
+              <string/>
+             </property>
+            </widget>
+            <widget class="QComboBox" name="variableArg1">
+             <property name="geometry">
+              <rect>
+               <x>10</x>
+               <y>140</y>
+               <width>101</width>
+               <height>22</height>
+              </rect>
+             </property>
+             <property name="currentText">
+              <string/>
+             </property>
+            </widget>
+            <widget class="QComboBox" name="operatorArg1">
+             <property name="geometry">
+              <rect>
+               <x>40</x>
+               <y>170</y>
+               <width>41</width>
+               <height>22</height>
+              </rect>
+             </property>
+             <property name="currentText">
+              <string/>
+             </property>
+            </widget>
+            <widget class="QComboBox" name="variableArg3">
+             <property name="geometry">
+              <rect>
+               <x>10</x>
+               <y>260</y>
+               <width>101</width>
+               <height>22</height>
+              </rect>
+             </property>
+             <property name="currentText">
+              <string/>
+             </property>
+            </widget>
+            <widget class="QComboBox" name="operatorArg2">
+             <property name="geometry">
+              <rect>
+               <x>40</x>
+               <y>230</y>
+               <width>41</width>
+               <height>22</height>
+              </rect>
+             </property>
+             <property name="currentText">
+              <string/>
+             </property>
+             <item>
+              <property name="text">
+               <string/>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>=</string>
+              </property>
+             </item>
+            </widget>
+            <widget class="QRadioButton" name="calRadio">
+             <property name="geometry">
+              <rect>
+               <x>10</x>
+               <y>120</y>
+               <width>90</width>
+               <height>16</height>
+              </rect>
+             </property>
+             <property name="text">
+              <string>Calculation</string>
+             </property>
+            </widget>
+           </widget>
+          </widget>
+          <widget class="QWidget" name="debugTab">
+           <attribute name="title">
+            <string>Log</string>
+           </attribute>
+           <layout class="QGridLayout" name="gridLayout_6">
+            <item row="1" column="0">
+             <widget class="QTextEdit" name="outputTextEdit">
+              <property name="styleSheet">
+               <string notr="true">background-color: rgb(30, 30, 30);
+color: rgb(230, 230, 230);</string>
+              </property>
+              <property name="frameShape">
+               <enum>QFrame::NoFrame</enum>
+              </property>
+              <property name="frameShadow">
+               <enum>QFrame::Sunken</enum>
+              </property>
+              <property name="lineWidth">
+               <number>1</number>
+              </property>
+              <property name="verticalScrollBarPolicy">
+               <enum>Qt::ScrollBarAlwaysOff</enum>
+              </property>
+              <property name="horizontalScrollBarPolicy">
+               <enum>Qt::ScrollBarAlwaysOff</enum>
+              </property>
+              <property name="autoFormatting">
+               <set>QTextEdit::AutoNone</set>
+              </property>
+              <property name="undoRedoEnabled">
+               <bool>false</bool>
+              </property>
+              <property name="lineWrapMode">
+               <enum>QTextEdit::WidgetWidth</enum>
+              </property>
+              <property name="lineWrapColumnOrWidth">
+               <number>0</number>
+              </property>
+              <property name="readOnly">
+               <bool>true</bool>
+              </property>
+              <property name="placeholderText">
+               <string>test abcde</string>
+              </property>
+             </widget>
+            </item>
+            <item row="0" column="0">
+             <widget class="QCheckBox" name="lockLogCheck">
+              <property name="text">
+               <string>Lock to Log tab</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </widget>
+         </widget>
+        </item>
+        <item row="1" column="0">
+         <layout class="QGridLayout" name="gridLayout_5">
+          <item row="0" column="0">
+           <widget class="QLabel" name="label_9">
+            <property name="maximumSize">
+             <size>
+              <width>16777215</width>
+              <height>20</height>
+             </size>
+            </property>
+            <property name="text">
+             <string>On Success</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="1">
+           <widget class="QLabel" name="label_10">
+            <property name="text">
+             <string>On Fail</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="0">
+           <widget class="QComboBox" name="onSuccessCombo"/>
+          </item>
+          <item row="1" column="1">
+           <widget class="QComboBox" name="onFailCombo"/>
+          </item>
+         </layout>
+        </item>
+        <item row="2" column="0">
+         <layout class="QHBoxLayout" name="horizontalLayout">
+          <item>
+           <widget class="QPushButton" name="runButton">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="text">
+             <string>Run</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="insertButton">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="text">
+             <string>Insert</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="editButton">
+            <property name="enabled">
+             <bool>false</bool>
+            </property>
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="text">
+             <string>Edit</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+       </layout>
+      </widget>
+      <widget class="QFrame" name="frame">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+         <horstretch>2</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="frameShape">
+        <enum>QFrame::StyledPanel</enum>
+       </property>
+       <property name="frameShadow">
+        <enum>QFrame::Raised</enum>
+       </property>
+       <layout class="QGridLayout" name="gridLayout">
+        <item row="1" column="0" colspan="3">
+         <widget class="QListWidget" name="sequenceList">
+          <property name="verticalScrollBarPolicy">
+           <enum>Qt::ScrollBarAlwaysOn</enum>
+          </property>
+          <property name="horizontalScrollBarPolicy">
+           <enum>Qt::ScrollBarAlwaysOff</enum>
+          </property>
+          <property name="alternatingRowColors">
+           <bool>true</bool>
+          </property>
+          <property name="movement">
+           <enum>QListView::Static</enum>
+          </property>
+          <property name="viewMode">
+           <enum>QListView::ListMode</enum>
+          </property>
+          <property name="selectionRectVisible">
+           <bool>true</bool>
+          </property>
+          <item>
+           <property name="text">
+            <string>placeholder1</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>placeholder2</string>
+           </property>
+          </item>
+         </widget>
+        </item>
+        <item row="2" column="2">
+         <widget class="QPushButton" name="delButton">
+          <property name="text">
+           <string>Delete</string>
+          </property>
+         </widget>
+        </item>
+        <item row="2" column="1">
+         <widget class="QPushButton" name="downButton">
+          <property name="text">
+           <string>Move Down</string>
+          </property>
+         </widget>
+        </item>
+        <item row="2" column="0">
+         <widget class="QPushButton" name="upButton">
+          <property name="text">
+           <string>Move Up</string>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="0" colspan="3">
+         <widget class="QLineEdit" name="nameLine">
+          <property name="inputMask">
+           <string/>
+          </property>
+          <property name="placeholderText">
+           <string>Name..</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QMenuBar" name="menubar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>735</width>
+     <height>21</height>
+    </rect>
+   </property>
+   <widget class="QMenu" name="menuMenu">
+    <property name="title">
+     <string>Menu</string>
+    </property>
+    <addaction name="actionSave"/>
+    <addaction name="actionLoad"/>
+    <addaction name="separator"/>
+    <addaction name="actionExit"/>
+    <addaction name="separator"/>
+    <addaction name="actionHelp"/>
+   </widget>
+   <addaction name="menuMenu"/>
+  </widget>
+  <widget class="QStatusBar" name="statusbar">
+   <property name="sizeGripEnabled">
+    <bool>false</bool>
+   </property>
+  </widget>
+  <action name="actionSave">
+   <property name="text">
+    <string>Save (ctrl+s)</string>
+   </property>
+  </action>
+  <action name="actionLoad">
+   <property name="text">
+    <string>Load (ctrl+l)</string>
+   </property>
+  </action>
+  <action name="actionExit">
+   <property name="text">
+    <string>Exit (ctrl+q)</string>
+   </property>
+  </action>
+  <action name="actionHelp">
+   <property name="text">
+    <string>Info</string>
+   </property>
+  </action>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>
