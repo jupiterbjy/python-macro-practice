@@ -70,6 +70,7 @@ class Ui_MainWindow(object):
         self.methodList.addItem(item)
         self.gridLayout_2.addWidget(self.methodList, 0, 0, 1, 1)
         self.debugCheck = QtWidgets.QCheckBox(self.frame_2)
+        self.debugCheck.setChecked(True)
         self.debugCheck.setObjectName("debugCheck")
         self.gridLayout_2.addWidget(self.debugCheck, 1, 0, 1, 1)
         self.frame_3 = QtWidgets.QFrame(self.splitter)

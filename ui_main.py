@@ -8,7 +8,7 @@ from Toolset import QtTools, FrozenDetect, ObjectDispatch
 from Toolset.QtTools import IMG_CONVERT, ICON_LOCATION, ICON_ASSIGN, appendText
 from qtUI.pymacro import Ui_MainWindow
 from Toolset.Tools import nameCaller
-from SubWindow import SubWindow
+from SubWindow import Runner
 import MacroMethods
 
 # <Implementation>
@@ -38,9 +38,10 @@ import MacroMethods
 # TODO: get widget from Main Ui to runner ui without generating new within runner ui.
 # TODO: change SubWindow methods into something signal-based.
 # TODO: Implement abort inside MacroMethods. - use slot later.
+# TODO: change sequence list access to sequence widget object access.
 
 # <Bug fix>
-# TODO: fix QWidget vaporizing on runner ui.
+# TODO: fix QWidget vaporizing on runner ui. << temporal work-around by creating new.
 
 # <References>
 # https://doc.qt.io/qt-5/qthread.html
@@ -145,8 +146,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         MacroMethods.NextSetter(self.seqStorage)
 
         try:
-            runner = SubWindow(self, self.seqStorage, self.runner_signal,
-                               self.debugCheck.isChecked())
+            runner = Runner(self, self.seqStorage, self.runner_signal,
+                            self.debugCheck.isChecked())
         except IndexError:
 
             if not self.debugCheck.isChecked():

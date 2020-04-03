@@ -68,9 +68,9 @@
       <property name="elideMode">
        <enum>Qt::ElideNone</enum>
       </property>
-      <widget class="QWidget" name="Sequence">
+      <widget class="QWidget" name="History">
        <attribute name="title">
-        <string>Sequence</string>
+        <string>History</string>
        </attribute>
        <widget class="QListWidget" name="sequenceList">
         <property name="geometry">

@@ -85,11 +85,16 @@ class SeqItemWidget(QWidget):
                     color: rgb(255, 0, 0);
                 ''')
 
+        self.source = None
+
     def setup(self, t_up, t_down, img_path):
         self.textUpLabel.setText(t_up)
         self.textDownLabel.setText(t_down)
         self.iconLabel.setPixmap(setPix(img_path))
         self.iconLabel.setScaledContents(True)
+
+    def assign(self, obj):
+        self.source = obj
 
 
 class MethodItemWidget(QWidget):
@@ -149,6 +154,7 @@ def GenerateWidget(tgt):
 
     item = SeqItemWidget()
     item.setup(tgt.name, str(type(tgt).__name__ + 'Object'), ''.join([ICON_LOCATION, img]))
+    item.assign(tgt)
 
     return item
 

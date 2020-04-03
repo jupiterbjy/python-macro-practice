@@ -14,7 +14,6 @@ import MacroMethods
 class Worker(QRunnable):
     """
     Worker thread
-
     Inherits from QRunnable to handler worker thread setup, signals and wrap-up.
 
     :param callback: The function callback to run on this worker thread. Supplied args and
@@ -54,9 +53,13 @@ class CaptureCoverage(QDialog):
         self.setWindowOpacity(0.7)
 
 
-class SubWindow(QMainWindow, Ui_Runner):
+# --------------------------------------------------------------
+# https://horensic.tistory.com/85
+# https://stackoverflow.com/questions/12827305
+
+class Runner(QMainWindow, Ui_Runner):
     def __init__(self, parent, seq, finish_signal, debug):
-        super(SubWindow, self).__init__(parent)
+        super(Runner, self).__init__(parent)
         self.setupUi(self)
 
         self.debug = debug
@@ -64,7 +67,7 @@ class SubWindow(QMainWindow, Ui_Runner):
         self.StdRedirect()
 
         self.finish_signal = finish_signal
-        self.finish_signal.connect(self.close)
+        self.finish_signal.signal.connect(self.close)
 
         self.runButton.released.connect(self.runSeq)
         self.StopButton.released.connect(self.stopSeq)
@@ -72,6 +75,9 @@ class SubWindow(QMainWindow, Ui_Runner):
         self.updateHistory(self.source[0])
 
         print('GOT: ', self.source)
+
+    def closeEvent(self, *args, **kwargs):
+        self.deleteLater()
 
     def StdRedirect(self):
         if self.debug:
@@ -92,12 +98,12 @@ class SubWindow(QMainWindow, Ui_Runner):
                 obj.setArea(*area)
 
     def callCaptureCoverage(self):
-        sub_window = SubWindow(self, self.seqStorage)
+        sub_window = Runner(self, self.seqStorage)
         sub_window.show()
 
 # https://stackoverflow.com/questions/52522218/
 
-    def updateHistory(self, item=None):
+    def updateHistory(self, obj=None):
         widget = self.currentSeq.itemWidget(self.currentSeq.item(0))
 
         try:
@@ -112,8 +118,22 @@ class SubWindow(QMainWindow, Ui_Runner):
             self.sequenceList.setItemWidget(new, widget)
             self.currentSeq.clear()
 
-        if item:
-            QtTools.AddToListWidget(item, self.currentSeq)
+        if obj:
+            QtTools.AddToListWidget(obj, self.currentSeq)
+
+    def updateHistory_workaround(self, obj=None):
+
+        widget = self.currentSeq.itemWidget(self.currentSeq.item(0))
+
+        try:
+            QtTools.AddToListWidget(widget.source, self.sequenceList)
+        except AttributeError:
+            pass
+        finally:
+            self.currentSeq.clear()
+
+        if obj:
+            QtTools.AddToListWidget(obj, self.currentSeq)
 
     def runSeq_Threaded(self, obj):
 
@@ -121,7 +141,7 @@ class SubWindow(QMainWindow, Ui_Runner):
 
         while obj:
             self.runLine.setText(f'running "{obj.name}".')
-            self.updateHistory(obj)
+            self.updateHistory_workaround(obj)
 
             try:
                 obj = obj.run()
@@ -143,25 +163,8 @@ class SubWindow(QMainWindow, Ui_Runner):
             self.runLine.setText('Macro finished.')
             self.runButton.setEnabled(True)
             self.StopButton.setDisabled(True)
-            # self.updateHistory()
+            self.updateHistory_workaround()
             # https://stackoverflow.com/questions/60908741/
-    #
-    # def runSeq(self):
-    #     nameCaller()
-    #
-    #     self.sequenceList.clear()
-    #     self.currentSeq.clear()
-    #
-    #     self.runButton.setDisabled(True)
-    #     self.StopButton.setEnabled(True)
-    #
-    #     self.areaInject()
-    #     self.runLine.setText('Macro started.')
-    #
-    #     self.runSeq_Threaded(self.source[0])
-    #
-    #     # worker = Worker(self.runSeq_Threaded(self.source[0]))
-    #     # worker.run()
 
     def runSeq(self):
         nameCaller()
@@ -175,34 +178,51 @@ class SubWindow(QMainWindow, Ui_Runner):
         self.areaInject()
         self.runLine.setText('Macro started.')
 
-        obj = self.source[0]
-        seq_count = 0
+        self.runSeq_Threaded(self.source[0])
 
-        while obj:
-            self.runLine.setText(f'running "{obj.name}".')
-            self.updateHistory(obj)
+        # worker = Worker(self.runSeq_Threaded(self.source[0]))
+        # worker.run()
 
-            try:
-                obj = obj.run()
-
-            except pyautogui.FailSafeException:
-                print('└ PyAutoGui FailSafe')
-                self.runLine.setText('Cannot Click (0,0), Aborted.')
-                break
-
-            except ZeroDivisionError:
-                print('└ Division by Zero')
-                self.runLine.setText('Tried to divide by 0.')
-                break
-
-            else:
-                seq_count += 1
-
-        else:
-            self.runLine.setText('Macro finished.')
-            self.runButton.setEnabled(True)
-            self.StopButton.setDisabled(True)
-            # self.updateHistory()
+    # def runSeq(self):
+    #     nameCaller()
+    #
+    #     self.sequenceList.clear()
+    #     self.currentSeq.clear()
+    #
+    #     self.runButton.setDisabled(True)
+    #     self.StopButton.setEnabled(True)
+    #
+    #     self.areaInject()
+    #     self.runLine.setText('Macro started.')
+    #
+    #     obj = self.source[0]
+    #     seq_count = 0
+    #
+    #     while obj:
+    #         self.runLine.setText(f'running "{obj.name}".')
+    #         self.updateHistory(obj)
+    #
+    #         try:
+    #             obj = obj.run()
+    #
+    #         except pyautogui.FailSafeException:
+    #             print('└ PyAutoGui FailSafe')
+    #             self.runLine.setText('Cannot Click (0,0), Aborted.')
+    #             break
+    #
+    #         except ZeroDivisionError:
+    #             print('└ Division by Zero')
+    #             self.runLine.setText('Tried to divide by 0.')
+    #             break
+    #
+    #         else:
+    #             seq_count += 1
+    #
+    #     else:
+    #         self.runLine.setText('Macro finished.')
+    #         self.runButton.setEnabled(True)
+    #         self.StopButton.setDisabled(True)
+    #         # self.updateHistory()
 
     def stopSeq(self):
         MacroMethods.abort()

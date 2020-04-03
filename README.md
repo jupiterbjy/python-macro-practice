@@ -24,9 +24,9 @@ Completely rewriting with GUI, OOP.
 
 [Demonstration video - v0.0.1](https://youtu.be/lsix-z5S4LQ)
 
-Now has separated Macro Editor - Player window. Many functions are not implemented yet.
-But basic functions - edit/save/load/play - works without significant issue when only using basic components - ImageSearch / Wait / Click.
+Now has separated Macro Editor & Player window. Many functions are not implemented yet.
+But basic functions - edit/save/load/play - works without significant issue when only using basic components. (ImageSearch, Wait, Click)
 
-Use Pickle to save & load macro sequence.
+Uses Pickle to save & load macro sequence.
 
-Still working on other macro components.
+Still working on other macro components. Planning to add drag first.
