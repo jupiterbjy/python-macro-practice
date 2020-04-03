@@ -37,7 +37,6 @@ class _Base:
         super(_Base, self).__init__()
         self.name = ''
         self.next = None           # assign obj to run next.
-        self.actionState = -2      # -2: standby / -1: active / 0: fail / 1: Success
         self.onSuccess = None
         self.onFail = None
         self.screenArea = ImgM.Area()
@@ -184,14 +183,9 @@ class Wait(_Base):
     def __init__(self):
         super().__init__()
         self.delay = 0
-        self.actionState = -2
 
     def action(self):
-
-        self.actionState = -1
         SLEEP_FUNCTION(self.delay)
-        self.actionState = 1
-
         return True
 
 
@@ -320,11 +314,7 @@ class ImageSearch(_Image, _ClickBase):
         for i in range(self.trials):
             self.ImageSearch()
             if self._foundFlag:
-                self.actionState = 1
                 break
-
-        else:
-            self.actionState = 0
 
         self.DumpCaptured(self._foundFlag)
 
@@ -338,8 +328,6 @@ class ImageSearch(_Image, _ClickBase):
         return self.matchPoint[0] + w//2, self.matchPoint[1] + h//2
 
     def action(self):
-        self.actionState = -1
-
         self.ImageSearchMultiple()
 
         if self._foundFlag:
@@ -347,10 +335,9 @@ class ImageSearch(_Image, _ClickBase):
                 self.target.set(*self.ImageCenter)
                 self._click(self.screenArea.p1)
 
-            self.actionState = 1
             return True
+
         else:
-            self.actionState = 0
             return False
 
 
@@ -371,15 +358,29 @@ class SearchOccurrence(_Image, _ClickBase):
             ImgM.scanOccurrence(self.targetImage, self.screenArea.region, self.precision)
 
     def action(self):
-        self.actionState = -1
         self.ScanOccurrence()
 
         if self.matchCount > 0:
-            self.actionState = 1
             return True
         else:
-            self.actionState = 0
             return False
+
+
+class Drag(_Base):
+    """
+    Drag from p1 to p2.
+    """
+    def __init__(self):
+        super().__init__()
+
+        self.p1 = ImgM.Pos()
+        self.p2 = ImgM.Pos()
+
+    def action(self):
+        pgui.moveTo(*self.p1)
+        pgui.dragTo(*self.p2)
+
+        return True
 
 
 class sActions(Wait, Variable, Click, SearchOccurrence, ImageSearch, Loop):

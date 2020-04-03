@@ -2,7 +2,9 @@
 from PyQt5.QtWidgets import *
 from PyQt5.QtCore import *
 import sys
+import os
 import pickle
+import re
 
 from Toolset import QtTools, FrozenDetect, ObjectDispatch
 from Toolset.QtTools import IMG_CONVERT, ICON_LOCATION, ICON_ASSIGN, appendText
@@ -18,30 +20,27 @@ import MacroMethods
 # TODO: add about screen.
 # TODO: Check Sequence and find if CaptureCoverage call is needed.
 # TODO: connect onFail / onSuccess to object
-# TODO: subwindow stop functionality    <<
 # TODO: add signal for each object change, so image saving could occur with it.
 # TODO: Decide what scanOccurrence function should do.
+# TODO: add drag Macro  <<
 
 # <Improvement>
 # TODO: implement random offset via option.
 # TODO: hide edit window while runner window is up and running.
 # TODO: generate icon with target image.
-# TODO: add button to toggle stdout redirect.
-# TODO: store directories from Qdialog for pickle load / image load separately.
-# TODO: prevent element name being cleared when edit is signaled
+# TODO: store directories from Qdialog for pickle load / image load separately. <<
 # TODO: utilize sys.path.insert?
+# TODO: better abort implementation.
 
 # <Optimization TO-DO>
 # TODO: Rewrite runner code to utilize QThread.
-# TODO: cleanup unnecessary properties in MacroMethods.
+# TODO: cleanup unnecessary properties in MacroMethods. <<
 # TODO: change extremely inefficient function 'rgbToHex' in TextTools.
 # TODO: get widget from Main Ui to runner ui without generating new within runner ui.
 # TODO: change SubWindow methods into something signal-based.
 # TODO: Implement abort inside MacroMethods. - use slot later.
-# TODO: change sequence list access to sequence widget object access.
 
 # <Bug fix>
-# TODO: fix QWidget vaporizing on runner ui. << temporal work-around by creating new.
 
 # <References>
 # https://doc.qt.io/qt-5/qthread.html
@@ -92,6 +91,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.actionSave.triggered.connect(self.seqSave)
         self.actionLoad.triggered.connect(self.seqLoad)
         self.initializing()
+
+        self.recentImageDir = os.getcwd()
+        self.recentPickleDir = os.getcwd()
 
     def StdRedirect(self):
         if self.debugCheck.isChecked():
@@ -173,7 +175,10 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         return out()
 
     def selectedSequence(self):
-        return self.seqStorage[self.sequenceList.currentRow()]
+        # return self.seqStorage[self.sequenceList.currentRow()]
+
+        widget = self.sequenceList.itemWidget(self.sequenceList.currentItem())
+        return widget.source
 
     def searchImageUpdate(self, obj=None):
         self._ImageUpdate(self.searchImgLabel, self.searchImgNameLabel, obj)
@@ -188,7 +193,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self._LoadImage(self.countImgLabel, self.countImgNameLabel, 'count')
 
     def editSelected(self):
-        self._configObject(self.selectedSequence())
+        self._configObject(self.selectedSequence(), clear_text=False)
         item = QtTools.GenerateWidget(self.selectedSequence())
 
         self.sequenceList.setItemWidget(self.sequenceList.currentItem(), item)
@@ -215,8 +220,11 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         """
         nameCaller((225, 8, 0))
 
-        name = QFileDialog.getOpenFileName(self)[0]
+        name = QFileDialog.getOpenFileName(self, directory=self.recentPickleDir)[0]
+        self.recentPickleDir = re.sub('([\\])(?!.*\1).*', '', name)
         self.initializing(manual=True)
+
+        # ([\\])(?!.*\1) capture
 
         try:
             target = pickle.load(open(name, 'rb'))
@@ -374,7 +382,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             name_label.setText(obj.name)
             img_label.setStyleSheet('background-color: rgba(40, 40, 40, 255);')
 
-    def _configObject(self, target):
+    def _configObject(self, target, clear_text=True):
         """
         Configs given object with values from GUI.
         :param target: Instance of one of methods from MacroMethods.
@@ -382,7 +390,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         text = self.nameLine.text()
         target.name = type(target).__name__ if text == '' else text
-        self.nameLine.clear()
+
+        if clear_text:
+            self.nameLine.clear()
 
         dispatch = ObjectDispatch.preset()
 
