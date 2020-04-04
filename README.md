@@ -19,14 +19,13 @@ This script will read off from .txt file which contains macro actions. But curre
 
 Completely rewriting with GUI, OOP.
 
-**Current State:** (a03890e)
-![Imgur](https://imgur.com/MiMXmYE.jpg)
-
-[Demonstration video - v0.0.1](https://youtu.be/lsix-z5S4LQ)
+**Current State:** (1e24343)
+![Imgur](https://imgur.com/JSpTtFS.jpg) 
+[Demonstration video - v0.0.2](https://youtu.be/ujzYg3-SDe0)
 
 Now has separated Macro Editor & Player window. Many functions are not implemented yet.
-But basic functions - edit/save/load/play - works without significant issue when only using basic components. (ImageSearch, Wait, Click)
+But basic functions - edit/save/load/play/stop - works without significant issue when only using basic components. (ImageSearch, Wait, Click, Drag)
 
 Uses Pickle to save & load macro sequence.
 
-Still working on other macro components. Planning to add drag first.
+Still working on other macro components.

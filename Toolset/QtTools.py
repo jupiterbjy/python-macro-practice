@@ -8,7 +8,7 @@ import sys
 import pyautogui
 import keyboard
 
-from Toolset.Tools import nameCaller
+from Toolset.Tools import nameCaller, resource_path
 from Toolset.TextTools import QtColorize
 from ImageModule import Pos, Area
 
@@ -91,7 +91,7 @@ class SeqItemWidget(QWidget):
     def setup(self, t_up, t_down, img_path):
         self.textUpLabel.setText(t_up)
         self.textDownLabel.setText(t_down)
-        self.iconLabel.setPixmap(setPix(img_path))
+        self.iconLabel.setPixmap(setPix(resource_path(img_path)))
         self.iconLabel.setScaledContents(True)
 
     def assign(self, obj):
