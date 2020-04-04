@@ -17,7 +17,6 @@ import MacroMethods
 # TODO: give property to base to get remaining time.
 # TODO: add undo
 # TODO: add about screen.
-# TODO: Check Sequence and find if CaptureCoverage call is needed.
 # TODO: connect onFail / onSuccess to object
 # TODO: add signal for each object change, so image saving could occur with it.
 # TODO: Decide what scanOccurrence function should do.
@@ -27,7 +26,6 @@ import MacroMethods
 # TODO: implement random offset via option.
 # TODO: hide edit window while runner window is up and running.
 # TODO: generate icon with target image.
-# TODO: utilize sys.path.insert?
 # TODO: better abort implementation.
 
 # <Optimization TO-DO>

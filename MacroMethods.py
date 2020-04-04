@@ -77,8 +77,6 @@ class _ClickBase:
     Super class for click operation.
     Separated from click object to prevent diamond inherit.
     """
-    # __slots__ = ('target', 'clickCount', 'clickDelay', 'preDelay')
-
     def __init__(self):
         self.target = ImgM.Pos()
         self.clickCount = 0
@@ -116,8 +114,6 @@ class Loop:
     Interface. Internally generate loopStart, LoopEnd.
     LoopEnd set next to
     """
-    # __slots__ = ('loopTime', 'endOrder', 'currentLoop', 'startOrder', 'loopName')
-
     def __init__(self):
 
         self.loopName = ''
@@ -183,7 +179,6 @@ class Wait(_Base):
     Using Asynchronous sleep for Qt - using SLEEP_FUNCTION for now,
     but will support normal time.sleep in case this is used on CLI.
     """
-    # __slots__ = ('delay', 'actionState')
 
     def __init__(self):
         super().__init__()
