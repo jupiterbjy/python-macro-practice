@@ -8,7 +8,6 @@ import sys
 import pyautogui
 import keyboard
 
-from Toolset import Tools
 from Toolset.Tools import nameCaller
 from Toolset.TextTools import QtColorize
 from ImageModule import Pos, Area
@@ -140,11 +139,11 @@ def loadImage(self, recent):
 
     except NameError:
         print(f'└ {file_name} not found.')
-        return None, None
+        return False
 
     except Image.UnidentifiedImageError:
         print(f'└ {file_name} is not an image.')
-        return None, None
+        return False
 
     else:
         return img, file_name, os.path.dirname(file_dir)

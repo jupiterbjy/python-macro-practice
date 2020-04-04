@@ -39,6 +39,7 @@ import MacroMethods
 # TODO: Implement abort inside MacroMethods. - use slot later.
 
 # <Bug fix>
+# TODO: prevent img background reset on load.  <<<
 
 # <References>
 # https://doc.qt.io/qt-5/qthread.html
@@ -179,10 +180,10 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         return widget.source
 
     def searchImageUpdate(self, obj=None):
-        self._ImageUpdate(self.searchImgLabel, self.searchImgNameLabel, obj)
+        self._ImageUpdateToObject(self.searchImgLabel, self.searchImgNameLabel, obj)
 
     def countImageUpdate(self, obj=None):
-        self._ImageUpdate(self.countImgLabel, self.countImgNameLabel, obj)
+        self._ImageUpdateToObject(self.countImgLabel, self.countImgNameLabel, obj)
 
     def searchLoadImage(self):
         self._LoadImage(self.searchImgLabel, self.searchImgNameLabel, 'search')
@@ -355,14 +356,17 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 QtTools.loadImage(self, self.recentImageDir)
         except TypeError:
             return False
+        except ValueError:
+            return False
         else:
             if img is not None:
                 self.cachedImage[cache_name] = img
                 name_label.setText(file_name)
                 img_label.setPixmap(QtTools.setPix(img).scaled(*IMG_CONVERT))
+                img_label.setStyleSheet('background-color: rgba(40, 40, 40, 255);')
 
     @staticmethod
-    def _ImageUpdate(img_label, name_label, obj):
+    def _ImageUpdateToObject(img_label, name_label, obj):
         """
         Update image from image inside object.
         Similar roles with _LoadImage.
