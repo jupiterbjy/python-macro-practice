@@ -27,6 +27,7 @@ import MacroMethods
 # TODO: hide edit window while runner window is up and running.
 # TODO: generate icon with target image.
 # TODO: better abort implementation.
+# TODO: prevent 'edit' after removing selected cause different object to be selected.
 
 # <Optimization TO-DO>
 # TODO: cleanup unnecessary properties in MacroMethods. <<
@@ -34,7 +35,6 @@ import MacroMethods
 # TODO: get widget from Main Ui to runner ui without generating new within runner ui.
 # TODO: Improve Abort mechanism for Wait macro object \
 #  - without While loop, aborting timers.
-
 
 # <Bug fix>
 
@@ -397,7 +397,13 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         @dispatch.register(MacroMethods.Click)
         def _(obj):
-            obj.target.set(self.xSpin.value(), self.ySpin.value())
+            obj.target.set(self.clickX.value(), self.clickY.value())
+
+        @dispatch.register(MacroMethods.Drag)
+        def _(obj):
+            x1, y1 = self.dragFromX.value(), self.dragFromY.value()
+            x2, y2 = self.dragToX.value(), self.dragToY.value()
+            obj.set(x1, y1, x2, y2)
 
         @dispatch.register(MacroMethods.ImageSearch)
         def _(obj):
@@ -441,7 +447,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         """
 
         # 'onClick' signal args with QModel. Making case for it.
+
         if target is None or isinstance(target, QModelIndex):
+
             try:
                 obj = self.seqStorage[self.sequenceList.currentRow()]
             except IndexError:
@@ -465,8 +473,15 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         @dispatch.register(MacroMethods.Click)
         def _(obj_):
-            self.xSpin.setValue(obj_.target.x)
-            self.ySpin.setValue(obj_.target.y)
+            self.clickX.setValue(obj_.target.x)
+            self.clickY.setValue(obj_.target.y)
+
+        @dispatch.register(MacroMethods.Drag)
+        def _(obj_):
+            self.dragFromX.setValue(obj_.p1.x)
+            self.dragFromY.setValue(obj_.p1.y)
+            self.dragToX.setValue(obj_.p2.x)
+            self.dragToY.setValue(obj_.p2.y)
 
         @dispatch.register(MacroMethods.ImageSearch)
         def _(obj_):
@@ -511,6 +526,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         or triggered upon change of selection in Method List.
         :param target: If not specified, will config with selection from method list.
         """
+
         if self.lockLogCheck.isChecked():
             # Assuming users are in log tab as they have toggled checkbox.
             return
@@ -518,11 +534,12 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         # release-connect args with row index for currentRowChanged.
         if target is None or isinstance(target, int):
             selected = self.selectedClass()
+            self.nameLine.clear()
         else:
             selected = target
 
         groups = [self.waitGroup, self.searchClickGroup, self.clickGroup,
-                  self.loopGroup, self.trialsGroup, self.varGroup]
+                  self.loopGroup, self.trialsGroup, self.varGroup, self.dragGroup]
 
         for g in groups:
             g.setEnabled(False)
@@ -537,6 +554,12 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.tabWidget.setCurrentIndex(2)
             self.tabWidget.setTabEnabled(2, True)
             self.clickGroup.setEnabled(True)
+
+        @dispatch.register(MacroMethods.Drag)
+        def _(_):
+            self.tabWidget.setCurrentIndex(2)
+            self.tabWidget.setTabEnabled(2, True)
+            self.dragGroup.setEnabled(True)
 
         @dispatch.register(MacroMethods.ImageSearch)
         def _(_):

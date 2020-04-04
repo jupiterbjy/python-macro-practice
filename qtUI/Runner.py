@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file './Runner.ui'
 #
-# Created by: PyQt5 UI code generator 5.14.1
+# Created by: PyQt5 UI code generator 5.14.2
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -156,7 +156,7 @@ class Ui_MainWindow(object):
         MainWindow.setCentralWidget(self.centralwidget)
 
         self.retranslateUi(MainWindow)
-        self.tabWidget.setCurrentIndex(0)
+        self.tabWidget.setCurrentIndex(1)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
     def retranslateUi(self, MainWindow):
@@ -164,6 +164,7 @@ class Ui_MainWindow(object):
         MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.History), _translate("MainWindow", "History"))
         self.lockLogCheck.setText(_translate("MainWindow", "Lock to Log tab"))
+        self.outputTextEdit.setPlaceholderText(_translate("MainWindow", "Standby"))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.Log), _translate("MainWindow", "Log"))
         self.randOffsetCheck.setText(_translate("MainWindow", "Random Offset"))
         self.runButton.setText(_translate("MainWindow", "Run"))

@@ -20,6 +20,7 @@ IMG_CONVERT = (226, 151, Qt.KeepAspectRatio)
 ICON_LOCATION = './icons/methods/'
 ICON_ASSIGN = {
     'Click': 'click.png',
+    'Drag': 'drag.png',
     'Loop': 'loop.png',
     'sLoopEnd': 'loopEnd.png',
     'sLoopStart': 'loopStart.png',
@@ -183,7 +184,10 @@ TIMER_RUNNING = []
 
 def AbortTimers():
     for timer in TIMER_RUNNING:
-        timer.stop()
+        timer[0].stop()
+        timer[1].quit()
+
+    TIMER_RUNNING.clear()
 
 
 def QSleep(delay, output=False):
@@ -199,7 +203,7 @@ def QSleep(delay, output=False):
         timer = QTimer()
         timer.setSingleShot(True)
         timer.timeout.connect(loop.quit)
-        TIMER_RUNNING.append(timer)
+        TIMER_RUNNING.append((timer, loop))
         timer.start(delay * 1000)
         loop.exec_()
 

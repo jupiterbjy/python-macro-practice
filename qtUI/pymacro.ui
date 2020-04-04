@@ -771,17 +771,17 @@ color: rgb(255, 255, 255);</string>
               <x>10</x>
               <y>130</y>
               <width>91</width>
-              <height>151</height>
+              <height>111</height>
              </rect>
             </property>
             <property name="title">
              <string>Click</string>
             </property>
-            <widget class="QPushButton" name="coordFromImg">
+            <widget class="QPushButton" name="clickFromImg">
              <property name="geometry">
               <rect>
                <x>10</x>
-               <y>120</y>
+               <y>80</y>
                <width>71</width>
                <height>21</height>
               </rect>
@@ -790,25 +790,12 @@ color: rgb(255, 255, 255);</string>
               <string>From Img</string>
              </property>
             </widget>
-            <widget class="QSpinBox" name="ySpin">
-             <property name="geometry">
-              <rect>
-               <x>10</x>
-               <y>90</y>
-               <width>71</width>
-               <height>21</height>
-              </rect>
-             </property>
-             <property name="maximum">
-              <number>10000</number>
-             </property>
-            </widget>
             <widget class="QLabel" name="label_6">
              <property name="geometry">
               <rect>
                <x>10</x>
-               <y>70</y>
-               <width>81</width>
+               <y>50</y>
+               <width>21</width>
                <height>20</height>
               </rect>
              </property>
@@ -816,30 +803,49 @@ color: rgb(255, 255, 255);</string>
               <string>Y</string>
              </property>
             </widget>
-            <widget class="QSpinBox" name="xSpin">
-             <property name="geometry">
-              <rect>
-               <x>10</x>
-               <y>40</y>
-               <width>71</width>
-               <height>21</height>
-              </rect>
-             </property>
-             <property name="maximum">
-              <number>10000</number>
-             </property>
-            </widget>
             <widget class="QLabel" name="label_5">
              <property name="geometry">
               <rect>
                <x>10</x>
                <y>20</y>
-               <width>81</width>
+               <width>21</width>
                <height>20</height>
               </rect>
              </property>
              <property name="text">
               <string>X</string>
+             </property>
+            </widget>
+            <widget class="QSpinBox" name="clickX">
+             <property name="geometry">
+              <rect>
+               <x>40</x>
+               <y>20</y>
+               <width>41</width>
+               <height>22</height>
+              </rect>
+             </property>
+             <property name="frame">
+              <bool>true</bool>
+             </property>
+             <property name="buttonSymbols">
+              <enum>QAbstractSpinBox::NoButtons</enum>
+             </property>
+            </widget>
+            <widget class="QSpinBox" name="clickY">
+             <property name="geometry">
+              <rect>
+               <x>40</x>
+               <y>50</y>
+               <width>41</width>
+               <height>22</height>
+              </rect>
+             </property>
+             <property name="frame">
+              <bool>true</bool>
+             </property>
+             <property name="buttonSymbols">
+              <enum>QAbstractSpinBox::NoButtons</enum>
              </property>
             </widget>
            </widget>
@@ -990,6 +996,122 @@ color: rgb(255, 255, 255);</string>
              </property>
             </widget>
            </widget>
+           <widget class="QGroupBox" name="dragGroup">
+            <property name="geometry">
+             <rect>
+              <x>10</x>
+              <y>250</y>
+              <width>91</width>
+              <height>151</height>
+             </rect>
+            </property>
+            <property name="title">
+             <string>Drag</string>
+            </property>
+            <widget class="QPushButton" name="dragFromImg">
+             <property name="geometry">
+              <rect>
+               <x>10</x>
+               <y>120</y>
+               <width>71</width>
+               <height>21</height>
+              </rect>
+             </property>
+             <property name="text">
+              <string>From Img</string>
+             </property>
+            </widget>
+            <widget class="QLabel" name="label_15">
+             <property name="geometry">
+              <rect>
+               <x>10</x>
+               <y>20</y>
+               <width>81</width>
+               <height>20</height>
+              </rect>
+             </property>
+             <property name="text">
+              <string>From X / Y</string>
+             </property>
+            </widget>
+            <widget class="QSpinBox" name="dragFromX">
+             <property name="geometry">
+              <rect>
+               <x>10</x>
+               <y>40</y>
+               <width>31</width>
+               <height>22</height>
+              </rect>
+             </property>
+             <property name="frame">
+              <bool>true</bool>
+             </property>
+             <property name="buttonSymbols">
+              <enum>QAbstractSpinBox::NoButtons</enum>
+             </property>
+            </widget>
+            <widget class="QSpinBox" name="dragFromY">
+             <property name="geometry">
+              <rect>
+               <x>50</x>
+               <y>40</y>
+               <width>31</width>
+               <height>22</height>
+              </rect>
+             </property>
+             <property name="frame">
+              <bool>true</bool>
+             </property>
+             <property name="buttonSymbols">
+              <enum>QAbstractSpinBox::NoButtons</enum>
+             </property>
+            </widget>
+            <widget class="QLabel" name="label_16">
+             <property name="geometry">
+              <rect>
+               <x>10</x>
+               <y>70</y>
+               <width>81</width>
+               <height>20</height>
+              </rect>
+             </property>
+             <property name="text">
+              <string>To    X / Y</string>
+             </property>
+            </widget>
+            <widget class="QSpinBox" name="dragToY">
+             <property name="geometry">
+              <rect>
+               <x>50</x>
+               <y>90</y>
+               <width>31</width>
+               <height>22</height>
+              </rect>
+             </property>
+             <property name="frame">
+              <bool>true</bool>
+             </property>
+             <property name="buttonSymbols">
+              <enum>QAbstractSpinBox::NoButtons</enum>
+             </property>
+            </widget>
+            <widget class="QSpinBox" name="dragToX">
+             <property name="geometry">
+              <rect>
+               <x>10</x>
+               <y>90</y>
+               <width>31</width>
+               <height>22</height>
+              </rect>
+             </property>
+             <property name="frame">
+              <bool>true</bool>
+             </property>
+             <property name="buttonSymbols">
+              <enum>QAbstractSpinBox::NoButtons</enum>
+             </property>
+            </widget>
+           </widget>
           </widget>
           <widget class="QWidget" name="debugTab">
            <attribute name="title">
@@ -1033,7 +1155,7 @@ color: rgb(230, 230, 230);</string>
                <bool>true</bool>
               </property>
               <property name="placeholderText">
-               <string>test abcde</string>
+               <string>Standby</string>
               </property>
              </widget>
             </item>
@@ -1227,7 +1349,7 @@ color: rgb(230, 230, 230);</string>
     <addaction name="separator"/>
     <addaction name="actionExit"/>
     <addaction name="separator"/>
-    <addaction name="actionHelp"/>
+    <addaction name="actionAbout"/>
    </widget>
    <addaction name="menuMenu"/>
   </widget>
@@ -1251,9 +1373,9 @@ color: rgb(230, 230, 230);</string>
     <string>Exit (ctrl+q)</string>
    </property>
   </action>
-  <action name="actionHelp">
+  <action name="actionAbout">
    <property name="text">
-    <string>Info</string>
+    <string>About</string>
    </property>
   </action>
  </widget>

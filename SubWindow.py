@@ -150,12 +150,12 @@ class Runner(QMainWindow, Ui_Runner):
 
             except pyautogui.FailSafeException:
                 print('└ PyAutoGui FailSafe')
-                self.runLine.setText('Cannot Click (0,0), Aborted.')
+                self.runLine.setText('Cannot Click (0,0)')
                 break
 
             except ZeroDivisionError:
                 print('└ Division by Zero')
-                self.runLine.setText('Tried to divide by 0.')
+                self.runLine.setText('Tried to divide by 0')
                 break
 
             except MacroMethods.AbortException:
@@ -191,7 +191,7 @@ class Runner(QMainWindow, Ui_Runner):
     @staticmethod
     def stopSeq():
         MacroMethods.abort()
-        # QtTools.AbortTimers()
+        QtTools.AbortTimers()
 
     def updateButtonState(self):
 

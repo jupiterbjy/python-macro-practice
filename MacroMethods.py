@@ -79,7 +79,7 @@ class _ClickBase:
     """
     def __init__(self):
         self.target = ImgM.Pos()
-        self.clickCount = 0
+        self.clickCount = 1
         self.clickDelay = 0.01
 
     def _click(self, abs_target=ImgM.Pos()):
@@ -175,24 +175,27 @@ class sLoopEnd(_Base, Loop):
 
 class Wait(_Base):
     """
-    Simple waiting Macro Class.
-    Using Asynchronous sleep for Qt - using SLEEP_FUNCTION for now,
-    but will support normal time.sleep in case this is used on CLI.
+    Using Asynchronous sleep for Qt.
+    but will default to normal time.sleep in case this is used on CLI.
     """
 
     def __init__(self):
         super().__init__()
         self.delay = 0
 
-    def action(self):
+    def action2(self):
         left = self.delay
-        # SLEEP_FUNCTION(self.delay)
+
         while left > 1:
             checkAbort()
             SLEEP_FUNCTION(0.5)
             left -= 0.5
 
         SLEEP_FUNCTION(left)
+        return True
+
+    def action(self):
+        SLEEP_FUNCTION(self.delay)
         return True
 
 
@@ -388,6 +391,10 @@ class Drag(_Base):
         pgui.dragTo(*self.p2)
 
         return True
+
+    def set(self, x1, y1, x2, y2):
+        self.p1.set(x1, y1)
+        self.p2.set(x2, y2)
 
 
 def NextSetter(sequence):
