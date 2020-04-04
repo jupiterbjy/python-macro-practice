@@ -16,8 +16,9 @@ from ImageModule import Pos, Area
 Module to store all necessary Qt-Related tools for UI.
 """
 
+ABOUT_IMAGE = 'About.png'
 IMG_CONVERT = (226, 151, Qt.KeepAspectRatio)
-ICON_LOCATION = './icons/methods/'
+ICON_LOCATION = 'icons/'
 ICON_ASSIGN = {
     'Click': 'click.png',
     'Drag': 'drag.png',

@@ -3,10 +3,11 @@ from PyQt5.QtWidgets import *
 from PyQt5.QtCore import *
 import pyautogui
 
-from Toolset import QtTools
-from Toolset.QtTools import appendText
+from Toolset import QtTools, Tools
+from Toolset.QtTools import appendText, setPix, ABOUT_IMAGE, ICON_LOCATION
 from Toolset.Tools import nameCaller
 from qtUI.Runner import Ui_MainWindow as Ui_Runner
+from qtUI.aboutDialog import Ui_About
 import MacroMethods
 
 
@@ -204,3 +205,10 @@ class Runner(QMainWindow, Ui_Runner):
 
     def _getPos(self):
         pass
+
+
+class About(QMainWindow, Ui_About):
+    def __init__(self, parent, *args, **kwargs):
+        super(About, self).__init__(parent)
+        self.setupUi(self)
+        self.label.setPixmap(setPix(Tools.resource_path(ICON_LOCATION + ABOUT_IMAGE)))

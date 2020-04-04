@@ -82,31 +82,25 @@ class _ClickBase:
         self.clickCount = 1
         self.clickDelay = 0.01
 
-    def _click(self, abs_target=ImgM.Pos()):
-        p = self.target + abs_target
+    def _click(self, target):
 
         for i in range(self.clickCount):
             checkAbort()
             SLEEP_FUNCTION(self.clickDelay)
-            pgui.click(p)
-            print(f'Click: {p}')
+            pgui.click(target)
+            print(f'Click: {target}')
 
 
 class Click(_Base, _ClickBase):
     """
     Interface of Simple Click method.
-    I barely used click on frep too, so I'm not putting empathise on this for now.
     """
     @property
-    def absoluteTarget(self):
-        return self.target
+    def absPos(self):
+        return self.screenArea.p1 + self.target
 
     def action(self):
-        self._click()
-
-
-# --------------------------------------------------------
-# TODO: find better way to embed loop.
+        self._click(self.absPos)
 
 
 class Loop:
@@ -169,8 +163,6 @@ class sLoopEnd(_Base, Loop):
             return True
         else:
             return False
-
-# --------------------------------------------------------
 
 
 class Wait(_Base):
@@ -334,8 +326,11 @@ class ImageSearch(_Image, _ClickBase):
     @property
     def ImageCenter(self):
         w, h = self.targetImage.size
-
         return self.matchPoint[0] + w//2, self.matchPoint[1] + h//2
+
+    @property
+    def absPos(self):
+        return self.screenArea.p1 + self.target
 
     def action(self):
         self.ImageSearchMultiple()
@@ -343,7 +338,7 @@ class ImageSearch(_Image, _ClickBase):
         if self._foundFlag:
             if self.clickOnMatch:
                 self.target.set(*self.ImageCenter)
-                self._click(self.screenArea.p1)
+                self._click(self.absPos)
 
             return True
 
@@ -386,15 +381,23 @@ class Drag(_Base):
         self.p1 = ImgM.Pos()
         self.p2 = ImgM.Pos()
 
-    def action(self):
-        pgui.moveTo(*self.p1)
-        pgui.dragTo(*self.p2)
+    @property
+    def From(self):
+        return self.p1 + self.screenArea.p1
 
-        return True
+    @property
+    def To(self):
+        return self.p2 + self.screenArea.p1
 
     def set(self, x1, y1, x2, y2):
         self.p1.set(x1, y1)
         self.p2.set(x2, y2)
+
+    def action(self):
+        pgui.moveTo(*self.From)
+        pgui.dragTo(*self.To, button='left')
+
+        return True
 
 
 def NextSetter(sequence):

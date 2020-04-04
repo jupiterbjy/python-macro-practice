@@ -5,11 +5,11 @@ import sys
 import os
 import pickle
 
-from Toolset import QtTools, FrozenDetect, ObjectDispatch
+from Toolset import QtTools, ObjectDispatch, Tools
 from Toolset.QtTools import IMG_CONVERT, ICON_LOCATION, ICON_ASSIGN, appendText
 from qtUI.pymacro import Ui_MainWindow
 from Toolset.Tools import nameCaller
-from SubWindow import Runner
+from SubWindow import Runner, About
 import MacroMethods
 
 # <Implementation>
@@ -20,7 +20,7 @@ import MacroMethods
 # TODO: connect onFail / onSuccess to object
 # TODO: add signal for each object change, so image saving could occur with it.
 # TODO: Decide what scanOccurrence function should do.
-# TODO: add drag Macro  <<
+# TODO: fix resource directory.
 
 # <Improvement>
 # TODO: implement random offset via option.
@@ -86,6 +86,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         self.actionSave.triggered.connect(self.seqSave)
         self.actionLoad.triggered.connect(self.seqLoad)
+        self.actionExit.triggered.connect(self.close)
+        self.actionAbout.triggered.connect(self.openAbout)
         self.initializing()
 
         self.recentImageDir = os.getcwd()
@@ -97,6 +99,10 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         else:
             self._stdout.start()
             self._stdout.printOccur.connect(lambda x: appendText(self.outputTextEdit, x))
+
+    def openAbout(self):
+        ui = About(self)
+        ui.show()
 
     def remove(self):
         """
@@ -265,10 +271,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         """
 
         def iconSet(name):
-            """
-            Find corresponding icon in image dict with method name.
-            """
-            return ICON_LOCATION + ICON_ASSIGN.setdefault(name, 'default')
+            temp = ICON_LOCATION + ICON_ASSIGN.setdefault(name, 'default')
+            return Tools.resource_path(temp)
 
         def setItems(item_list):
             """
@@ -602,17 +606,7 @@ def main():
 
 
 if __name__ == '__main__':
-    #
-    # sys._excepthook = sys.excepthook
-    #
-    #
-    # def exception_hook(exctype, value, traceback):
-    #     print(exctype, value, traceback)
-    #     sys._excepthook(exctype, value, traceback)
-    #     sys.exit(1)
-    #
-    #
-    # sys.excepthook = exception_hook
+    Tools.IsFrozen()
+    Tools.MAIN_LOCATION = __file__
 
-    FrozenDetect.IsFrozen()
     main()

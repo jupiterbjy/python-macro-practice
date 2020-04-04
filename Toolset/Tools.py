@@ -1,3 +1,40 @@
+import sys
+import os
+
+
+def IsFrozen(change_dir=True):
+    """
+    Checks whether Python instance is Frozen(aka onefile) or not.
+    :param change_dir: If true, will set working directory where exe is.
+    :return: Returns True-False according to frozen state.
+    """
+    if getattr(sys, 'frozen', False):
+        if change_dir:
+            try:
+                os.chdir(os.path.dirname(sys.executable))
+            except WindowsError as we:
+                print(we)
+        return True
+    else:
+        file_dir = os.path.dirname(sys.argv[0])
+        # Fail-safe in terminal path showing relative path.
+        try:
+            os.chdir(file_dir)
+        except OSError:
+            print('In relative path')
+        return False
+
+
+MAIN_LOCATION = __file__
+
+
+# https://stackoverflow.com/questions/7674790
+def resource_path(relative_path):
+    """ Get absolute path to resource, works for dev and for PyInstaller """
+    base_path = getattr(sys, '_MEIPASS', os.path.dirname(os.path.abspath(MAIN_LOCATION)))
+    print(base_path)
+    return os.path.join(base_path, relative_path)
+
 
 def fileNameExtract(location):
     return (location.split('/'))[-1]
