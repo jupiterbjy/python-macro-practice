@@ -31,15 +31,14 @@ import MacroMethods
 # TODO: better abort implementation.
 
 # <Optimization TO-DO>
-# TODO: Rewrite runner code to utilize QThread.
 # TODO: cleanup unnecessary properties in MacroMethods. <<
 # TODO: change extremely inefficient function 'rgbToHex' in TextTools.
 # TODO: get widget from Main Ui to runner ui without generating new within runner ui.
-# TODO: change SubWindow methods into something signal-based.
-# TODO: Implement abort inside MacroMethods. - use slot later.
+# TODO: Improve Abort mechanism for Wait macro object \
+#  - without While loop, aborting timers.
+
 
 # <Bug fix>
-# TODO: prevent img background reset on load.  <<<
 
 # <References>
 # https://doc.qt.io/qt-5/qthread.html

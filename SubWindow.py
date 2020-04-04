@@ -69,6 +69,8 @@ class Runner(QMainWindow, Ui_Runner):
         self.finish_signal = finish_signal
         self.finish_signal.signal.connect(self.close)
 
+        self.sequenceStarted = False
+
         self.runButton.released.connect(self.runSeq)
         self.StopButton.released.connect(self.stopSeq)
         self.source = list(seq)
@@ -156,78 +158,49 @@ class Runner(QMainWindow, Ui_Runner):
                 self.runLine.setText('Tried to divide by 0.')
                 break
 
+            except MacroMethods.AbortException:
+                print('└ Abort Signaled')
+                self.runLine.setText('Aborted')
+                break
+
             else:
                 seq_count += 1
-
         else:
             self.runLine.setText('Macro finished.')
-            self.runButton.setEnabled(True)
-            self.StopButton.setDisabled(True)
             self.updateHistory_workaround()
-            # https://stackoverflow.com/questions/60908741/
+
+        self.sequenceStarted = False
+        self.updateButtonState()
+        MacroMethods.CLEAR()
 
     def runSeq(self):
         nameCaller()
 
+        self.sequenceStarted = True
+
         self.sequenceList.clear()
         self.currentSeq.clear()
-
-        self.runButton.setDisabled(True)
-        self.StopButton.setEnabled(True)
+        self.updateButtonState()
 
         self.areaInject()
         self.runLine.setText('Macro started.')
 
-        self.runSeq_Threaded(self.source[0])
+        worker = Worker(self.runSeq_Threaded, self.source[0])
+        worker.run()
 
-        # worker = Worker(self.runSeq_Threaded(self.source[0]))
-        # worker.run()
-
-    # def runSeq(self):
-    #     nameCaller()
-    #
-    #     self.sequenceList.clear()
-    #     self.currentSeq.clear()
-    #
-    #     self.runButton.setDisabled(True)
-    #     self.StopButton.setEnabled(True)
-    #
-    #     self.areaInject()
-    #     self.runLine.setText('Macro started.')
-    #
-    #     obj = self.source[0]
-    #     seq_count = 0
-    #
-    #     while obj:
-    #         self.runLine.setText(f'running "{obj.name}".')
-    #         self.updateHistory(obj)
-    #
-    #         try:
-    #             obj = obj.run()
-    #
-    #         except pyautogui.FailSafeException:
-    #             print('└ PyAutoGui FailSafe')
-    #             self.runLine.setText('Cannot Click (0,0), Aborted.')
-    #             break
-    #
-    #         except ZeroDivisionError:
-    #             print('└ Division by Zero')
-    #             self.runLine.setText('Tried to divide by 0.')
-    #             break
-    #
-    #         else:
-    #             seq_count += 1
-    #
-    #     else:
-    #         self.runLine.setText('Macro finished.')
-    #         self.runButton.setEnabled(True)
-    #         self.StopButton.setDisabled(True)
-    #         # self.updateHistory()
-
-    def stopSeq(self):
+    @staticmethod
+    def stopSeq():
         MacroMethods.abort()
-        QtTools.AbortTimers()
-        self.runLine.setText('Aborted.')
+        # QtTools.AbortTimers()
+
+    def updateButtonState(self):
+
+        if self.sequenceStarted:
+            self.runButton.setDisabled(True)
+            self.StopButton.setEnabled(True)
+        else:
+            self.runButton.setEnabled(True)
+            self.StopButton.setDisabled(True)
 
     def _getPos(self):
         pass

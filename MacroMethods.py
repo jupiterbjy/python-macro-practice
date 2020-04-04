@@ -12,6 +12,10 @@ imgSaver = ImgM.saveImg()
 ABORT = False
 
 
+class AbortException(Exception):
+    pass
+
+
 def abort():
     global ABORT
     ABORT = True
@@ -23,8 +27,9 @@ def CLEAR():
 
 
 def checkAbort():  # for now call this every action() to implement abort.
+    global ABORT
     if ABORT:      # inefficient to check if every run.
-        raise Exception('Abort Signaled.')
+        raise AbortException
 
 
 class _Base:
@@ -185,7 +190,14 @@ class Wait(_Base):
         self.delay = 0
 
     def action(self):
-        SLEEP_FUNCTION(self.delay)
+        left = self.delay
+        # SLEEP_FUNCTION(self.delay)
+        while left > 1:
+            checkAbort()
+            SLEEP_FUNCTION(0.5)
+            left -= 0.5
+
+        SLEEP_FUNCTION(left)
         return True
 
 
@@ -383,13 +395,6 @@ class Drag(_Base):
         return True
 
 
-class sActions(Wait, Variable, Click, SearchOccurrence, ImageSearch, Loop):
-    """
-    Unused yet. Only exists to display clean on UML diagram.
-    """
-    pass
-
-
 def NextSetter(sequence):
     """
     Set next for respective object in sequence.
@@ -405,5 +410,5 @@ def NextSetter(sequence):
                 break
 
 
-__all__ = MemberLoader.ListClass(__name__, blacklist={'_', 's'})
-class_dict = MemberLoader.ListClass(__name__, blacklist={'_', 's'}, return_dict=True)
+__all__ = MemberLoader.ListClass(__name__, blacklist={'_', 's', 'Abort'})
+class_dict = MemberLoader.ListClass(__name__, blacklist={'_', 's', 'Abort'}, return_dict=True)
