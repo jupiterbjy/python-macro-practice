@@ -4,7 +4,6 @@ from PyQt5.QtCore import *
 import sys
 import os
 import pickle
-import re
 
 from Toolset import QtTools, FrozenDetect, ObjectDispatch
 from Toolset.QtTools import IMG_CONVERT, ICON_LOCATION, ICON_ASSIGN, appendText
@@ -28,7 +27,6 @@ import MacroMethods
 # TODO: implement random offset via option.
 # TODO: hide edit window while runner window is up and running.
 # TODO: generate icon with target image.
-# TODO: store directories from Qdialog for pickle load / image load separately. <<
 # TODO: utilize sys.path.insert?
 # TODO: better abort implementation.
 
@@ -221,10 +219,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         nameCaller((225, 8, 0))
 
         name = QFileDialog.getOpenFileName(self, directory=self.recentPickleDir)[0]
-        self.recentPickleDir = re.sub('([\\])(?!.*\1).*', '', name)
-        self.initializing(manual=True)
 
-        # ([\\])(?!.*\1) capture
+        self.recentPickleDir = os.path.dirname(name)
+        self.initializing(manual=True)
 
         try:
             target = pickle.load(open(name, 'rb'))
@@ -354,7 +351,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         :return: return false on TypeError.
         """
         try:
-            img, file_name = QtTools.loadImage(self)
+            img, file_name, self.recentImageDir = \
+                QtTools.loadImage(self, self.recentImageDir)
         except TypeError:
             return False
         else:

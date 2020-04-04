@@ -124,11 +124,12 @@ def setPix(image):
         return QPixmap(tmp)
 
 
-def loadImage(self):
+def loadImage(self, recent):
+    import os
     nameCaller()
 
-    file_dir = QFileDialog.getOpenFileName(self)[0]
-    file_name = Tools.fileNameExtract(file_dir)
+    file_dir = QFileDialog.getOpenFileName(self, directory=recent)[0]
+    file_name = os.path.basename(file_dir)
 
     if not file_dir:
         print('└ Canceled')
@@ -142,11 +143,11 @@ def loadImage(self):
         return None, None
 
     except Image.UnidentifiedImageError:
-        print(f'└ {file_name} is not image.')
+        print(f'└ {file_name} is not an image.')
         return None, None
 
     else:
-        return img, file_name
+        return img, file_name, os.path.dirname(file_dir)
 
 
 def GenerateWidget(tgt):
