@@ -13,29 +13,14 @@ from Toolset import MemberLoader, Tools
 SLEEP_FUNCTION = time.sleep     # Will be override-d by ui_main.
 imgSaver = ImgM.saveImg()
 ABORT = False
-
+RAND_OFFSET = False
+OFFSET_MAX = 5
 
 class AbortException(Exception):
     pass
 
 
-# class abort:
-#     def __init__(self):
-#         self.ABORT = False
-
-
-def abort():
-    global ABORT
-    ABORT = True
-
-
-def CLEAR():
-    global ABORT
-    ABORT = False
-
-
 def checkAbort():  # for now call this every action() to implement abort.
-    global ABORT
     if ABORT:      # inefficient to check if every run.
         raise AbortException
 
@@ -97,13 +82,20 @@ class _ClickBase:
         self.clickCount = 1
         self.clickDelay = 0.01
 
+    @staticmethod
+    def finalPos(target):
+        if RAND_OFFSET:
+            return ImgM.RandomOffset(target, OFFSET_MAX)
+
+        return target
+
     def _click(self, target):
 
         for i in range(self.clickCount):
             checkAbort()
             SLEEP_FUNCTION(self.clickDelay)
-            pgui.click(target)
-            print(f'Click: {target}')
+            pgui.click(self.finalPos(target))
+            print(f'Click: {self.finalPos(target)}')
 
 
 class Click(_Base, _ClickBase):
@@ -269,7 +261,6 @@ class _Image(_Base):
         self.capturedImage = None
         self.matchPoint = (0, 0)
         self.precision = 0.85
-        self.offsetMax = 5
 
     def DumpCaptured(self, name=None):
         imgSaver(self.capturedImage, str(name))
@@ -346,9 +337,6 @@ class ImageSearch(_Image, _ClickBase):
                 break
 
         self.DumpCaptured(self._foundFlag)
-
-    def ImageClick(self):
-        pgui.click(ImgM.RandomOffset(self.matchPoint, self.offsetMax))
 
     @property
     def ImageCenter(self):
@@ -446,6 +434,7 @@ def NextSetter(sequence):
                 break
 
 
+# Took way too much time on json serialization...
 def Serializer(obj_list):
     """
     Due to reference of next object that stored in each objects,
@@ -454,7 +443,7 @@ def Serializer(obj_list):
     """
     obj_type = []
     out = []
-    reference_list = [[] for i in range(len(obj_list))]
+    reference_list = [[] for _ in range(len(obj_list))]
 
     for idx, element in enumerate(obj_list):
         element.next = None

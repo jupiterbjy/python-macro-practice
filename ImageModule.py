@@ -151,9 +151,13 @@ def scanOccurrence(target, corner_pos, xy, precision=0.8, threshold=0.3):
     return count, img
 
 
-def RandomOffset(corner_pos, offset):
+def RandomOffset(pos, offset):
     import random
     x_offset = random.randrange(0, offset)
-    corner_pos.x = corner_pos.x + offset
-    corner_pos.y = corner_pos.y + offset - x_offset
+    y_offset = random.randrange(0, offset - x_offset)
+    off = Pos(x_offset, y_offset)
+    try:
+        return pos + off
+    except TypeError:
+        return Pos(*pos) + off
 

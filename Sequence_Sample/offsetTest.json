@@ -1,0 +1,123 @@
+{
+  "type": [
+    "Click",
+    "Click",
+    "Click",
+    "Click",
+    "Click"
+  ],
+  "data": [
+    {
+      "target": [
+        10,
+        10
+      ],
+      "clickCount": 1,
+      "clickDelay": 0.01,
+      "name": "Click",
+      "next": null,
+      "onSuccess": null,
+      "onFail": null,
+      "screenArea": [
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "target": [
+        10,
+        10
+      ],
+      "clickCount": 1,
+      "clickDelay": 0.01,
+      "name": "Click",
+      "next": null,
+      "onSuccess": null,
+      "onFail": null,
+      "screenArea": [
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "target": [
+        10,
+        10
+      ],
+      "clickCount": 1,
+      "clickDelay": 0.01,
+      "name": "Click",
+      "next": null,
+      "onSuccess": null,
+      "onFail": null,
+      "screenArea": [
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "target": [
+        10,
+        10
+      ],
+      "clickCount": 1,
+      "clickDelay": 0.01,
+      "name": "Click",
+      "next": null,
+      "onSuccess": null,
+      "onFail": null,
+      "screenArea": [
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "target": [
+        10,
+        10
+      ],
+      "clickCount": 1,
+      "clickDelay": 0.01,
+      "name": "Click",
+      "next": null,
+      "onSuccess": null,
+      "onFail": null,
+      "screenArea": [
+        0,
+        0,
+        0,
+        0
+      ]
+    }
+  ],
+  "reference": [
+    [
+      null,
+      null
+    ],
+    [
+      0,
+      null
+    ],
+    [
+      1,
+      null
+    ],
+    [
+      2,
+      null
+    ],
+    [
+      3,
+      null
+    ]
+  ]
+}

@@ -167,7 +167,7 @@ def AddToListWidget(tgt, item_list_widget):
     :param tgt: macro object to Add
     :param item_list_widget: QItemListWidget
     """
-    nameCaller((100, 100, 100))
+    nameCaller()
 
     print(f'└ Add: {type(tgt).__name__} "{QtColorize(tgt.name, (0, 217, 127))}"')
 

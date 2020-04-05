@@ -79,6 +79,10 @@ class Runner(QMainWindow, Ui_Runner):
 
         print('GOT: ', self.source)
 
+    def injectGlobals(self):
+        MacroMethods.RAND_OFFSET = self.randOffsetCheck.isChecked()
+        MacroMethods.OFFSET_MAX = self.randOffsetSpin.value()
+
     def closeEvent(self, *args, **kwargs):
         self.deleteLater()
 
@@ -91,14 +95,14 @@ class Runner(QMainWindow, Ui_Runner):
 
     def areaInject(self):
 
-        if not self.fullScreenCheck.isChecked():
-            self.runLine.setText('Press f2 at 2 diagonal corner.')
-            area = QtTools.getCaptureArea()
+        # if not self.fullScreenCheck.isChecked():
+        self.runLine.setText('Press f2 at 2 diagonal corner.')
+        area = QtTools.getCaptureArea()
 
-            self.runLine.setText(str(area))
+        self.runLine.setText(str(area))
 
-            for obj in self.source:
-                obj.setArea(*area)
+        for obj in self.source:
+            obj.setArea(*area)
 
     def callCaptureCoverage(self):
         sub_window = Runner(self, self.seqStorage)
@@ -172,7 +176,7 @@ class Runner(QMainWindow, Ui_Runner):
 
         self.sequenceStarted = False
         self.updateButtonState()
-        MacroMethods.CLEAR()
+        MacroMethods.ABORT = False
 
     def runSeq(self):
         nameCaller()
@@ -183,6 +187,7 @@ class Runner(QMainWindow, Ui_Runner):
         self.currentSeq.clear()
         self.updateButtonState()
 
+        self.injectGlobals()
         self.areaInject()
         self.runLine.setText('Macro started.')
 
@@ -191,7 +196,7 @@ class Runner(QMainWindow, Ui_Runner):
 
     @staticmethod
     def stopSeq():
-        MacroMethods.abort()
+        MacroMethods.ABORT = True
         QtTools.AbortTimers()
 
     def updateButtonState(self):

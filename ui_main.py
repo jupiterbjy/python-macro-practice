@@ -3,7 +3,6 @@ from PyQt5.QtCore import QModelIndex
 from PyQt5.QtWidgets import QFileDialog, QListWidgetItem, QApplication, QMainWindow
 import sys
 import os
-import pickle
 import json
 
 from Toolset import QtTools, ObjectDispatch, Tools
@@ -68,7 +67,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.initializing()
 
         self.recentImageDir = os.getcwd()
-        self.recentPickleDir = os.getcwd()
+        self.recentIoDir = os.getcwd()
 
     def StdRedirect(self):
         if self.debugCheck.isChecked():
@@ -106,8 +105,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         """
         if len(self.seqBackup) >= 4:
             self.seqBackup.pop(0)
+
         self.seqBackup.append(self.seqStorage)
-        nameCaller()
         print(f'└ Backup: {len(self.seqBackup)}')
 
     def undoSeq(self):
@@ -130,12 +129,10 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             runner = Runner(self, self.seqStorage, self.runner_signal,
                             self.debugCheck.isChecked())
         except IndexError:
-
-            if not self.debugCheck.isChecked():
-                self.StdRedirect()
-
+            self.StdRedirect()
             nameCaller()
             print('└ Nothing To play.')
+
         else:
             self._stdout.stop()
             # self.hide()
@@ -145,9 +142,10 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         """
         Runs when SubWindow is closed.
         """
-        self._stdout.start()
+        if self.debugCheck.isChecked():
+            self._stdout.start()
+
         # self.show()
-        nameCaller()
 
     def selectedClass(self):
         out = MacroMethods.class_dict[MacroMethods.__all__[self.methodList.currentRow()]]
@@ -179,36 +177,46 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
     def seqSave(self):
         """
-        Saves current sequence into Pickle byte file.
+        Saves current sequence into json serialized format.
         """
-        nameCaller((225, 8, 0))
-        name = QFileDialog.getSaveFileName(self, 'Save file')[0]
+        nameCaller((225, 8, 0), raw=self.debugCheck.isChecked())
 
-        # try:
-        #     pickle.dump(self.seqStorage, open(name, 'wb'), protocol=pickle.HIGHEST_PROTOCOL)
-        #
-        # except FileNotFoundError:
-        #     print('└ save canceled.')
+        name = QFileDialog.getSaveFileName(self, 'Save file')[0]
+        self.recentIoDir = os.path.dirname(name)
 
         baked = MacroMethods.Serializer(self.seqStorage)
-        json.dump(baked, open(name, 'w'), indent=2, default=lambda x: x.__dict__)
+        try:
+            json.dump(baked, open(name, 'w'), indent=2, default=lambda x: x.__dict__)
+        except FileNotFoundError:
+            print('└ Save canceled')
 
     def seqLoad(self):
         """
-        Loads Saved sequence stored as Bytes - aka HIGHEST_PROTOCOL - pickle file.
+        Loads json serialized Macro Sequence.
         """
-        nameCaller((225, 8, 0))
+        nameCaller((225, 8, 0), raw=self.debugCheck.isChecked())
 
-        name = QFileDialog.getOpenFileName(self, directory=self.recentPickleDir)[0]
-        self.recentPickleDir = os.path.dirname(name)
+        name = QFileDialog.getOpenFileName(self, directory=self.recentIoDir)[0]
+        self.recentIoDir = os.path.dirname(name)
 
         try:
             baked = json.load(open(name, 'r'))
 
+        except json.JSONDecodeError:
+            print('└ JSONDecodeError')
+            return
+
         except UnicodeDecodeError:
-            deserialized = self._LoadPickle(name)
-            if deserialized is None:
-                return
+            if name is None:
+                raise FileNotFoundError
+
+            print('└ UnicodeDecodeError')
+            return
+
+        except FileNotFoundError:
+            print('└ Load canceled')
+            return
+
         else:
             deserialized = MacroMethods.Deserializer(baked)
 
@@ -219,29 +227,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         last = type(self.seqStorage[-1]).__name__
         self.methodList.setCurrentRow(MacroMethods.__all__.index(last))
-
-    @staticmethod
-    def _LoadPickle(name):
-
-        try:
-            loaded = pickle.load(open(name, 'rb'))
-
-        except pickle.UnpicklingError:
-            print('└ Wrong file is supplied.')
-
-        except FileNotFoundError:
-            print('└ File does not exist.')
-
-        except AttributeError:
-            print('└ File is Outdated.')
-
-        except TypeError:
-            print('└ File is Damaged.')
-
-        else:
-            return loaded
-
-        return None
 
     def initializing(self, manual=False):
         """
@@ -372,10 +357,13 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         try:
             img, file_name, self.recentImageDir = \
                 QtTools.loadImage(self, self.recentImageDir)
+
         except TypeError:
             return False
+
         except ValueError:
             return False
+
         else:
             if img is not None:
                 self.cachedImage[cache_name] = img
@@ -415,7 +403,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.nameLine.clear()
 
         try:
-
             if self.onSuccessCombo.currentIndex() != 1:
                 target.onSuccess = self.seqStorage[self.onSuccessCombo.currentIndex() - 1]
 
