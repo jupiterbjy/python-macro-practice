@@ -1,0 +1,17 @@
+@1 Created at  : 2019.6.12 8:58:11
+@2 Last Access : 2019.6.30 13:19:12
+# Macro Data Starts
+
+& EventHardBossRunTrigger 1
+./Event_BossLoop/Hard.png 1 1 5
+./Event_BossLoop/Challenge.png 1 1 5
+./Event_BossLoop/Start.png 1 1 5
+%
+
+& EventHardBossLoopSection -1
+./Event_BossLoop/Loop_next.png 1 10 50
+./Event_BossLoop/Retry.png 1 1 10
+./Event_BossLoop/Retry.png 2 0.5 2
+./Event_BossLoop/Retry_ok.png 1 1 5
+./Event_BossLoop/Retry_ok.png 2 0.5 2
+%

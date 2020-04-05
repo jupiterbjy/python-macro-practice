@@ -9,6 +9,7 @@
       <excludeFolder url="file://$MODULE_DIR$/CustomAction" />
       <excludeFolder url="file://$MODULE_DIR$/Dungeon" />
       <excludeFolder url="file://$MODULE_DIR$/Event_BossLoop" />
+      <excludeFolder url="file://$MODULE_DIR$/Legacy" />
       <excludeFolder url="file://$MODULE_DIR$/Preset1" />
       <excludeFolder url="file://$MODULE_DIR$/Preset2" />
       <excludeFolder url="file://$MODULE_DIR$/Preset_backup" />

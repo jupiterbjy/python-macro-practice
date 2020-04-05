@@ -1,0 +1,7 @@
+@1 Created at  : 2019.6.12 8:58:11
+@2 Last Access : 2019.7.12 10:48:38
+# Macro Data Starts
+
+& CharaselectDemonstration 1
+./CoreImage/CharaOffset.png 3 2 10
+%
