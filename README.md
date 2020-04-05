@@ -1,7 +1,6 @@
 #### Introduction
-Noob's attempt on language he never learned about.
 
-Currently avg.80 mins per day is allocated for this personal project.
+Avg.80 mins per day is allocated for this personal project.
 
 ----------------
 ###### Previous:

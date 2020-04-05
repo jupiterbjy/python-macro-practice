@@ -3,6 +3,7 @@ import functools
 import time
 import pyautogui as pgui
 from PIL import Image
+import json
 
 import ImageModule as ImgM
 from Toolset import MemberLoader
@@ -72,6 +73,14 @@ class _Base:
 
     def setArea(self, x1, y1, x2, y2):
         self.screenArea = ImgM.Area(x1, y1, x2, y2)
+
+    def postLoadProcess(self):
+        if isinstance(self.screenArea, list):
+            self.screenArea = ImgM.Area(*self.screenArea)
+
+    def serialize_prepare(self):
+        self.screenArea = [*self.screenArea]
+
 
 # --------------------------------------------------------
 
@@ -176,16 +185,16 @@ class Wait(_Base):
         super().__init__()
         self.delay = 0
 
-    def action2(self):
-        left = self.delay
-
-        while left > 1:
-            checkAbort()
-            SLEEP_FUNCTION(0.5)
-            left -= 0.5
-
-        SLEEP_FUNCTION(left)
-        return True
+    # def action2(self):
+    #     left = self.delay
+    #
+    #     while left > 1:
+    #         checkAbort()
+    #         SLEEP_FUNCTION(0.5)
+    #         left -= 0.5
+    #
+    #     SLEEP_FUNCTION(left)
+    #     return True
 
     def action(self):
         SLEEP_FUNCTION(self.delay)
@@ -258,7 +267,7 @@ class _Image(_Base):
         self._targetImage = None
         self.targetName = None
         self.capturedImage = None
-        self.matchPoint = ImgM.Pos()
+        self.matchPoint = (0, 0)
         self.precision = 0.85
         self.offsetMax = 5
 
