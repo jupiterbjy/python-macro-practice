@@ -15,14 +15,14 @@ def IsFrozen(change_dir=True):
             except WindowsError as we:
                 print(we)
         return True
-    else:
-        file_dir = os.path.dirname(sys.argv[0])
-        # Fail-safe in terminal path showing relative path.
-        try:
-            os.chdir(file_dir)
-        except OSError:
-            print('In relative path')
-        return False
+
+    file_dir = os.path.dirname(sys.argv[0])
+    # Fail-safe in terminal path showing relative path.
+    try:
+        os.chdir(file_dir)
+    except OSError:
+        print('In relative path')
+    return False
 
 
 MAIN_LOCATION = __file__
