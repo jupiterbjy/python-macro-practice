@@ -1,6 +1,6 @@
 
-from PyQt5.QtWidgets import *
-from PyQt5.QtCore import *
+from PyQt5.QtCore import QModelIndex
+from PyQt5.QtWidgets import QFileDialog, QListWidgetItem, QApplication, QMainWindow
 import sys
 import os
 import pickle
@@ -341,7 +341,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         Unlike freps, on PC one might not use full screen capture at all due to speed.
         Therefore nothing is concrete clear about what this function will be.
         """
-        pass
 
     def _LoadImage(self, img_label, name_label, cache_name):
         """
@@ -511,7 +510,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         @dispatch.register(MacroMethods.SearchOccurrence)
         def _(obj_):
             self.countImageUpdate(obj_)
-            pass
 
         @dispatch.register(MacroMethods.Variable)
         def _(obj_):

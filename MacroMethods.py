@@ -16,6 +16,11 @@ class AbortException(Exception):
     pass
 
 
+class abort:
+    def __init__(self):
+        self.ABORT = False
+
+
 def abort():
     global ABORT
     ABORT = True
@@ -51,17 +56,16 @@ class _Base:
         checkAbort()
 
         if self.action():
-            # self.onSuccess.run()          <- this might trigger stack limit..?
+
             if self.onSuccess is None:
                 return self.next
-            else:
-                return self.onSuccess
 
-        else:
-            if self.onFail is None:
-                return self.next
-            else:
-                return self.onFail
+            return self.onSuccess
+
+        if self.onFail is None:
+            return self.next
+
+        return self.onFail
 
     def action(self):
         return True
@@ -159,10 +163,7 @@ class sLoopEnd(_Base, Loop):
         # Will override onSuccess for loop, onFail for loop end.
 
     def action(self):
-        if self.currentLoop < self.loopTime:
-            return True
-        else:
-            return False
+        return self.currentLoop < self.loopTime
 
 
 class Wait(_Base):
@@ -201,9 +202,6 @@ class Variable(_Base):
         super().__init__()
         self.name = 'variable'
         self.value = 0
-
-    # TODO: complete below parts. Will support simple variable calculation with these.
-    # TODO: implement variable assign
 
     def __iadd__(self, other):
         self.value = self.value + other.value
@@ -342,8 +340,7 @@ class ImageSearch(_Image, _ClickBase):
 
             return True
 
-        else:
-            return False
+        return False
 
 
 class SearchOccurrence(_Image, _ClickBase):
@@ -364,11 +361,7 @@ class SearchOccurrence(_Image, _ClickBase):
 
     def action(self):
         self.ScanOccurrence()
-
-        if self.matchCount > 0:
-            return True
-        else:
-            return False
+        return self.matchCount > 0
 
 
 class Drag(_Base):
