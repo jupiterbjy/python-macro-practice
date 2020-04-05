@@ -1,7 +1,8 @@
 
-from PyQt5.QtWidgets import *
-from PyQt5.QtCore import *
-from PyQt5.QtGui import *
+from PyQt5.QtGui import QPixmap, QTextCursor
+from PyQt5.QtCore import Qt, QObject, pyqtSignal, QSize, QTimer, QEventLoop
+from PyQt5.QtWidgets import QFileDialog, QListWidgetItem, QApplication, QWidget, \
+                            QVBoxLayout, QHBoxLayout, QLabel, QGridLayout
 from PIL import Image
 from PIL.ImageQt import ImageQt
 import sys
@@ -12,9 +13,7 @@ from Toolset.Tools import nameCaller, resource_path
 from Toolset.TextTools import QtColorize
 from ImageModule import Pos, Area
 
-"""
-Module to store all necessary Qt-Related tools for UI.
-"""
+# Module to store all necessary Qt-Related tools for UI.
 
 ABOUT_IMAGE = 'About.png'
 IMG_CONVERT = (226, 151, Qt.KeepAspectRatio)
@@ -55,7 +54,7 @@ class StdoutRedirect(QObject):
 
     def start(self):
         sys.stdout.write = self.write
-        sys.stderr.write = lambda msg: self.write(msg)
+        sys.stderr.write = self.write
 
     def write(self, s):
         sys.stdout.flush()
@@ -119,10 +118,11 @@ class MethodItemWidget(QWidget):
 def setPix(image):
     if isinstance(image, str):
         return QPixmap(image)
-    else:
-        tmp = ImageQt(image).copy()     # Plain ImageQt() call don't return QImage.
-        # TransformMode => Qt::SmoothTransformation for better quality is possible.
-        return QPixmap(tmp)
+
+    tmp = ImageQt(image).copy()     # Plain ImageQt() call don't return QImage.
+    return QPixmap(tmp)
+
+    # TransformMode => Qt::SmoothTransformation for better quality is possible.
 
 
 def loadImage(self, recent):
@@ -273,8 +273,7 @@ def returnRow(q_list):
     except AttributeError:
         raise AttributeError(f'Expected QListWidget, got {type(q_list)}.')
 
-    else:
-        if row == -1:
-            raise IndexError('Nothing Selected.')
-        else:
-            return row
+    if row == -1:
+        raise IndexError('Nothing Selected.')
+
+    return row
