@@ -1,0 +1,171 @@
+{
+  "type": [
+    "Wait",
+    "Click",
+    "Wait",
+    "Drag",
+    "Wait",
+    "ImageSearch",
+    "Drag"
+  ],
+  "data": [
+    {
+      "name": "Wait",
+      "next": null,
+      "onSuccess": null,
+      "onFail": null,
+      "screenArea": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "delay": 1.5
+    },
+    {
+      "target": [
+        20,
+        20
+      ],
+      "clickCount": 1,
+      "clickDelay": 0.01,
+      "name": "Click",
+      "next": null,
+      "onSuccess": null,
+      "onFail": null,
+      "screenArea": [
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "Wait - Renaming!",
+      "next": null,
+      "onSuccess": null,
+      "onFail": null,
+      "screenArea": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "delay": 1.5
+    },
+    {
+      "name": "Drag",
+      "next": null,
+      "onSuccess": null,
+      "onFail": null,
+      "screenArea": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "p1": [
+        20,
+        30
+      ],
+      "p2": [
+        30,
+        20
+      ]
+    },
+    {
+      "name": "Wait",
+      "next": null,
+      "onSuccess": null,
+      "onFail": null,
+      "screenArea": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "delay": 1.5
+    },
+    {
+      "target": {
+        "x": 0,
+        "y": 0
+      },
+      "clickCount": 1,
+      "clickDelay": 0.2,
+      "name": "Blue",
+      "next": null,
+      "onSuccess": null,
+      "onFail": null,
+      "screenArea": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "_targetImage": "iVBORw0KGgoAAAANSUhEUgAAAC8AAAAvCAIAAAD8RQT7AAAEaklEQVR4nK2XS0tcQRCFq6r7qiQxICSBPCALg4gLF2YpxGV+gVsXWQQCIbsEXAluAwEhkD+oREXJEBx1HPRmcftRj+47o0Z60dOjU98951T1iMvLy3Dvn+HZu7+nH28u3zYEjYOG9PIEDUJD4DHsfbdX654co9Gb05PPF2fvG4KmAUdxubwnjBsCh/GkO0Sx7kVzMvhycvLJAXgfypPkCCcMpQeI7kwzHK0fD76Nr5b8DDgAB5mDuuXCJmBh3nCgsDo4uBPN8fDrn7MPBOBnwLVAAA5iGaMNVyhb9l+curxeObrYGY1XO0kIwLVsQ0AchUmVWJUwQa24bkEzuN48vNx1CMmdLEy3wVg+2kRKJBRAiePW2hzdbA9utjIHV4VhERqnXEhGTnSKDjNrWm2uYf43fT+HDU8MhS1q2QajJNwm1VNxw1M8lTZXtHjgf4xhyZc4hFkJC8E5bRNJIKvN5A6/cGsHs3stPvEAPjYOtynLw81q5egjYZNIMckO76EZNuv7D34SzvlIMKU8BLEAa7FkkErxVNqczb7bf/zLAzkUHDUgneVWDB4eHcK8EdGpaTOcW99f+OWRuredtMkCpanDLSMQ41jE2QpDlZ66mFvbf/rTk0ZJfimRiGMxpiCP1YZkaEiMHEFzNbt48HyP3Fwqz1GquSn5FVZRm1JutDbXNH/w8kc7+yT5krVBEx00NCk0TKcU53ybcm1IzBtB8/v19/HDpSRDjzbeotggp71qb3ZzZWFUhx+92j5f2PBRCacgSnGesrnUtcCznKIjnBo82xy82Eoc+dFrZk2iUcPQDkAyQQ5OXT5aOXyzGwqgqWdOat1OlolPRRtnFuQ8b46WdlzDCtvyRionDa3Kk7IM+XrKTEWnRgurWomKMNlKKPAVtFGhtijWqSCMQpHlJ1pWCLL0S1xemAejdsp5U3KSVIUgV5jERdFWg5xvBvIFVQoEFbW8ZNJ+RRTHup0qbRWc6mS0takikjCrZxIyhSjdYio37Os6cacoPVkvStE4+5ID6QDJ/7O4PNqpjul2KBUs1epZJ/kVx7H0SKcq6Uk+En/Zz2SBol9JHt5iLMWxUjCLQUylk0w0oaZR0cndbqaOd16nOEBAwUFFo0/SL/fLwy4v3VPk4+RWYkiFlGtFs0ihYInGfBczKVYlOZk6TJKoSClVesziWOZrV9CGuEexMFnBTKJ7/Kq2Okh5WIZybmxh21lUEYn6adDQqMuLO6VoaiK5kkiimAmTwC1mGUo0mmCSWVkb2W7ir5hUZRpgl1fnFDkgBKwT2EMrXiE9ptfKNDLOHn2FY4qXyi9+LtqwXx6IWpDKzSSnBEflvDA/a1mWfmFHgx1g/Ai8jUKps1RidAeAkLBAAyw3dAegCpkySwSfC8OkojaY5dEz5yxQBUW/W8pTfnTUBIUsAxCAJxc+OgOxkgiFdkOGiL1qcSYxeEp+IUhtEDIZf3qMJyhR+rPSvynK49HlMlakHkeQCZMeZiKKmMuoaf4BHNym6i6oxlAAAAAASUVORK5CYII=",
+      "targetName": null,
+      "capturedImage": null,
+      "matchPoint": {
+        "x": 0,
+        "y": 0
+      },
+      "precision": 0.9,
+      "offsetMax": 5,
+      "loopDelay": 0.2,
+      "trials": 5,
+      "clickOnMatch": true,
+      "_foundFlag": false
+    },
+    {
+      "name": "Bla",
+      "next": null,
+      "onSuccess": null,
+      "onFail": null,
+      "screenArea": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "p1": [
+        30,
+        30
+      ],
+      "p2": [
+        40,
+        40
+      ]
+    }
+  ],
+  "reference": [
+    [
+      null,
+      null
+    ],
+    [
+      null,
+      null
+    ],
+    [
+      null,
+      null
+    ],
+    [
+      null,
+      null
+    ],
+    [
+      null,
+      null
+    ],
+    [
+      null,
+      null
+    ],
+    [
+      null,
+      null
+    ]
+  ]
+}

@@ -51,6 +51,9 @@ class Area:
         self.p2 = Pos(x2, y2)
         self.sort()
 
+    def __call__(self, *args, **kwargs):
+        return *self.p1(), *self.p2()
+
     def __iter__(self):
         return iter((*self.p1, *self.p2))
 

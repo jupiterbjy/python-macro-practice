@@ -32,22 +32,15 @@ MAIN_LOCATION = __file__
 def resource_path(relative_path):
     """ Get absolute path to resource, works for dev and for PyInstaller """
     base_path = getattr(sys, '_MEIPASS', os.path.dirname(os.path.abspath(MAIN_LOCATION)))
-    print(base_path)
     return os.path.join(base_path, relative_path)
 
 
-def fileNameExtract(location):
-    return (location.split('/'))[-1]
+def listFindInstance(instance, obj_list):
+    for idx, obj in enumerate(obj_list):
+        if instance is obj:
+            return idx
 
-
-def fileOpen(loc, mode='rt'):
-    try:
-        f = open(loc, mode)
-
-    except FileNotFoundError:
-        print()
-    else:
-        return f
+    return None
 
 
 def arrSwap(arr, idx1, idx2):

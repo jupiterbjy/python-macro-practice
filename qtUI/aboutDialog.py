@@ -66,4 +66,4 @@ class Ui_About(object):
 "<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
 "p, li { white-space: pre-wrap; }\n"
 "</style></head><body style=\" font-family:\'Gulim\'; font-size:9pt; font-weight:400; font-style:normal;\">\n"
-"<p align=\"right\" style=\" margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:\'SFMono-Regular,Consolas\'; font-size:11pt; color:#664a26;\">Copyright (c) 2019 jupiterbjy<br /><br />A random hikineet who makes more mistakes than one could accept.<br /><br />Contact me to:<br />nyarukoishi@gmail.com<br /><br />2020-04-04<br />v 0.0.2</span></p></body></html>"))
+"<p align=\"right\" style=\" margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:\'Consolas\'; font-size:11pt; color:#664a26;\">Copyright (c) 2019 jupiterbjy<br /><br />A random hikineet who makes more mistakes than one could accept.<br /><br />Contact me to:<br />nyarukoishi@gmail.com<br /><br />2020-04-04<br />v 0.0.2</span></p></body></html>"))

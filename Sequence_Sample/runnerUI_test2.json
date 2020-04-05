@@ -1,0 +1,46 @@
+{
+  "type": [
+    "Wait",
+    "Wait"
+  ],
+  "data": [
+    {
+      "name": "Wait",
+      "next": null,
+      "actionState": 1,
+      "onSuccess": null,
+      "onFail": null,
+      "screenArea": [
+        0,
+        112,
+        1122,
+        1079
+      ],
+      "delay": 1.0
+    },
+    {
+      "name": "Wait",
+      "next": null,
+      "actionState": -2,
+      "onSuccess": null,
+      "onFail": null,
+      "screenArea": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "delay": 1.0
+    }
+  ],
+  "reference": [
+    [
+      null,
+      null
+    ],
+    [
+      null,
+      null
+    ]
+  ]
+}

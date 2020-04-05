@@ -4,6 +4,7 @@ from PyQt5.QtWidgets import QFileDialog, QListWidgetItem, QApplication, QMainWin
 import sys
 import os
 import pickle
+import json
 
 from Toolset import QtTools, ObjectDispatch, Tools
 from Toolset.QtTools import IMG_CONVERT, ICON_LOCATION, ICON_ASSIGN, appendText
@@ -153,8 +154,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         return out()
 
     def selectedSequence(self):
-        # return self.seqStorage[self.sequenceList.currentRow()]
-
         widget = self.sequenceList.itemWidget(self.sequenceList.currentItem())
         return widget.source
 
@@ -171,27 +170,29 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self._LoadImage(self.countImgLabel, self.countImgNameLabel, 'count')
 
     def editSelected(self):
+        print(f'Edit: {self.selectedSequence().name}')
         self._configObject(self.selectedSequence(), clear_text=False)
+        self._comboBoxUpdateNew()
         item = QtTools.GenerateWidget(self.selectedSequence())
 
         self.sequenceList.setItemWidget(self.sequenceList.currentItem(), item)
 
-    # noinspection PyCallByClass,PyArgumentList
     def seqSave(self):
         """
         Saves current sequence into Pickle byte file.
         """
         nameCaller((225, 8, 0))
         name = QFileDialog.getSaveFileName(self, 'Save file')[0]
-        MacroMethods.NextSetter(self.seqStorage)
 
-        try:
-            pickle.dump(self.seqStorage, open(name, 'wb'), protocol=pickle.HIGHEST_PROTOCOL)
+        # try:
+        #     pickle.dump(self.seqStorage, open(name, 'wb'), protocol=pickle.HIGHEST_PROTOCOL)
+        #
+        # except FileNotFoundError:
+        #     print('└ save canceled.')
 
-        except FileNotFoundError:
-            print('└ save canceled.')
+        baked = MacroMethods.Serializer(self.seqStorage)
+        json.dump(baked, open(name, 'w'), indent=2, default=lambda x: x.__dict__)
 
-    # noinspection PyCallByClass,PyArgumentList
     def seqLoad(self):
         """
         Loads Saved sequence stored as Bytes - aka HIGHEST_PROTOCOL - pickle file.
@@ -199,14 +200,31 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         nameCaller((225, 8, 0))
 
         name = QFileDialog.getOpenFileName(self, directory=self.recentPickleDir)[0]
-
         self.recentPickleDir = os.path.dirname(name)
-        self.initializing(manual=True)
 
         try:
-            target = pickle.load(open(name, 'rb'))
-            for i in target:
-                self.AddToSequence(tgt=i)
+            baked = json.load(open(name, 'r'))
+
+        except UnicodeDecodeError:
+            deserialized = self._LoadPickle(name)
+            if deserialized is None:
+                return
+        else:
+            deserialized = MacroMethods.Deserializer(baked)
+
+        self.initializing(manual=True)
+
+        for i in deserialized:
+            self.AddToSequence(i)
+
+        last = type(self.seqStorage[-1]).__name__
+        self.methodList.setCurrentRow(MacroMethods.__all__.index(last))
+
+    @staticmethod
+    def _LoadPickle(name):
+
+        try:
+            loaded = pickle.load(open(name, 'rb'))
 
         except pickle.UnpicklingError:
             print('└ Wrong file is supplied.')
@@ -221,9 +239,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             print('└ File is Damaged.')
 
         else:
-            # This is too expensive.. Might be better generate ordered dict.
-            last = type(self.seqStorage[-1]).__name__
-            self.methodList.setCurrentRow(MacroMethods.__all__.index(last))
+            return loaded
+
+        return None
 
     def initializing(self, manual=False):
         """
@@ -237,7 +255,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.seqStorage.clear()
 
         self.sequenceList.clear()
-        self._comboBoxUpdate()
+        self._comboBoxUpdateNew()
+        self.onFailCombo.setCurrentIndex(0)
+        self.onSuccessCombo.setCurrentIndex(0)
         self._disableOptions(MacroMethods.Click())
 
     def listAvailableMethods(self):
@@ -293,13 +313,16 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         else:
             obj = tgt
-            self._updateToSelected(obj)
 
         QtTools.AddToListWidget(obj, self.sequenceList)
+        # self._updateToSelected(obj)
         self.seqStorage.append(obj)
-        self._comboBoxUpdate()
+        self._comboBoxUpdateNew()
 
-    def _comboBoxUpdate(self):
+    def _comboBoxUpdateNew(self):
+        success_bk = self.onSuccessCombo.currentIndex()
+        fail_bk = self.onFailCombo.currentIndex()
+
         self.onSuccessCombo.clear()
         self.onFailCombo.clear()
 
@@ -309,6 +332,25 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         for i in self.seqStorage:
             self.onSuccessCombo.addItem(i.name)
             self.onFailCombo.addItem(i.name)
+
+        self.onSuccessCombo.setCurrentIndex(success_bk)
+        self.onFailCombo.setCurrentIndex(fail_bk)
+
+    def _comboBoxUpdateSelected(self):
+        obj = self.selectedSequence()
+        success, fail = obj.onSuccess, obj.onFail
+
+        if success is not None:
+            index = Tools.listFindInstance(success, self.seqStorage)
+            self.onSuccessCombo.setCurrentIndex(index + 1)
+        else:
+            self.onSuccessCombo.setCurrentIndex(0)
+
+        if fail is not None:
+            index = Tools.listFindInstance(fail, self.seqStorage)
+            self.onFailCombo.setCurrentIndex(index + 1)
+        else:
+            self.onFailCombo.setCurrentIndex(0)
 
     def _setXYFromImage(self):
         """
@@ -372,6 +414,20 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         if clear_text:
             self.nameLine.clear()
 
+        try:
+
+            if self.onSuccessCombo.currentIndex() != 1:
+                target.onSuccess = self.seqStorage[self.onSuccessCombo.currentIndex() - 1]
+
+            elif self.onFailCombo.currentIndex() != 1:
+                target.onFail = self.seqStorage[self.onFailCombo.currentIndex() - 1]
+
+            else:
+                target.onSuccess = None
+                target.onFail = None
+        except IndexError:
+            pass
+
         dispatch = ObjectDispatch.preset()
 
         @dispatch.register(MacroMethods.Click)
@@ -414,8 +470,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         @dispatch.register(MacroMethods.Wait)
         def _(obj):
             obj.delay = self.waitSpin.value()
-            obj.onFail = None
-            obj.onSuccess = None
 
         return dispatch(target)
 
@@ -430,7 +484,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         if target is None or isinstance(target, QModelIndex):
 
             try:
-                obj = self.seqStorage[self.sequenceList.currentRow()]
+                obj = self.selectedSequence()
             except IndexError:
                 nameCaller()
                 print('└ Sequence is Empty.')
@@ -447,6 +501,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         self.nameLine.setText(obj.name)
         self._disableOptions(obj)
+        self._comboBoxUpdateSelected()
 
         dispatch = ObjectDispatch.preset()
 

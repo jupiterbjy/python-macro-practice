@@ -2,11 +2,13 @@
 import functools
 import time
 import pyautogui as pgui
+import copy
+import io
+import base64
 from PIL import Image
-import json
 
 import ImageModule as ImgM
-from Toolset import MemberLoader
+from Toolset import MemberLoader, Tools
 
 SLEEP_FUNCTION = time.sleep     # Will be override-d by ui_main.
 imgSaver = ImgM.saveImg()
@@ -17,9 +19,9 @@ class AbortException(Exception):
     pass
 
 
-class abort:
-    def __init__(self):
-        self.ABORT = False
+# class abort:
+#     def __init__(self):
+#         self.ABORT = False
 
 
 def abort():
@@ -74,12 +76,12 @@ class _Base:
     def setArea(self, x1, y1, x2, y2):
         self.screenArea = ImgM.Area(x1, y1, x2, y2)
 
-    def postLoadProcess(self):
-        if isinstance(self.screenArea, list):
-            self.screenArea = ImgM.Area(*self.screenArea)
+    def serialize(self):
+        self.screenArea = self.screenArea()
+        return self.__dict__
 
-    def serialize_prepare(self):
-        self.screenArea = [*self.screenArea]
+    def deserialize(self):
+        self.screenArea = ImgM.Area(*self.screenArea)
 
 
 # --------------------------------------------------------
@@ -114,6 +116,15 @@ class Click(_Base, _ClickBase):
 
     def action(self):
         self._click(self.absPos)
+
+    def serialize(self):
+        self.screenArea = self.screenArea()
+        self.target = self.target()
+        return self.__dict__
+
+    def deserialize(self):
+        self.screenArea = ImgM.Area(*self.screenArea)
+        self.target = ImgM.Pos(*self.target)
 
 
 class Loop:
@@ -184,17 +195,6 @@ class Wait(_Base):
     def __init__(self):
         super().__init__()
         self.delay = 0
-
-    # def action2(self):
-    #     left = self.delay
-    #
-    #     while left > 1:
-    #         checkAbort()
-    #         SLEEP_FUNCTION(0.5)
-    #         left -= 0.5
-    #
-    #     SLEEP_FUNCTION(left)
-    #     return True
 
     def action(self):
         SLEEP_FUNCTION(self.delay)
@@ -289,14 +289,34 @@ class _Image(_Base):
         img.convert('RGB')
 
         if img.format != 'PNG':     # Non-png images has trouble with cv2 conversion
-            from io import BytesIO
 
-            byte_io = BytesIO()
+            byte_io = io.BytesIO()
             img.save(byte_io, 'PNG')
             self._targetImage = Image.open(byte_io)
 
         else:
             self._targetImage = img
+
+    def serialize(self):
+        self.screenArea = self.screenArea()
+
+        buffer = io.BytesIO()
+        self._targetImage.save(buffer, format='PNG')
+        string = base64.b64encode(buffer.getvalue())
+        self._targetImage = string.decode('utf-8')
+        buffer.close()
+
+        return self.__dict__
+
+    def deserialize(self):
+        self.screenArea = ImgM.Area(*self.screenArea)
+
+        buffer = io.BytesIO()
+        string = self._targetImage
+
+        buffer.write(base64.b64decode(string))
+        self._targetImage = Image.open(buffer, 'r').copy()
+        buffer.close()
 
 
 class ImageSearch(_Image, _ClickBase):
@@ -348,7 +368,6 @@ class ImageSearch(_Image, _ClickBase):
                 self._click(self.absPos)
 
             return True
-
         return False
 
 
@@ -401,6 +420,17 @@ class Drag(_Base):
 
         return True
 
+    def serialize(self):
+        self.screenArea = self.screenArea()
+        self.p1 = self.p1()
+        self.p2 = self.p2()
+        return self.__dict__
+
+    def deserialize(self):
+        self.screenArea = ImgM.Area(*self.screenArea)
+        self.p1 = ImgM.Pos(*self.p1)
+        self.p2 = ImgM.Pos(*self.p2)
+
 
 def NextSetter(sequence):
     """
@@ -409,12 +439,78 @@ def NextSetter(sequence):
     :param sequence: List containing macro objects.
     """
     if sequence:
-        # This is waste of memory
         for idx, i in enumerate(sequence):
             if idx + 1 < len(sequence):
                 i.next = sequence[idx + 1]
             else:
                 break
+
+
+def Serializer(obj_list):
+    """
+    Due to reference of next object that stored in each objects,
+    No serialization other than pickle works.
+    Therefore, I'm adding reference_list to map references of each objects.
+    """
+    obj_type = []
+    out = []
+    reference_list = [[] for i in range(len(obj_list))]
+
+    for idx, element in enumerate(obj_list):
+        element.next = None
+        obj_type.append(type(element).__name__)
+
+        if element.onSuccess is not None:
+            index = Tools.listFindInstance(element.onSuccess, obj_list)
+            reference_list[idx].append(index)
+            element.onSuccess = None
+
+        else:
+            reference_list[idx].append(None)
+
+        if element.onFail is not None:
+            index = Tools.listFindInstance(element.onFail, obj_list)
+            reference_list[idx].append(index)
+            element.onFail = None
+
+        else:
+            reference_list[idx].append(None)
+
+    for obj in obj_list:
+        out.append(copy.deepcopy(obj).serialize())
+
+    output = {'type': obj_type, 'data': out, 'reference': reference_list}
+
+    return output
+
+
+def Deserializer(baked):
+    out = []
+
+    inject = baked['data']
+    ref = baked['reference']
+    type_list = baked['type']
+
+    for obj in type_list:
+        obj = class_dict[obj]()
+        obj.__dict__ = inject.pop(0)
+        out.append(obj)
+
+    for obj in out:
+        success_idx, fail_idx = ref.pop(0)
+        try:
+            obj.onSuccess = out[success_idx]
+        except TypeError:
+            obj.onSuccess = None
+
+        try:
+            obj.onFail = out[fail_idx]
+        except TypeError:
+            obj.onFail = None
+
+        obj.deserialize()
+
+    return out
 
 
 __all__ = MemberLoader.ListClass(__name__, blacklist={'_', 's', 'Abort'})
