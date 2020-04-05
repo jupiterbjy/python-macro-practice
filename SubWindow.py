@@ -1,6 +1,6 @@
 
-from PyQt5.QtWidgets import *
-from PyQt5.QtCore import *
+from PyQt5.QtCore import QRunnable, pyqtSlot, Qt
+from PyQt5.QtWidgets import QListWidgetItem, QMainWindow, QDialog
 import pyautogui
 
 from Toolset import QtTools, Tools
@@ -84,10 +84,10 @@ class Runner(QMainWindow, Ui_Runner):
 
     def StdRedirect(self):
         if self.debug:
+            self._stdout.stop()
+        else:
             self._stdout.start()
             self._stdout.printOccur.connect(lambda x: appendText(self.outputTextEdit, x))
-        else:
-            self._stdout.stop()
 
     def areaInject(self):
 

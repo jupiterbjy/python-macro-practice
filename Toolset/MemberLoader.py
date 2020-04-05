@@ -2,21 +2,19 @@ import inspect
 import re
 from sys import modules
 
-'''
-Return list of target, i.e. Class or Function in target module.
-Main usage is for generating __all__ upon function defining.
-
-i.e.
-__all__ = member_loader.ListFunction(__name__, name_only = True)
-
-Blacklist only supported for array return.
-
-On default will follow python's way, ignoring case starting with underscore.
-'''
-# TODO: add dict key remove for blacklist
-
 
 def ListTarget(name, target, prefix_mode, blacklist, return_dict):
+    """
+    Return list of target, i.e. Class or Function in target module.
+    Main usage is for generating __all__ upon function defining.
+
+    i.e.
+    __all__ = member_loader.ListFunction(__name__, name_only = True)
+
+    Blacklist only supported for array return.
+
+    On default will follow python's way, ignoring case starting with underscore.
+    """
 
     if prefix_mode and blacklist is None:
         blacklist = {'_'}
@@ -39,8 +37,7 @@ def ListTarget(name, target, prefix_mode, blacklist, return_dict):
     if return_dict:
         return FunctionToDict([i for _, i in filtered])
 
-    else:
-        return [i for i, _ in filtered]
+    return [i for i, _ in filtered]
 
 
 def ListClass(name, prefix_mode=True, blacklist=None, return_dict=False):
