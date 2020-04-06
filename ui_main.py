@@ -299,7 +299,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             obj = tgt
 
         QtTools.AddToListWidget(obj, self.sequenceList)
-        # self._updateToSelected(obj)
         self.seqStorage.append(obj)
         self._comboBoxUpdateNew()
 
@@ -403,10 +402,10 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.nameLine.clear()
 
         try:
-            if self.onSuccessCombo.currentIndex() != 1:
+            if self.onSuccessCombo.currentIndex() != 0:
                 target.onSuccess = self.seqStorage[self.onSuccessCombo.currentIndex() - 1]
 
-            elif self.onFailCombo.currentIndex() != 1:
+            elif self.onFailCombo.currentIndex() != 0:
                 target.onFail = self.seqStorage[self.onFailCombo.currentIndex() - 1]
 
             else:

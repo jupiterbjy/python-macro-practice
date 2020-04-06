@@ -161,7 +161,7 @@ def GenerateWidget(tgt):
     return item
 
 
-def AddToListWidget(tgt, item_list_widget):
+def AddToListWidget(tgt, item_list_widget, index=None):
     """
     Adds macro object to given QItemListWidget.
     :param tgt: macro object to Add
@@ -176,7 +176,11 @@ def AddToListWidget(tgt, item_list_widget):
     list_item = QListWidgetItem(item_list_widget)
     list_item.setSizeHint(item.sizeHint())
 
-    item_list_widget.addItem(list_item)
+    if index:
+        item_list_widget.insertItem(0, list_item)
+
+    else:
+        item_list_widget.addItem(list_item)
     item_list_widget.setItemWidget(list_item, item)
 
 

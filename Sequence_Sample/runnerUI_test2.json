@@ -1,25 +1,15 @@
 {
   "type": [
     "Wait",
+    "Wait",
+    "Wait",
+    "Wait",
+    "Wait",
     "Wait"
   ],
   "data": [
     {
-      "name": "Wait",
-      "next": null,
-      "actionState": 1,
-      "onSuccess": null,
-      "onFail": null,
-      "screenArea": [
-        0,
-        112,
-        1122,
-        1079
-      ],
-      "delay": 1.0
-    },
-    {
-      "name": "Wait",
+      "name": "1",
       "next": null,
       "actionState": -2,
       "onSuccess": null,
@@ -30,10 +20,94 @@
         0,
         0
       ],
-      "delay": 1.0
+      "delay": 0.5
+    },
+    {
+      "name": "3",
+      "next": null,
+      "actionState": -2,
+      "onSuccess": null,
+      "onFail": null,
+      "screenArea": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "delay": 0.5
+    },
+    {
+      "name": "5",
+      "next": null,
+      "actionState": -2,
+      "onSuccess": null,
+      "onFail": null,
+      "screenArea": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "delay": 0.5
+    },
+    {
+      "name": "7",
+      "next": null,
+      "actionState": -2,
+      "onSuccess": null,
+      "onFail": null,
+      "screenArea": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "delay": 0.5
+    },
+    {
+      "name": "9",
+      "next": null,
+      "onSuccess": null,
+      "onFail": null,
+      "screenArea": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "delay": 0.5
+    },
+    {
+      "name": "11",
+      "next": null,
+      "onSuccess": null,
+      "onFail": null,
+      "screenArea": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "delay": 0.5
     }
   ],
   "reference": [
+    [
+      null,
+      null
+    ],
+    [
+      null,
+      null
+    ],
+    [
+      null,
+      null
+    ],
+    [
+      null,
+      null
+    ],
     [
       null,
       null

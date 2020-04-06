@@ -110,6 +110,7 @@ class Runner(QMainWindow, Ui_Runner):
 
 # https://stackoverflow.com/questions/52522218/
 
+# THIS IS OBSOLETE
     def updateHistory(self, obj=None):
         widget = self.currentSeq.itemWidget(self.currentSeq.item(0))
 
@@ -121,7 +122,7 @@ class Runner(QMainWindow, Ui_Runner):
             new = QListWidgetItem(self.sequenceList)
             new.setSizeHint(size)
 
-            self.sequenceList.addItem(new)
+            self.sequenceList.insertItem(0, new)
             self.sequenceList.setItemWidget(new, widget)
             self.currentSeq.clear()
 
@@ -133,7 +134,7 @@ class Runner(QMainWindow, Ui_Runner):
         widget = self.currentSeq.itemWidget(self.currentSeq.item(0))
 
         try:
-            QtTools.AddToListWidget(widget.source, self.sequenceList)
+            QtTools.AddToListWidget(widget.source, self.sequenceList, 0)
         except AttributeError:
             pass
         finally:
