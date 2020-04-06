@@ -5,7 +5,7 @@ import sys
 import os
 import json
 
-from Toolset import QtTools, ObjectDispatch, Tools
+from Toolset import QtTools, ObjectDispatch, Tools, TextTools
 from Toolset.QtTools import IMG_CONVERT, ICON_LOCATION, ICON_ASSIGN, appendText
 from qtUI.pymacro import Ui_MainWindow
 from Toolset.Tools import nameCaller
@@ -31,17 +31,11 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         super(MainWindow, self).__init__(*args, **kwargs)
         self.setupUi(self)
 
-        self._stdout = QtTools.StdoutRedirect()
         self.seqStorage = []
         self.seqBackup = []     # Consumes memory!
 
         self.runner_signal = QtTools.runnerSignal()
         self.runner_signal.signal.connect(self.SeqStopped)
-
-        self.cachedImage = {
-            'search': None,
-            'count': None
-        }
 
         self.insertButton.released.connect(self.AddToSequence)
         self.methodList.currentRowChanged.connect(self._disableOptions)
@@ -49,9 +43,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.delButton.released.connect(self.remove)
         self.runButton.released.connect(self.runSeq)
         self.editButton.released.connect(self.editSelected)
-
-        self.debugCheck.stateChanged.connect(self.StdRedirect)
-        self.StdRedirect()
 
         self.searchImgLoadButton.released.connect(self.searchLoadImage)
         self.searchImgClearButton.released.connect(self.searchImageUpdate)
@@ -64,17 +55,29 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.actionLoad.triggered.connect(self.seqLoad)
         self.actionExit.triggered.connect(self.close)
         self.actionAbout.triggered.connect(self.openAbout)
+
+        self._stdout = QtTools.StdoutRedirect()
+        self.StdRedirect()
+        self.debugCheck.stateChanged.connect(self.StdRedirect)
+
         self.initializing()
 
         self.recentImageDir = os.getcwd()
         self.recentIoDir = os.getcwd()
 
+        self.cachedImage = {
+            'search': None,
+            'count': None
+        }
+
     def StdRedirect(self):
         if self.debugCheck.isChecked():
             self._stdout.stop()
+            TextTools.COLORIZE_ENABLE = False
         else:
             self._stdout.start()
             self._stdout.printOccur.connect(lambda x: appendText(self.outputTextEdit, x))
+            TextTools.COLORIZE_ENABLE = True
 
     def openAbout(self):
         ui = About(self)
@@ -114,10 +117,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         Planing to support proper undo functionality, but not complete yet.
         """
         self.seqStorage = self.seqBackup.pop()
-        # if self.seqBackup:
-        #     source = self.seqBackup.pop()
-        #     self.seqUndo.append(source)
-        #     self.seqStorage = source
 
     def runSeq(self):
         """
@@ -144,8 +143,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         """
         if self.debugCheck.isChecked():
             self._stdout.start()
-
-        # self.show()
 
     def selectedClass(self):
         out = MacroMethods.class_dict[MacroMethods.__all__[self.methodList.currentRow()]]
@@ -179,7 +176,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         """
         Saves current sequence into json serialized format.
         """
-        nameCaller((225, 8, 0), raw=self.debugCheck.isChecked())
+        nameCaller((225, 8, 0))
 
         name = QFileDialog.getSaveFileName(self, 'Save file')[0]
         self.recentIoDir = os.path.dirname(name)
@@ -194,7 +191,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         """
         Loads json serialized Macro Sequence.
         """
-        nameCaller((225, 8, 0), raw=self.debugCheck.isChecked())
+        nameCaller((225, 8, 0))
 
         name = QFileDialog.getOpenFileName(self, directory=self.recentIoDir)[0]
         self.recentIoDir = os.path.dirname(name)
@@ -227,6 +224,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         last = type(self.seqStorage[-1]).__name__
         self.methodList.setCurrentRow(MacroMethods.__all__.index(last))
+        self.sequenceList.setCurrentRow(len(self.seqStorage) - 1)
+        self._updateToSelected()
 
     def initializing(self, manual=False):
         """
@@ -323,19 +322,20 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
     def _comboBoxUpdateSelected(self):
         obj = self.selectedSequence()
-        success, fail = obj.onSuccess, obj.onFail
 
-        if success is not None:
-            index = Tools.listFindInstance(success, self.seqStorage)
-            self.onSuccessCombo.setCurrentIndex(index + 1)
-        else:
+        try:
+            index = self.seqStorage.index(obj.onSuccess)
+        except ValueError:
             self.onSuccessCombo.setCurrentIndex(0)
-
-        if fail is not None:
-            index = Tools.listFindInstance(fail, self.seqStorage)
-            self.onFailCombo.setCurrentIndex(index + 1)
         else:
+            self.onSuccessCombo.setCurrentIndex(index + 1)
+
+        try:
+            index = self.seqStorage.index(obj.onFail)
+        except ValueError:
             self.onFailCombo.setCurrentIndex(0)
+        else:
+            self.onFailCombo.setCurrentIndex(index + 1)
 
     def _setXYFromImage(self):
         """

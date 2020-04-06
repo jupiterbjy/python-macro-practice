@@ -1,6 +1,6 @@
 from Toolset import MemberLoader
 
-COLORIZE_ENABLE = True
+COLORIZE_ENABLE = False
 
 
 def rgbToHex(r=0, g=0, b=0):
