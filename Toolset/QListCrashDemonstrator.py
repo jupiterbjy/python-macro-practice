@@ -1,48 +1,9 @@
-from PyQt5.QtCore import QTimer, QEventLoop, QSize, QMetaObject, QCoreApplication
-from PyQt5.QtWidgets import QWidget, QGridLayout, QListWidgetItem, QListWidget, QApplication,\
-                            QVBoxLayout, QPushButton, QLabel, QCheckBox, QMainWindow
-from PyQt5.QtGui import QPixmap
-from PIL.ImageQt import ImageQt
+from PyQt5.QtCore import *
+from PyQt5.QtWidgets import *
 import sys
 
 
-def QSleep(delay):
-    loop = QEventLoop()
-    QTimer.singleShot(delay * 1000, loop.quit)
-    loop.exec_()
-
-
-class Wait:
-    def __init__(self, name):
-        self.delay = 1
-        self.next = None
-        self.name = name
-
-    def action(self):
-        QSleep(self.delay)
-        return True
-
-    def run(self):
-        if self.action():
-            return self.next
-
-
-def testcase_generate():
-    seq = []
-    for i in range(3):
-        obj = Wait(str(i))
-        seq.append(obj)
-
-    for idx, obj in enumerate(seq):
-        try:
-            obj.next = seq[idx + 1]
-        except IndexError:
-            pass
-
-    return seq
-
-
-class Ui_MainWindow(object):
+class Ui_MainWindow(object):        # Ignore this, just UI generation.
     def setupUi(self, MainWindow):
         self.centralwidget = QWidget(MainWindow)
         self.gridLayout = QGridLayout(self.centralwidget)
@@ -53,19 +14,22 @@ class Ui_MainWindow(object):
         self.gridLayout.addWidget(self.runButton, 1, 0, 1, 1)
         self.gridLayout.addWidget(self.crashCheck, 2, 0, 1, 1)
         self.currentSeq = QListWidget(self.centralwidget)
-        self.currentSeq.setMinimumSize(QSize(267, 70))
         self.currentSeq.setMaximumSize(QSize(267, 70))
         self.gridLayout.addWidget(self.currentSeq, 3, 0, 1, 1)
         MainWindow.setCentralWidget(self.centralwidget)
+        self.runButton.setText('Run')
+        self.crashCheck.setText('Check this and Run to Crash')
 
-        self.retranslateUi(MainWindow)
-        QMetaObject.connectSlotsByName(MainWindow)
 
-    def retranslateUi(self, MainWindow):
-        _translate = QCoreApplication.translate
-        MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
-        self.runButton.setText(_translate("MainWindow", "Run"))
-        self.crashCheck.setText(_translate("MainWindow", "Crash"))
+class Wait:
+    def __init__(self, name):
+        self.name = name
+
+    @staticmethod
+    def action():
+        loop = QEventLoop()
+        QTimer.singleShot(1000, loop.quit)
+        loop.exec_()
 
 
 class SeqItemWidget(QWidget):
@@ -73,22 +37,11 @@ class SeqItemWidget(QWidget):
         super().__init__()
         self.textLayOut = QVBoxLayout()
         self.textUpLabel = QLabel()
-        self.textDownLabel = QLabel()
         self.textLayOut.addWidget(self.textUpLabel)
-        self.textLayOut.addWidget(self.textDownLabel)
         self.setLayout(self.textLayOut)
 
-    def setup(self, t_up, t_down):
+    def setup(self, t_up):
         self.textUpLabel.setText(t_up)
-        self.textDownLabel.setText(t_down)
-
-
-def setPix(image):
-    if isinstance(image, str):
-        return QPixmap(image)
-
-    tmp = ImageQt(image).copy()
-    return QPixmap(tmp)
 
 
 class SubWindow(QMainWindow, Ui_MainWindow):
@@ -96,14 +49,15 @@ class SubWindow(QMainWindow, Ui_MainWindow):
         super(SubWindow, self).__init__(parent)
         self.setupUi(self)
 
-        self.source = testcase_generate()
+        self.source = [Wait('3'), Wait('2'), Wait('1')]
+
         self.updateHistory(self.source[0])
         self.runButton.released.connect(self.runSeq)
 
-    def AddToListWidget(self, target):
+    def GenerateItemWidget(self, target):
 
         item = SeqItemWidget()
-        item.setup(target.name, 'Test')
+        item.setup(target.name)
 
         list_item = QListWidgetItem(self.currentSeq)
         list_item.setSizeHint(item.sizeHint())
@@ -127,18 +81,17 @@ class SubWindow(QMainWindow, Ui_MainWindow):
             self.currentSeq.clear()
 
         if item:
-            self.AddToListWidget(item)
+            self.GenerateItemWidget(item)
 
     def runSeq(self):
         self.sequenceList.clear()
         self.currentSeq.clear()
-        obj = self.source[0]
 
-        while obj:
-            self.updateHistory(obj)
-            obj = obj.run()
+        for i in self.source:
+            self.updateHistory(i)
+            i.action()
 
-        if self.crashCheck.isChecked():
+        if self.crashCheck.isChecked():     # << crashes here with DLL error
             self.updateHistory()
 
 
