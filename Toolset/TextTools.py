@@ -1,35 +1,29 @@
 from Toolset import MemberLoader
 
+COLORIZE_ENABLE = True
+
 
 def rgbToHex(r=0, g=0, b=0):
     arr = [r, g, b]
-    out = []
-    for i in arr:
-        if i < 16:
-            out.append('0' + str(hex(i))[2:])
-        else:
-            out.append(str(hex(i))[2:])
+    out = [str(hex(i))[2:] for i in arr]
     return '#' + ''.join(out)
 
 
 def QtColorize(text, color=(0, 0, 0), size=None, weight=None):
-    start = '<span style=\" '
-    font = f'font-size:{size}pt; '
-    font_weight = f'font-weight:{weight}; '
-    color = f'color:{rgbToHex(*color)}; '
-    end = '\" >'
-    txt = str(text)
-    span_complete = '</span>'
+    if COLORIZE_ENABLE:
+        start = '<span style=\" '
+        font = f'font-size:{size}pt; ' if size else ''
+        font_weight = f'font-weight:{weight}; ' if size else ''
+        color = f'color:{rgbToHex(*color)}; '
+        end = '\" >'
+        txt = str(text)
+        span_complete = '</span>'
 
-    out = [start, font, font_weight, color, end, txt, span_complete]
+        out = [start, font, font_weight, color, end, txt, span_complete]
 
-    if size is None:
-        out.remove(font)
+        return ''.join(out)
 
-    if weight is None:
-        out.remove(font_weight)
-
-    return ''.join(out)
+    return text
 
 
 class ANSI_C:
