@@ -35,14 +35,6 @@ def resource_path(relative_path):
     return os.path.join(base_path, relative_path)
 
 
-def listFindInstance(instance, obj_list):
-    for idx, obj in enumerate(obj_list):
-        if instance is obj:
-            return idx
-
-    return None
-
-
 def nameCaller(color=None, raw=False):
     # https://stackoverflow.com/a/5067654/10909029
     # print(inspect.stack()[0][3]) <- this prints current stack's name

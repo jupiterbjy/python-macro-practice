@@ -1,20 +1,21 @@
 
-import functools
+from functools import singledispatch
 import time
-import pyautogui as pgui
+import pyautogui
 import copy
 import io
 import base64
 from PIL import Image
 
-import ImageModule as ImgM
-from Toolset import MemberLoader, Tools
+import ImageModule
+from Toolset import MemberLoader
 
 SLEEP_FUNCTION = time.sleep     # Will be override-d by ui_main.
-imgSaver = ImgM.saveImg()
+IMG_SAVER = ImageModule.saveImg()
 ABORT = False
 RAND_OFFSET = False
 OFFSET_MAX = 5
+
 
 class AbortException(Exception):
     pass
@@ -37,7 +38,7 @@ class _Base:
         self.next = None           # assign obj to run next.
         self.onSuccess = None
         self.onFail = None
-        self.screenArea = ImgM.Area()
+        self.screenArea = ImageModule.Area()
 
     def run(self):
 
@@ -59,14 +60,14 @@ class _Base:
         return True
 
     def setArea(self, x1, y1, x2, y2):
-        self.screenArea = ImgM.Area(x1, y1, x2, y2)
+        self.screenArea = ImageModule.Area(x1, y1, x2, y2)
 
     def serialize(self):
         self.screenArea = self.screenArea()
         return self.__dict__
 
     def deserialize(self):
-        self.screenArea = ImgM.Area(*self.screenArea)
+        self.screenArea = ImageModule.Area(*self.screenArea)
 
 
 # --------------------------------------------------------
@@ -78,14 +79,14 @@ class _ClickBase:
     Separated from click object to prevent diamond inherit.
     """
     def __init__(self):
-        self.target = ImgM.Pos()
+        self.target = ImageModule.Pos()
         self.clickCount = 1
         self.clickDelay = 0.01
 
     @staticmethod
     def finalPos(target):
         if RAND_OFFSET:
-            return ImgM.RandomOffset(target, OFFSET_MAX)
+            return ImageModule.RandomOffset(target, OFFSET_MAX)
 
         return target
 
@@ -94,7 +95,7 @@ class _ClickBase:
         for i in range(self.clickCount):
             checkAbort()
             SLEEP_FUNCTION(self.clickDelay)
-            pgui.click(self.finalPos(target))
+            pyautogui.click(self.finalPos(target))
             print(f'Click: {self.finalPos(target)}')
 
 
@@ -115,8 +116,8 @@ class Click(_Base, _ClickBase):
         return self.__dict__
 
     def deserialize(self):
-        self.screenArea = ImgM.Area(*self.screenArea)
-        self.target = ImgM.Pos(*self.target)
+        self.screenArea = ImageModule.Area(*self.screenArea)
+        self.target = ImageModule.Pos(*self.target)
 
 
 class Loop:
@@ -228,7 +229,7 @@ class Variable(_Base):
         self.value = self.value // other.value
         return self
 
-    @functools.singledispatch
+    @singledispatch
     def valueType(self):
         pass
 
@@ -263,10 +264,10 @@ class _Image(_Base):
         self.precision = 0.85
 
     def DumpCaptured(self, name=None):
-        imgSaver(self.capturedImage, str(name))
+        IMG_SAVER(self.capturedImage, str(name))
 
     def DumpTarget(self):
-        imgSaver(self.targetImage, self.targetName)
+        IMG_SAVER(self.targetImage, self.targetName)
 
     def DumpCoordinates(self):      # Do I need this?
         return self.screenArea, self.matchPoint
@@ -300,7 +301,7 @@ class _Image(_Base):
         return self.__dict__
 
     def deserialize(self):
-        self.screenArea = ImgM.Area(*self.screenArea)
+        self.screenArea = ImageModule.Area(*self.screenArea)
 
         buffer = io.BytesIO()
         string = self._targetImage
@@ -326,7 +327,7 @@ class ImageSearch(_Image, _ClickBase):
 
     def ImageSearch(self):
         self.matchPoint, self.capturedImage = \
-            ImgM.imageSearch(self.targetImage, self.screenArea.region, self.precision)
+            ImageModule.imageSearch(self.targetImage, self.screenArea.region, self.precision)
         if self.matchPoint[0] != -1:
             self._foundFlag = True
 
@@ -373,7 +374,7 @@ class SearchOccurrence(_Image, _ClickBase):
 
     def ScanOccurrence(self):
         self.matchCount, self.capturedImage = \
-            ImgM.scanOccurrence(self.targetImage, self.screenArea.region, self.precision)
+            ImageModule.scanOccurrence(self.targetImage, self.screenArea.region, self.precision)
 
     def action(self):
         self.ScanOccurrence()
@@ -387,8 +388,8 @@ class Drag(_Base):
     def __init__(self):
         super().__init__()
 
-        self.p1 = ImgM.Pos()
-        self.p2 = ImgM.Pos()
+        self.p1 = ImageModule.Pos()
+        self.p2 = ImageModule.Pos()
 
     @property
     def From(self):
@@ -403,8 +404,8 @@ class Drag(_Base):
         self.p2.set(x2, y2)
 
     def action(self):
-        pgui.moveTo(*self.From)
-        pgui.dragTo(*self.To, button='left')
+        pyautogui.moveTo(*self.From)
+        pyautogui.dragTo(*self.To, button='left')
 
         return True
 
@@ -415,9 +416,9 @@ class Drag(_Base):
         return self.__dict__
 
     def deserialize(self):
-        self.screenArea = ImgM.Area(*self.screenArea)
-        self.p1 = ImgM.Pos(*self.p1)
-        self.p2 = ImgM.Pos(*self.p2)
+        self.screenArea = ImageModule.Area(*self.screenArea)
+        self.p1 = ImageModule.Pos(*self.p1)
+        self.p2 = ImageModule.Pos(*self.p2)
 
 
 def NextSetter(sequence):
@@ -428,17 +429,16 @@ def NextSetter(sequence):
     """
     if sequence:
         for idx, i in enumerate(sequence):
-            if idx + 1 < len(sequence):
+            try:
                 i.next = sequence[idx + 1]
-            else:
+            except IndexError:
                 break
 
 
-# Took way too much time on json serialization...
 def Serializer(obj_list):
     """
-    Due to reference of next object that stored in each objects,
-    No serialization other than pickle works.
+    Manage serialization of objects and return serialized string.
+    No serialization other than pickle works with object references.
     Therefore, I'm adding reference_list to map references of each objects.
     """
     obj_type = []
@@ -449,33 +449,31 @@ def Serializer(obj_list):
         element.next = None
         obj_type.append(type(element).__name__)
 
-        if element.onSuccess is not None:
-            index = Tools.listFindInstance(element.onSuccess, obj_list)
-            reference_list[idx].append(index)
-            element.onSuccess = None
-
-        else:
+        try:
+            index = obj_list.index(element.onSuccess)
+        except ValueError:
             reference_list[idx].append(None)
-
-        if element.onFail is not None:
-            index = Tools.listFindInstance(element.onFail, obj_list)
-            reference_list[idx].append(index)
-            element.onFail = None
-
         else:
+            reference_list[idx].append(index)
+
+        try:
+            index = obj_list.index(element.onFail)
+        except ValueError:
             reference_list[idx].append(None)
+        else:
+            reference_list[idx].append(index)
 
-    for obj in obj_list:
-        out.append(copy.deepcopy(obj).serialize())
+        out.append(copy.deepcopy(element.serialize()))
 
-    output = {'type': obj_type, 'data': out, 'reference': reference_list}
-
-    return output
+    return {'type': obj_type, 'data': out, 'reference': reference_list}
 
 
 def Deserializer(baked):
+    """
+    Deserialize given json-serialized file.
+    error handling should happen outside of this function, where it is called.
+    """
     out = []
-
     inject = baked['data']
     ref = baked['reference']
     type_list = baked['type']
@@ -487,6 +485,7 @@ def Deserializer(baked):
 
     for obj in out:
         success_idx, fail_idx = ref.pop(0)
+
         try:
             obj.onSuccess = out[success_idx]
         except TypeError:

@@ -1,5 +1,4 @@
 import cv2
-import functools
 import numpy as np
 import pyautogui as pgui
 from math import sqrt
@@ -64,7 +63,6 @@ class Area:
     def region(self):
         return *self.p1, *(self.p1 - self.p2)
 
-    @functools.lru_cache(maxsize=128, typed=False)
     def sort(self):
         x, y = [sorted(list(i)) for i in zip(self.p1, self.p2)]
         self.p1.set(x[0], y[0])
@@ -87,16 +85,13 @@ def saveImg():
     order = 0
 
     def save(img, name=None):
-
         nonlocal order
 
         if name is None:
             name = ''
 
         cv2.imwrite(f'{IMG_PATH}{str(order)}_{name}.png', img)
-
         order += 1
-
     return save
 
 
@@ -160,4 +155,3 @@ def RandomOffset(pos, offset):
         return pos + off
     except TypeError:
         return Pos(*pos) + off
-
