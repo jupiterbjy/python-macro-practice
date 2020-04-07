@@ -4,6 +4,7 @@ from PyQt5.QtWidgets import QFileDialog, QListWidgetItem, QApplication, QMainWin
 import sys
 import os
 import json
+import copy
 
 from Toolset import QtTools, ObjectDispatch, Tools, TextTools
 from Toolset.QtTools import IMG_CONVERT, ICON_LOCATION, ICON_ASSIGN, appendText
@@ -13,6 +14,8 @@ from SubWindow import Runner, About
 import MacroMethods
 
 # <Bug fix>
+# Fix image disappear upon exporting to json.
+# Fix sequence that have ran before still having .target parameter in imageserach.
 
 # <References>
 # https://doc.qt.io/qt-5/qthread.html
@@ -125,7 +128,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         MacroMethods.NextSetter(self.seqStorage)
 
         try:
-            runner = Runner(self, self.seqStorage, self.runner_signal,
+            runner = Runner(self, copy.deepcopy(self.seqStorage), self.runner_signal,
                             self.debugCheck.isChecked())
         except IndexError:
             self.StdRedirect()
@@ -178,7 +181,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         """
         nameCaller((225, 8, 0))
 
-        name = QFileDialog.getSaveFileName(self, 'Save file', directory=self.recentIoDir)[0]
+        name = QFileDialog.getSaveFileName(self, 'Save file',
+                                           directory=self.recentIoDir, filter='*.json')[0]
         self.recentIoDir = os.path.dirname(name)
 
         baked = MacroMethods.Serializer(self.seqStorage)
@@ -193,7 +197,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         """
         nameCaller((225, 8, 0))
 
-        name = QFileDialog.getOpenFileName(self, directory=self.recentIoDir)[0]
+        name = QFileDialog.getOpenFileName(self, 'Load File',
+                                           directory=self.recentIoDir, filter='*.json')[0]
         self.recentIoDir = os.path.dirname(name)
 
         try:

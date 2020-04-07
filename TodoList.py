@@ -18,3 +18,6 @@
 # <Reference>
 # Accessing QListWidgetItem's Widgets.
 # https://stackoverflow.com/questions/52522218/
+
+# QFileDialog set file type filter
+# https://www.tutorialspoint.com/pyqt/pyqt_qfiledialog_widget.htm
