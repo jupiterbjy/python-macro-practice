@@ -13,3 +13,8 @@
 
 # <Optimization TO-DO>
 # TODO: get widget from Main Ui to runner ui without generating new within runner ui.
+
+
+# <Reference>
+# Accessing QListWidgetItem's Widgets.
+# https://stackoverflow.com/questions/52522218/

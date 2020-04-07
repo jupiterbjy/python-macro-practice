@@ -178,7 +178,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         """
         nameCaller((225, 8, 0))
 
-        name = QFileDialog.getSaveFileName(self, 'Save file')[0]
+        name = QFileDialog.getSaveFileName(self, 'Save file', directory=self.recentIoDir)[0]
         self.recentIoDir = os.path.dirname(name)
 
         baked = MacroMethods.Serializer(self.seqStorage)

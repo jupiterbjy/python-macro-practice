@@ -188,6 +188,10 @@ TIMER_RUNNING = []
 
 
 def AbortTimers():
+    """
+    Kills all Timers currently signed in Global list TIMER_RUNNING.
+    Assuming Timers are added in tuple(QTimer, QEventLoop) format.
+    """
     for timer in TIMER_RUNNING:
         timer[0].stop()
         timer[1].quit()
@@ -208,7 +212,9 @@ def QSleep(delay, output=False):
         timer = QTimer()
         timer.setSingleShot(True)
         timer.timeout.connect(loop.quit)
+
         TIMER_RUNNING.append((timer, loop))
+
         timer.start(delay * 1000)
         loop.exec_()
 
@@ -223,12 +229,15 @@ def QSleep(delay, output=False):
     if output:
         with context():
             wait()
-
     else:
         wait()
 
 
 def getCaptureArea():
+    """
+    Get area to work with.
+    :return:
+    """
     p1 = Pos()
     p2 = Pos()
     kill_key = 'f2'

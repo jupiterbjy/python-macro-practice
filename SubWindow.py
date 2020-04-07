@@ -95,7 +95,6 @@ class Runner(QMainWindow, Ui_Runner):
 
     def areaInject(self):
 
-        # if not self.fullScreenCheck.isChecked():
         self.runLine.setText('Press f2 at 2 diagonal corner.')
         area = QtTools.getCaptureArea()
 
@@ -108,28 +107,7 @@ class Runner(QMainWindow, Ui_Runner):
         sub_window = Runner(self, self.seqStorage)
         sub_window.show()
 
-# https://stackoverflow.com/questions/52522218/
-
-# THIS IS OBSOLETE
     def updateHistory(self, obj=None):
-        widget = self.currentSeq.itemWidget(self.currentSeq.item(0))
-
-        try:
-            size = widget.sizeHint()
-        except AttributeError:
-            pass
-        else:
-            new = QListWidgetItem(self.sequenceList)
-            new.setSizeHint(size)
-
-            self.sequenceList.insertItem(0, new)
-            self.sequenceList.setItemWidget(new, widget)
-            self.currentSeq.clear()
-
-        if obj:
-            QtTools.AddToListWidget(obj, self.currentSeq)
-
-    def updateHistory_workaround(self, obj=None):
 
         widget = self.currentSeq.itemWidget(self.currentSeq.item(0))
 
@@ -149,7 +127,7 @@ class Runner(QMainWindow, Ui_Runner):
 
         while obj:
             self.runLine.setText(f'running "{obj.name}".')
-            self.updateHistory_workaround(obj)
+            self.updateHistory(obj)
 
             try:
                 obj = obj.run()
@@ -173,7 +151,7 @@ class Runner(QMainWindow, Ui_Runner):
                 seq_count += 1
         else:
             self.runLine.setText('Macro finished.')
-            self.updateHistory_workaround()
+            self.updateHistory()
 
         self.sequenceStarted = False
         self.updateButtonState()
@@ -214,7 +192,7 @@ class Runner(QMainWindow, Ui_Runner):
 
 
 class About(QMainWindow, Ui_About):
-    def __init__(self, parent, *args, **kwargs):
+    def __init__(self, parent):
         super(About, self).__init__(parent)
         self.setupUi(self)
         self.label.setPixmap(setPix(Tools.resource_path(ICON_LOCATION + ABOUT_IMAGE)))
