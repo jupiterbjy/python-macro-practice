@@ -1,7 +1,7 @@
 
-from PyQt5.QtGui import QPixmap, QTextCursor
-from PyQt5.QtCore import Qt, QObject, pyqtSignal, QSize, QTimer, QEventLoop
-from PyQt5.QtWidgets import QFileDialog, QListWidgetItem, QApplication, QWidget, \
+from PySide2.QtGui import QPixmap, QTextCursor
+from PySide2.QtCore import Qt, QObject, Signal, QSize, QTimer, QEventLoop
+from PySide2.QtWidgets import QFileDialog, QListWidgetItem, QApplication, QWidget, \
                             QVBoxLayout, QHBoxLayout, QLabel, QGridLayout
 from PIL import Image
 from PIL.ImageQt import ImageQt
@@ -33,14 +33,14 @@ ICON_ASSIGN = {
 
 
 class runnerSignal(QObject):
-    signal = pyqtSignal()
+    signal = Signal()
 
 
 class StdoutRedirect(QObject):
     # Codes from below.
     # https://4uwingnet.tistory.com/9
 
-    printOccur = pyqtSignal(str, name="print")
+    printOccur = Signal(str, name="print")
 
     def __init__(self):
         QObject.__init__(self, None)

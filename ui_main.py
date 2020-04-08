@@ -1,6 +1,6 @@
 
-from PyQt5.QtCore import QModelIndex
-from PyQt5.QtWidgets import QFileDialog, QListWidgetItem, QApplication, QMainWindow
+from PySide2.QtCore import QModelIndex
+from PySide2.QtWidgets import QFileDialog, QListWidgetItem, QApplication, QMainWindow
 import sys
 import os
 import json
@@ -444,6 +444,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             obj.clickCount = self.searchClickCount.value()
             obj.clickDelay = self.searchClickInterval.value()
             obj.precision = self.searchPrecisionSpin.value() / 100
+            obj.targetName = self.searchImgNameLabel.value()
 
         @dispatch.register(MacroMethods.Loop)
         def _(obj):
@@ -622,7 +623,7 @@ def main():
     app = QApplication(sys.argv)
     window = MainWindow()
     window.show()
-    sys.exit(app.exec())
+    sys.exit(app.exec_())
 
 
 if __name__ == '__main__':

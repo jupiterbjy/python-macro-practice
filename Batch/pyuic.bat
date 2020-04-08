@@ -1,4 +1,4 @@
 rem @echo off
 rem cd %~dp0
 cd ..\qtUI
-for %%f in (./*.ui) do pyuic5 ./%%f -o ./%%~nf.py
+for %%f in (./*.ui) do pyside2-uic ./%%f -o ./%%~nf.py

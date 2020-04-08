@@ -69,6 +69,9 @@ class _Base:
     def deserialize(self):
         self.screenArea = ImageModule.Area(*self.screenArea)
 
+    def reset(self):
+        pass
+
 
 # --------------------------------------------------------
 
@@ -359,6 +362,10 @@ class ImageSearch(_Image, _ClickBase):
             return True
         return False
 
+    def reset(self):
+        self.target = ImageModule.Pos()
+        self._foundFlag = False
+        self.capturedImage = None
 
 class SearchOccurrence(_Image, _ClickBase):
     """

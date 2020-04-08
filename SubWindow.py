@@ -1,6 +1,6 @@
 
-from PyQt5.QtCore import QRunnable, pyqtSlot, Qt
-from PyQt5.QtWidgets import QListWidgetItem, QMainWindow, QDialog
+from PySide2.QtCore import QRunnable, Slot, Qt, SLOT
+from PySide2.QtWidgets import QListWidgetItem, QMainWindow, QDialog
 import pyautogui
 
 from Toolset import QtTools, Tools
@@ -31,7 +31,7 @@ class Worker(QRunnable):
         self.args = args
         self.kwargs = kwargs
 
-    @pyqtSlot()
+    @Slot()
     def run(self):
         """
         Initialise the runner function with passed args, kwargs.
@@ -45,11 +45,6 @@ class Worker(QRunnable):
 class CaptureCoverage(QDialog):
     def __init__(self, flags, *args, **kwargs):
         super().__init__(flags, *args, **kwargs)
-
-        self.setWindowFlag(
-            self.windowFlags() |
-            Qt.FramelessWindowHint
-        )
 
         self.setWindowOpacity(0.7)
 

@@ -1,178 +1,201 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file './Runner.ui'
-#
-# Created by: PyQt5 UI code generator 5.14.2
-#
-# WARNING! All changes made in this file will be lost!
+################################################################################
+## Form generated from reading UI file 'Runner.ui'
+##
+## Created by: Qt User Interface Compiler version 5.14.2
+##
+## WARNING! All changes made in this file will be lost when recompiling UI file!
+################################################################################
 
-
-from PyQt5 import QtCore, QtGui, QtWidgets
+from PySide2.QtCore import (QCoreApplication, QDate, QDateTime, QMetaObject,
+    QObject, QPoint, QRect, QSize, QTime, QUrl, Qt)
+from PySide2.QtGui import (QBrush, QColor, QConicalGradient, QCursor, QFont,
+    QFontDatabase, QIcon, QKeySequence, QLinearGradient, QPalette, QPainter,
+    QPixmap, QRadialGradient)
+from PySide2.QtWidgets import *
 
 
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
-        MainWindow.setObjectName("MainWindow")
+        if not MainWindow.objectName():
+            MainWindow.setObjectName(u"MainWindow")
         MainWindow.resize(305, 587)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed)
+        sizePolicy = QSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(MainWindow.sizePolicy().hasHeightForWidth())
         MainWindow.setSizePolicy(sizePolicy)
-        MainWindow.setMinimumSize(QtCore.QSize(305, 587))
-        MainWindow.setMaximumSize(QtCore.QSize(305, 587))
-        MainWindow.setStyleSheet("")
-        self.centralwidget = QtWidgets.QWidget(MainWindow)
-        self.centralwidget.setObjectName("centralwidget")
-        self.gridLayout_3 = QtWidgets.QGridLayout(self.centralwidget)
-        self.gridLayout_3.setObjectName("gridLayout_3")
-        self.tabWidget = QtWidgets.QTabWidget(self.centralwidget)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
+        MainWindow.setMinimumSize(QSize(305, 587))
+        MainWindow.setMaximumSize(QSize(305, 587))
+        MainWindow.setStyleSheet(u"")
+        self.centralwidget = QWidget(MainWindow)
+        self.centralwidget.setObjectName(u"centralwidget")
+        self.gridLayout_3 = QGridLayout(self.centralwidget)
+        self.gridLayout_3.setObjectName(u"gridLayout_3")
+        self.tabWidget = QTabWidget(self.centralwidget)
+        self.tabWidget.setObjectName(u"tabWidget")
         sizePolicy.setHeightForWidth(self.tabWidget.sizePolicy().hasHeightForWidth())
         self.tabWidget.setSizePolicy(sizePolicy)
-        self.tabWidget.setMinimumSize(QtCore.QSize(287, 321))
-        self.tabWidget.setMaximumSize(QtCore.QSize(287, 321))
-        self.tabWidget.setTabPosition(QtWidgets.QTabWidget.North)
-        self.tabWidget.setTabShape(QtWidgets.QTabWidget.Rounded)
-        self.tabWidget.setElideMode(QtCore.Qt.ElideNone)
-        self.tabWidget.setObjectName("tabWidget")
-        self.History = QtWidgets.QWidget()
-        self.History.setObjectName("History")
-        self.sequenceList = QtWidgets.QListWidget(self.History)
-        self.sequenceList.setGeometry(QtCore.QRect(10, 10, 265, 279))
-        self.sequenceList.setFrameShape(QtWidgets.QFrame.NoFrame)
-        self.sequenceList.setFrameShadow(QtWidgets.QFrame.Plain)
-        self.sequenceList.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOn)
-        self.sequenceList.setHorizontalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff)
-        self.sequenceList.setEditTriggers(QtWidgets.QAbstractItemView.NoEditTriggers)
+        self.tabWidget.setMinimumSize(QSize(287, 321))
+        self.tabWidget.setMaximumSize(QSize(287, 321))
+        self.tabWidget.setTabPosition(QTabWidget.North)
+        self.tabWidget.setTabShape(QTabWidget.Rounded)
+        self.tabWidget.setElideMode(Qt.ElideNone)
+        self.History = QWidget()
+        self.History.setObjectName(u"History")
+        self.sequenceList = QListWidget(self.History)
+        self.sequenceList.setObjectName(u"sequenceList")
+        self.sequenceList.setGeometry(QRect(10, 10, 265, 279))
+        self.sequenceList.setFrameShape(QFrame.NoFrame)
+        self.sequenceList.setFrameShadow(QFrame.Plain)
+        self.sequenceList.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOn)
+        self.sequenceList.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+        self.sequenceList.setEditTriggers(QAbstractItemView.NoEditTriggers)
         self.sequenceList.setAlternatingRowColors(True)
-        self.sequenceList.setMovement(QtWidgets.QListView.Static)
-        self.sequenceList.setViewMode(QtWidgets.QListView.ListMode)
+        self.sequenceList.setMovement(QListView.Static)
+        self.sequenceList.setViewMode(QListView.ListMode)
         self.sequenceList.setSelectionRectVisible(True)
-        self.sequenceList.setObjectName("sequenceList")
         self.tabWidget.addTab(self.History, "")
-        self.Log = QtWidgets.QWidget()
-        self.Log.setObjectName("Log")
-        self.gridLayout_4 = QtWidgets.QGridLayout(self.Log)
-        self.gridLayout_4.setObjectName("gridLayout_4")
-        self.lockLogCheck = QtWidgets.QCheckBox(self.Log)
-        self.lockLogCheck.setObjectName("lockLogCheck")
+        self.Log = QWidget()
+        self.Log.setObjectName(u"Log")
+        self.gridLayout_4 = QGridLayout(self.Log)
+        self.gridLayout_4.setObjectName(u"gridLayout_4")
+        self.lockLogCheck = QCheckBox(self.Log)
+        self.lockLogCheck.setObjectName(u"lockLogCheck")
+
         self.gridLayout_4.addWidget(self.lockLogCheck, 0, 0, 1, 1)
-        self.outputTextEdit = QtWidgets.QTextEdit(self.Log)
-        self.outputTextEdit.setStyleSheet("background-color: rgb(30, 30, 30);\n"
+
+        self.outputTextEdit = QTextEdit(self.Log)
+        self.outputTextEdit.setObjectName(u"outputTextEdit")
+        self.outputTextEdit.setStyleSheet(u"background-color: rgb(30, 30, 30);\n"
 "color: rgb(255, 255, 255);")
-        self.outputTextEdit.setFrameShape(QtWidgets.QFrame.NoFrame)
-        self.outputTextEdit.setFrameShadow(QtWidgets.QFrame.Raised)
+        self.outputTextEdit.setFrameShape(QFrame.NoFrame)
+        self.outputTextEdit.setFrameShadow(QFrame.Raised)
         self.outputTextEdit.setLineWidth(0)
-        self.outputTextEdit.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff)
-        self.outputTextEdit.setHorizontalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff)
-        self.outputTextEdit.setAutoFormatting(QtWidgets.QTextEdit.AutoNone)
+        self.outputTextEdit.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+        self.outputTextEdit.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+        self.outputTextEdit.setAutoFormatting(QTextEdit.AutoNone)
         self.outputTextEdit.setUndoRedoEnabled(False)
-        self.outputTextEdit.setLineWrapMode(QtWidgets.QTextEdit.WidgetWidth)
+        self.outputTextEdit.setLineWrapMode(QTextEdit.WidgetWidth)
         self.outputTextEdit.setLineWrapColumnOrWidth(0)
         self.outputTextEdit.setReadOnly(True)
-        self.outputTextEdit.setObjectName("outputTextEdit")
+
         self.gridLayout_4.addWidget(self.outputTextEdit, 1, 0, 1, 1)
+
         self.tabWidget.addTab(self.Log, "")
+
         self.gridLayout_3.addWidget(self.tabWidget, 0, 0, 1, 1)
-        self.frame = QtWidgets.QFrame(self.centralwidget)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
+
+        self.frame = QFrame(self.centralwidget)
+        self.frame.setObjectName(u"frame")
         sizePolicy.setHeightForWidth(self.frame.sizePolicy().hasHeightForWidth())
         self.frame.setSizePolicy(sizePolicy)
-        self.frame.setFrameShape(QtWidgets.QFrame.StyledPanel)
-        self.frame.setFrameShadow(QtWidgets.QFrame.Raised)
-        self.frame.setObjectName("frame")
-        self.gridLayout_2 = QtWidgets.QGridLayout(self.frame)
-        self.gridLayout_2.setObjectName("gridLayout_2")
-        self.currentSeq = QtWidgets.QListWidget(self.frame)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
+        self.frame.setFrameShape(QFrame.StyledPanel)
+        self.frame.setFrameShadow(QFrame.Raised)
+        self.gridLayout_2 = QGridLayout(self.frame)
+        self.gridLayout_2.setObjectName(u"gridLayout_2")
+        self.currentSeq = QListWidget(self.frame)
+        self.currentSeq.setObjectName(u"currentSeq")
         sizePolicy.setHeightForWidth(self.currentSeq.sizePolicy().hasHeightForWidth())
         self.currentSeq.setSizePolicy(sizePolicy)
-        self.currentSeq.setMinimumSize(QtCore.QSize(267, 70))
-        self.currentSeq.setMaximumSize(QtCore.QSize(267, 70))
-        self.currentSeq.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff)
-        self.currentSeq.setHorizontalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff)
-        self.currentSeq.setEditTriggers(QtWidgets.QAbstractItemView.NoEditTriggers)
+        self.currentSeq.setMinimumSize(QSize(267, 70))
+        self.currentSeq.setMaximumSize(QSize(267, 70))
+        self.currentSeq.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+        self.currentSeq.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+        self.currentSeq.setEditTriggers(QAbstractItemView.NoEditTriggers)
         self.currentSeq.setAlternatingRowColors(True)
-        self.currentSeq.setMovement(QtWidgets.QListView.Static)
-        self.currentSeq.setViewMode(QtWidgets.QListView.ListMode)
+        self.currentSeq.setMovement(QListView.Static)
+        self.currentSeq.setViewMode(QListView.ListMode)
         self.currentSeq.setSelectionRectVisible(True)
-        self.currentSeq.setObjectName("currentSeq")
+
         self.gridLayout_2.addWidget(self.currentSeq, 0, 0, 1, 1)
-        self.runLine = QtWidgets.QLineEdit(self.frame)
+
+        self.runLine = QLineEdit(self.frame)
+        self.runLine.setObjectName(u"runLine")
         self.runLine.setEnabled(True)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.runLine.sizePolicy().hasHeightForWidth())
         self.runLine.setSizePolicy(sizePolicy)
-        self.runLine.setMinimumSize(QtCore.QSize(267, 20))
-        self.runLine.setMaximumSize(QtCore.QSize(267, 20))
+        self.runLine.setMinimumSize(QSize(267, 20))
+        self.runLine.setMaximumSize(QSize(267, 20))
         self.runLine.setReadOnly(True)
-        self.runLine.setObjectName("runLine")
+
         self.gridLayout_2.addWidget(self.runLine, 1, 0, 1, 1)
-        self.gridLayout = QtWidgets.QGridLayout()
-        self.gridLayout.setObjectName("gridLayout")
-        self.randOffsetSpin = QtWidgets.QSpinBox(self.frame)
+
+        self.gridLayout = QGridLayout()
+        self.gridLayout.setObjectName(u"gridLayout")
+        self.randOffsetSpin = QSpinBox(self.frame)
+        self.randOffsetSpin.setObjectName(u"randOffsetSpin")
         self.randOffsetSpin.setMaximum(50)
-        self.randOffsetSpin.setProperty("value", 5)
-        self.randOffsetSpin.setObjectName("randOffsetSpin")
+        self.randOffsetSpin.setValue(5)
+
         self.gridLayout.addWidget(self.randOffsetSpin, 2, 1, 1, 1)
-        self.randOffsetCheck = QtWidgets.QCheckBox(self.frame)
-        self.randOffsetCheck.setObjectName("randOffsetCheck")
+
+        self.randOffsetCheck = QCheckBox(self.frame)
+        self.randOffsetCheck.setObjectName(u"randOffsetCheck")
+
         self.gridLayout.addWidget(self.randOffsetCheck, 2, 0, 1, 1)
-        self.runButton = QtWidgets.QPushButton(self.frame)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Fixed)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.runButton.sizePolicy().hasHeightForWidth())
-        self.runButton.setSizePolicy(sizePolicy)
-        self.runButton.setObjectName("runButton")
+
+        self.runButton = QPushButton(self.frame)
+        self.runButton.setObjectName(u"runButton")
+        sizePolicy1 = QSizePolicy(QSizePolicy.Preferred, QSizePolicy.Fixed)
+        sizePolicy1.setHorizontalStretch(0)
+        sizePolicy1.setVerticalStretch(0)
+        sizePolicy1.setHeightForWidth(self.runButton.sizePolicy().hasHeightForWidth())
+        self.runButton.setSizePolicy(sizePolicy1)
+
         self.gridLayout.addWidget(self.runButton, 0, 0, 1, 1)
-        self.StopButton = QtWidgets.QPushButton(self.frame)
+
+        self.StopButton = QPushButton(self.frame)
+        self.StopButton.setObjectName(u"StopButton")
         self.StopButton.setEnabled(False)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Fixed)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.StopButton.sizePolicy().hasHeightForWidth())
-        self.StopButton.setSizePolicy(sizePolicy)
-        self.StopButton.setObjectName("StopButton")
+        sizePolicy1.setHeightForWidth(self.StopButton.sizePolicy().hasHeightForWidth())
+        self.StopButton.setSizePolicy(sizePolicy1)
+
         self.gridLayout.addWidget(self.StopButton, 0, 1, 1, 1)
-        self.fullScreenCheck = QtWidgets.QCheckBox(self.frame)
-        self.fullScreenCheck.setObjectName("fullScreenCheck")
+
+        self.fullScreenCheck = QCheckBox(self.frame)
+        self.fullScreenCheck.setObjectName(u"fullScreenCheck")
+
         self.gridLayout.addWidget(self.fullScreenCheck, 1, 0, 1, 1)
+
+
         self.gridLayout_2.addLayout(self.gridLayout, 3, 0, 1, 1)
-        self.progressBar = QtWidgets.QProgressBar(self.frame)
+
+        self.progressBar = QProgressBar(self.frame)
+        self.progressBar.setObjectName(u"progressBar")
         self.progressBar.setMaximum(50)
-        self.progressBar.setProperty("value", 24)
+        self.progressBar.setValue(24)
         self.progressBar.setTextVisible(True)
         self.progressBar.setInvertedAppearance(True)
-        self.progressBar.setTextDirection(QtWidgets.QProgressBar.TopToBottom)
-        self.progressBar.setObjectName("progressBar")
+        self.progressBar.setTextDirection(QProgressBar.TopToBottom)
+
         self.gridLayout_2.addWidget(self.progressBar, 2, 0, 1, 1)
+
+
         self.gridLayout_3.addWidget(self.frame, 1, 0, 1, 1)
+
         MainWindow.setCentralWidget(self.centralwidget)
 
         self.retranslateUi(MainWindow)
+
         self.tabWidget.setCurrentIndex(0)
-        QtCore.QMetaObject.connectSlotsByName(MainWindow)
+
+
+        QMetaObject.connectSlotsByName(MainWindow)
+    # setupUi
 
     def retranslateUi(self, MainWindow):
-        _translate = QtCore.QCoreApplication.translate
-        MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
-        self.tabWidget.setTabText(self.tabWidget.indexOf(self.History), _translate("MainWindow", "History"))
-        self.lockLogCheck.setText(_translate("MainWindow", "Lock to Log tab"))
-        self.outputTextEdit.setPlaceholderText(_translate("MainWindow", "Standby"))
-        self.tabWidget.setTabText(self.tabWidget.indexOf(self.Log), _translate("MainWindow", "Log"))
-        self.randOffsetSpin.setSuffix(_translate("MainWindow", " pixel"))
-        self.randOffsetCheck.setText(_translate("MainWindow", "Random Offset"))
-        self.runButton.setText(_translate("MainWindow", "Run"))
-        self.StopButton.setText(_translate("MainWindow", "Stop"))
-        self.fullScreenCheck.setText(_translate("MainWindow", "Full Screen"))
-        self.progressBar.setFormat(_translate("MainWindow", "%vs"))
+        MainWindow.setWindowTitle(QCoreApplication.translate("MainWindow", u"MainWindow", None))
+        self.tabWidget.setTabText(self.tabWidget.indexOf(self.History), QCoreApplication.translate("MainWindow", u"History", None))
+        self.lockLogCheck.setText(QCoreApplication.translate("MainWindow", u"Lock to Log tab", None))
+        self.outputTextEdit.setPlaceholderText(QCoreApplication.translate("MainWindow", u"Standby", None))
+        self.tabWidget.setTabText(self.tabWidget.indexOf(self.Log), QCoreApplication.translate("MainWindow", u"Log", None))
+        self.randOffsetSpin.setSuffix(QCoreApplication.translate("MainWindow", u" pixel", None))
+        self.randOffsetCheck.setText(QCoreApplication.translate("MainWindow", u"Random Offset", None))
+        self.runButton.setText(QCoreApplication.translate("MainWindow", u"Run", None))
+        self.StopButton.setText(QCoreApplication.translate("MainWindow", u"Stop", None))
+        self.fullScreenCheck.setText(QCoreApplication.translate("MainWindow", u"Full Screen", None))
+        self.progressBar.setFormat(QCoreApplication.translate("MainWindow", u"%vs", None))
+    # retranslateUi
+
