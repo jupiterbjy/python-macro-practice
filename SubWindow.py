@@ -1,6 +1,6 @@
 
-from PySide2.QtCore import QRunnable, Slot, Qt, SLOT
-from PySide2.QtWidgets import QListWidgetItem, QMainWindow, QDialog
+from PySide2.QtCore import QRunnable, Slot
+from PySide2.QtWidgets import QMainWindow, QDialog
 import pyautogui
 
 from Toolset import QtTools, Tools
@@ -78,6 +78,9 @@ class Runner(QMainWindow, Ui_Runner):
         MacroMethods.RAND_OFFSET = self.randOffsetCheck.isChecked()
         MacroMethods.OFFSET_MAX = self.randOffsetSpin.value()
 
+        for i in self.source:
+            i.reset()
+
     def closeEvent(self, *args, **kwargs):
         self.deleteLater()
 
@@ -97,10 +100,6 @@ class Runner(QMainWindow, Ui_Runner):
 
         for obj in self.source:
             obj.setArea(*area)
-
-    def callCaptureCoverage(self):
-        sub_window = Runner(self, self.seqStorage)
-        sub_window.show()
 
     def updateHistory(self, obj=None):
 
