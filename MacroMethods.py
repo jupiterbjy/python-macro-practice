@@ -15,6 +15,7 @@ IMG_SAVER = ImageModule.saveImg()
 ABORT = False
 RAND_OFFSET = False
 OFFSET_MAX = 5
+DEBUG = False
 
 
 class AbortException(Exception):
@@ -28,9 +29,9 @@ def checkAbort():  # for now call this every action() to implement abort.
 
 class _Base:
     """
-    Super class for all, success-fail-next is at this level.
+    Defines minimum interfaces that subclasses need to function.
+    Override when necessary.
     """
-    # __slots__ = ('name', 'order')
 
     def __init__(self):
         super(_Base, self).__init__()
@@ -70,8 +71,13 @@ class _Base:
         self.screenArea = ImageModule.Area(*self.screenArea)
 
     def reset(self):
-        pass
+        self.screenArea = ImageModule.Area()
 
+    def __next__(self):
+        return self.next
+
+    def __iter__(self):
+        return self
 
 # --------------------------------------------------------
 
@@ -85,6 +91,7 @@ class _ClickBase:
         self.target = ImageModule.Pos()
         self.clickCount = 1
         self.clickDelay = 0.01
+        self.randomOffset = 0
 
     @staticmethod
     def finalPos(target):
@@ -263,7 +270,7 @@ class _Image(_Base):
         self._targetImage = None
         self.targetName = None
         self.capturedImage = None
-        self.matchPoint = (0, 0)
+        self.matchPoint = None      # expects pos object
         self.precision = 0.85
 
     def DumpCaptured(self, name=None):
@@ -281,16 +288,21 @@ class _Image(_Base):
 
     @targetImage.setter
     def targetImage(self, img):
-        img.convert('RGB')
+        try:
+            img.convert('RGB')
 
-        if img.format != 'PNG':     # Non-png images has trouble with cv2 conversion
-
-            byte_io = io.BytesIO()
-            img.save(byte_io, 'PNG')
-            self._targetImage = Image.open(byte_io)
+        except AttributeError:
+            raise AttributeError('Onl PIL-type images are supported.')
 
         else:
-            self._targetImage = img
+            if img.format != 'PNG':     # Non-png images has trouble with cv2 conversion
+
+                byte_io = io.BytesIO()
+                img.save(byte_io, 'PNG')
+                self._targetImage = Image.open(byte_io)
+
+            else:
+                self._targetImage = img
 
     def serialize(self):
         self.screenArea = self.screenArea()
@@ -313,6 +325,10 @@ class _Image(_Base):
         self._targetImage = Image.open(buffer, 'r').copy()
         buffer.close()
 
+    def reset(self):
+        self.capturedImage = None
+        self.matchPoint = None
+
 
 class ImageSearch(_Image, _ClickBase):
     """
@@ -325,19 +341,16 @@ class ImageSearch(_Image, _ClickBase):
 
         self.loopDelay = 0.2
         self.trials = 5
-        self.clickOnMatch = False
         self._foundFlag = False
 
     def ImageSearch(self):
         self.matchPoint, self.capturedImage = \
             ImageModule.imageSearch(self.targetImage, self.screenArea.region, self.precision)
-        if self.matchPoint[0] != -1:
-            self._foundFlag = True
 
     def ImageSearchMultiple(self):
         for i in range(self.trials):
             self.ImageSearch()
-            if self._foundFlag:
+            if self.matchPoint:
                 break
 
         self.DumpCaptured(self._foundFlag)
@@ -345,7 +358,7 @@ class ImageSearch(_Image, _ClickBase):
     @property
     def ImageCenter(self):
         w, h = self.targetImage.size
-        return self.matchPoint[0] + w//2, self.matchPoint[1] + h//2
+        return self.matchPoint + ImageModule.Pos(w//2, h//2)
 
     @property
     def absPos(self):
@@ -354,10 +367,9 @@ class ImageSearch(_Image, _ClickBase):
     def action(self):
         self.ImageSearchMultiple()
 
-        if self._foundFlag:
-            if self.clickOnMatch:
-                self.target.set(*self.ImageCenter)
-                self._click(self.absPos)
+        if self.matchPoint:
+            self.target.set(*self.ImageCenter)
+            self._click(self.absPos)
 
             return True
         return False
@@ -366,6 +378,7 @@ class ImageSearch(_Image, _ClickBase):
         self.target = ImageModule.Pos()
         self._foundFlag = False
         self.capturedImage = None
+
 
 class SearchOccurrence(_Image, _ClickBase):
     """
@@ -413,7 +426,6 @@ class Drag(_Base):
     def action(self):
         pyautogui.moveTo(*self.From)
         pyautogui.dragTo(*self.To, button='left')
-
         return True
 
     def serialize(self):
@@ -428,7 +440,7 @@ class Drag(_Base):
         self.p2 = ImageModule.Pos(*self.p2)
 
 
-def NextSetter(sequence):
+def SetNext(sequence):
     """
     Set next for respective object in sequence.
     Will need special case for loop class.

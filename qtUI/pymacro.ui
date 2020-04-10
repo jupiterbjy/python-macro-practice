@@ -154,6 +154,82 @@
         <enum>QFrame::Raised</enum>
        </property>
        <layout class="QGridLayout" name="gridLayout_3">
+        <item row="1" column="0">
+         <layout class="QGridLayout" name="gridLayout_5">
+          <item row="0" column="0">
+           <widget class="QLabel" name="label_9">
+            <property name="maximumSize">
+             <size>
+              <width>16777215</width>
+              <height>20</height>
+             </size>
+            </property>
+            <property name="text">
+             <string>On Success</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="1">
+           <widget class="QLabel" name="label_10">
+            <property name="text">
+             <string>On Fail</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="0">
+           <widget class="QComboBox" name="onSuccessCombo"/>
+          </item>
+          <item row="1" column="1">
+           <widget class="QComboBox" name="onFailCombo"/>
+          </item>
+         </layout>
+        </item>
+        <item row="2" column="0">
+         <layout class="QHBoxLayout" name="horizontalLayout">
+          <item>
+           <widget class="QPushButton" name="runButton">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="text">
+             <string>Run</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="insertButton">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="text">
+             <string>Insert</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="editButton">
+            <property name="enabled">
+             <bool>false</bool>
+            </property>
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="text">
+             <string>Edit</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
         <item row="0" column="0">
          <widget class="QTabWidget" name="tabWidget">
           <property name="sizePolicy">
@@ -175,7 +251,7 @@
            </size>
           </property>
           <property name="currentIndex">
-           <number>3</number>
+           <number>0</number>
           </property>
           <property name="usesScrollButtons">
            <bool>true</bool>
@@ -274,6 +350,9 @@ color: rgb(255, 255, 255);</string>
                <height>20</height>
               </rect>
              </property>
+             <property name="toolTip">
+              <string>Number of image match trials until failure.</string>
+             </property>
              <property name="text">
               <string>Count</string>
              </property>
@@ -286,6 +365,9 @@ color: rgb(255, 255, 255);</string>
                <width>71</width>
                <height>21</height>
               </rect>
+             </property>
+             <property name="toolTip">
+              <string>Number of image match trials until failure.</string>
              </property>
              <property name="minimum">
               <number>1</number>
@@ -306,6 +388,9 @@ color: rgb(255, 255, 255);</string>
                <height>20</height>
               </rect>
              </property>
+             <property name="toolTip">
+              <string>Interval between trials.</string>
+             </property>
              <property name="text">
               <string>Interval</string>
              </property>
@@ -318,6 +403,9 @@ color: rgb(255, 255, 255);</string>
                <width>71</width>
                <height>21</height>
               </rect>
+             </property>
+             <property name="toolTip">
+              <string>Interval between trials.</string>
              </property>
              <property name="suffix">
               <string>s</string>
@@ -345,6 +433,9 @@ color: rgb(255, 255, 255);</string>
               <height>131</height>
              </rect>
             </property>
+            <property name="toolTip">
+             <string/>
+            </property>
             <property name="title">
              <string>Click</string>
             </property>
@@ -363,6 +454,9 @@ color: rgb(255, 255, 255);</string>
                <height>20</height>
               </rect>
              </property>
+             <property name="toolTip">
+              <string>Number of clicks when image is matched.</string>
+             </property>
              <property name="text">
               <string>Count</string>
              </property>
@@ -375,6 +469,9 @@ color: rgb(255, 255, 255);</string>
                <width>71</width>
                <height>21</height>
               </rect>
+             </property>
+             <property name="toolTip">
+              <string>Number of clicks when image is matched.</string>
              </property>
              <property name="maximum">
               <number>99999</number>
@@ -389,6 +486,9 @@ color: rgb(255, 255, 255);</string>
                <height>20</height>
               </rect>
              </property>
+             <property name="toolTip">
+              <string>Interval between each clicks.</string>
+             </property>
              <property name="text">
               <string>Interval</string>
              </property>
@@ -401,6 +501,9 @@ color: rgb(255, 255, 255);</string>
                <width>71</width>
                <height>21</height>
               </rect>
+             </property>
+             <property name="toolTip">
+              <string>Interval between each clicks.</string>
              </property>
              <property name="suffix">
               <string>s</string>
@@ -451,6 +554,9 @@ color: rgb(255, 255, 255);</string>
               <height>20</height>
              </rect>
             </property>
+            <property name="toolTip">
+             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Sets &lt;span style=&quot; font-weight:600;&quot;&gt;minimum &lt;/span&gt;similarity when matching image. Usually ~99% similarity is hardly useful when used in emulators due to inaccurate simulation.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+            </property>
             <property name="text">
              <string>Precision</string>
             </property>
@@ -464,6 +570,9 @@ color: rgb(255, 255, 255);</string>
               <height>21</height>
              </rect>
             </property>
+            <property name="toolTip">
+             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Sets &lt;span style=&quot; font-weight:600;&quot;&gt;minimum &lt;/span&gt;similarity when matching image. Usually ~99% similarity is hardly useful when used in emulators due to inaccurate simulation.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+            </property>
             <property name="suffix">
              <string>%</string>
             </property>
@@ -475,6 +584,47 @@ color: rgb(255, 255, 255);</string>
             </property>
             <property name="value">
              <number>85</number>
+            </property>
+           </widget>
+           <widget class="QCheckBox" name="checkBox">
+            <property name="geometry">
+             <rect>
+              <x>13</x>
+              <y>370</y>
+              <width>111</width>
+              <height>21</height>
+             </rect>
+            </property>
+            <property name="toolTip">
+             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Drift click position &lt;span style=&quot; font-weight:600;&quot;&gt;randomly&lt;/span&gt; to avoid macro detection in some games.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+            </property>
+            <property name="text">
+             <string>Random Offset</string>
+            </property>
+            <property name="tristate">
+             <bool>false</bool>
+            </property>
+           </widget>
+           <widget class="QSpinBox" name="spinBox">
+            <property name="geometry">
+             <rect>
+              <x>130</x>
+              <y>370</y>
+              <width>101</width>
+              <height>21</height>
+             </rect>
+            </property>
+            <property name="toolTip">
+             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Drift click position &lt;span style=&quot; font-weight:600;&quot;&gt;randomly&lt;/span&gt; to avoid macro detection in some games.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+            </property>
+            <property name="suffix">
+             <string> Pixel(s)</string>
+            </property>
+            <property name="maximum">
+             <number>9999</number>
+            </property>
+            <property name="stepType">
+             <enum>QAbstractSpinBox::DefaultStepType</enum>
             </property>
            </widget>
           </widget>
@@ -1205,82 +1355,6 @@ color: rgb(230, 230, 230);</string>
            </layout>
           </widget>
          </widget>
-        </item>
-        <item row="1" column="0">
-         <layout class="QGridLayout" name="gridLayout_5">
-          <item row="0" column="0">
-           <widget class="QLabel" name="label_9">
-            <property name="maximumSize">
-             <size>
-              <width>16777215</width>
-              <height>20</height>
-             </size>
-            </property>
-            <property name="text">
-             <string>On Success</string>
-            </property>
-           </widget>
-          </item>
-          <item row="0" column="1">
-           <widget class="QLabel" name="label_10">
-            <property name="text">
-             <string>On Fail</string>
-            </property>
-           </widget>
-          </item>
-          <item row="1" column="0">
-           <widget class="QComboBox" name="onSuccessCombo"/>
-          </item>
-          <item row="1" column="1">
-           <widget class="QComboBox" name="onFailCombo"/>
-          </item>
-         </layout>
-        </item>
-        <item row="2" column="0">
-         <layout class="QHBoxLayout" name="horizontalLayout">
-          <item>
-           <widget class="QPushButton" name="runButton">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-            <property name="text">
-             <string>Run</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QPushButton" name="insertButton">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-            <property name="text">
-             <string>Insert</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QPushButton" name="editButton">
-            <property name="enabled">
-             <bool>false</bool>
-            </property>
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-            <property name="text">
-             <string>Edit</string>
-            </property>
-           </widget>
-          </item>
-         </layout>
         </item>
        </layout>
       </widget>

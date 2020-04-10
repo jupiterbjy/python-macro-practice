@@ -12,7 +12,6 @@
 # TODO: prevent 'edit' after removing selected cause different object to be selected.
 
 # <Optimization TO-DO>
-# TODO: get widget from Main Ui to runner ui without generating new within runner ui.
 
 
 # <Reference>

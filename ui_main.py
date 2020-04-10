@@ -125,10 +125,10 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         """
         Prepares and Calls subWindow to run macro.
         """
-        MacroMethods.NextSetter(self.seqStorage)
+        MacroMethods.SetNext(self.seqStorage)
 
         try:
-            runner = Runner(self, copy.deepcopy(self.seqStorage), self.runner_signal,
+            runner = Runner(self, self.seqStorage[0], self.runner_signal,
                             self.debugCheck.isChecked())
         except IndexError:
             self.StdRedirect()
@@ -438,7 +438,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             except AttributeError:
                 raise AttributeError('└ No Image specified.')
 
-            obj.clickOnMatch = self.searchClickGroup.isEnabled()
             obj.trials = self.trialsCountSpin.value()
             obj.loopDelay = self.trialsIntervalSpin.value()
             obj.clickCount = self.searchClickCount.value()
@@ -511,8 +510,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         @dispatch.register(MacroMethods.ImageSearch)
         def _(obj_):
-            self.searchClickGroup.setChecked(obj_.clickOnMatch)
-
             self.searchClickCount.setValue(obj_.clickCount)
             self.searchClickInterval.setValue(obj_.clickDelay)
 

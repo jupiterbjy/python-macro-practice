@@ -97,13 +97,69 @@ class Ui_MainWindow(object):
         self.frame_3.setFrameShadow(QFrame.Raised)
         self.gridLayout_3 = QGridLayout(self.frame_3)
         self.gridLayout_3.setObjectName(u"gridLayout_3")
-        self.tabWidget = QTabWidget(self.frame_3)
-        self.tabWidget.setObjectName(u"tabWidget")
-        sizePolicy3 = QSizePolicy(QSizePolicy.Preferred, QSizePolicy.Preferred)
+        self.gridLayout_5 = QGridLayout()
+        self.gridLayout_5.setObjectName(u"gridLayout_5")
+        self.label_9 = QLabel(self.frame_3)
+        self.label_9.setObjectName(u"label_9")
+        self.label_9.setMaximumSize(QSize(16777215, 20))
+
+        self.gridLayout_5.addWidget(self.label_9, 0, 0, 1, 1)
+
+        self.label_10 = QLabel(self.frame_3)
+        self.label_10.setObjectName(u"label_10")
+
+        self.gridLayout_5.addWidget(self.label_10, 0, 1, 1, 1)
+
+        self.onSuccessCombo = QComboBox(self.frame_3)
+        self.onSuccessCombo.setObjectName(u"onSuccessCombo")
+
+        self.gridLayout_5.addWidget(self.onSuccessCombo, 1, 0, 1, 1)
+
+        self.onFailCombo = QComboBox(self.frame_3)
+        self.onFailCombo.setObjectName(u"onFailCombo")
+
+        self.gridLayout_5.addWidget(self.onFailCombo, 1, 1, 1, 1)
+
+
+        self.gridLayout_3.addLayout(self.gridLayout_5, 1, 0, 1, 1)
+
+        self.horizontalLayout = QHBoxLayout()
+        self.horizontalLayout.setObjectName(u"horizontalLayout")
+        self.runButton = QPushButton(self.frame_3)
+        self.runButton.setObjectName(u"runButton")
+        sizePolicy3 = QSizePolicy(QSizePolicy.Preferred, QSizePolicy.Fixed)
         sizePolicy3.setHorizontalStretch(0)
         sizePolicy3.setVerticalStretch(0)
-        sizePolicy3.setHeightForWidth(self.tabWidget.sizePolicy().hasHeightForWidth())
-        self.tabWidget.setSizePolicy(sizePolicy3)
+        sizePolicy3.setHeightForWidth(self.runButton.sizePolicy().hasHeightForWidth())
+        self.runButton.setSizePolicy(sizePolicy3)
+
+        self.horizontalLayout.addWidget(self.runButton)
+
+        self.insertButton = QPushButton(self.frame_3)
+        self.insertButton.setObjectName(u"insertButton")
+        sizePolicy3.setHeightForWidth(self.insertButton.sizePolicy().hasHeightForWidth())
+        self.insertButton.setSizePolicy(sizePolicy3)
+
+        self.horizontalLayout.addWidget(self.insertButton)
+
+        self.editButton = QPushButton(self.frame_3)
+        self.editButton.setObjectName(u"editButton")
+        self.editButton.setEnabled(False)
+        sizePolicy3.setHeightForWidth(self.editButton.sizePolicy().hasHeightForWidth())
+        self.editButton.setSizePolicy(sizePolicy3)
+
+        self.horizontalLayout.addWidget(self.editButton)
+
+
+        self.gridLayout_3.addLayout(self.horizontalLayout, 2, 0, 1, 1)
+
+        self.tabWidget = QTabWidget(self.frame_3)
+        self.tabWidget.setObjectName(u"tabWidget")
+        sizePolicy4 = QSizePolicy(QSizePolicy.Preferred, QSizePolicy.Preferred)
+        sizePolicy4.setHorizontalStretch(0)
+        sizePolicy4.setVerticalStretch(0)
+        sizePolicy4.setHeightForWidth(self.tabWidget.sizePolicy().hasHeightForWidth())
+        self.tabWidget.setSizePolicy(sizePolicy4)
         self.tabWidget.setMinimumSize(QSize(0, 431))
         self.tabWidget.setMaximumSize(QSize(252, 16777215))
         self.tabWidget.setUsesScrollButtons(True)
@@ -186,6 +242,15 @@ class Ui_MainWindow(object):
         self.searchPrecisionSpin.setGeometry(QRect(72, 340, 51, 21))
         self.searchPrecisionSpin.setMaximum(100)
         self.searchPrecisionSpin.setValue(85)
+        self.checkBox = QCheckBox(self.imgTab)
+        self.checkBox.setObjectName(u"checkBox")
+        self.checkBox.setGeometry(QRect(13, 370, 111, 21))
+        self.checkBox.setTristate(False)
+        self.spinBox = QSpinBox(self.imgTab)
+        self.spinBox.setObjectName(u"spinBox")
+        self.spinBox.setGeometry(QRect(130, 370, 101, 21))
+        self.spinBox.setMaximum(9999)
+        self.spinBox.setStepType(QAbstractSpinBox.DefaultStepType)
         self.tabWidget.addTab(self.imgTab, "")
         self.tab = QWidget()
         self.tab.setObjectName(u"tab")
@@ -396,62 +461,6 @@ class Ui_MainWindow(object):
 
         self.gridLayout_3.addWidget(self.tabWidget, 0, 0, 1, 1)
 
-        self.gridLayout_5 = QGridLayout()
-        self.gridLayout_5.setObjectName(u"gridLayout_5")
-        self.label_9 = QLabel(self.frame_3)
-        self.label_9.setObjectName(u"label_9")
-        self.label_9.setMaximumSize(QSize(16777215, 20))
-
-        self.gridLayout_5.addWidget(self.label_9, 0, 0, 1, 1)
-
-        self.label_10 = QLabel(self.frame_3)
-        self.label_10.setObjectName(u"label_10")
-
-        self.gridLayout_5.addWidget(self.label_10, 0, 1, 1, 1)
-
-        self.onSuccessCombo = QComboBox(self.frame_3)
-        self.onSuccessCombo.setObjectName(u"onSuccessCombo")
-
-        self.gridLayout_5.addWidget(self.onSuccessCombo, 1, 0, 1, 1)
-
-        self.onFailCombo = QComboBox(self.frame_3)
-        self.onFailCombo.setObjectName(u"onFailCombo")
-
-        self.gridLayout_5.addWidget(self.onFailCombo, 1, 1, 1, 1)
-
-
-        self.gridLayout_3.addLayout(self.gridLayout_5, 1, 0, 1, 1)
-
-        self.horizontalLayout = QHBoxLayout()
-        self.horizontalLayout.setObjectName(u"horizontalLayout")
-        self.runButton = QPushButton(self.frame_3)
-        self.runButton.setObjectName(u"runButton")
-        sizePolicy4 = QSizePolicy(QSizePolicy.Preferred, QSizePolicy.Fixed)
-        sizePolicy4.setHorizontalStretch(0)
-        sizePolicy4.setVerticalStretch(0)
-        sizePolicy4.setHeightForWidth(self.runButton.sizePolicy().hasHeightForWidth())
-        self.runButton.setSizePolicy(sizePolicy4)
-
-        self.horizontalLayout.addWidget(self.runButton)
-
-        self.insertButton = QPushButton(self.frame_3)
-        self.insertButton.setObjectName(u"insertButton")
-        sizePolicy4.setHeightForWidth(self.insertButton.sizePolicy().hasHeightForWidth())
-        self.insertButton.setSizePolicy(sizePolicy4)
-
-        self.horizontalLayout.addWidget(self.insertButton)
-
-        self.editButton = QPushButton(self.frame_3)
-        self.editButton.setObjectName(u"editButton")
-        self.editButton.setEnabled(False)
-        sizePolicy4.setHeightForWidth(self.editButton.sizePolicy().hasHeightForWidth())
-        self.editButton.setSizePolicy(sizePolicy4)
-
-        self.horizontalLayout.addWidget(self.editButton)
-
-
-        self.gridLayout_3.addLayout(self.horizontalLayout, 2, 0, 1, 1)
-
         self.splitter.addWidget(self.frame_3)
         self.frame = QFrame(self.splitter)
         self.frame.setObjectName(u"frame")
@@ -524,7 +533,7 @@ class Ui_MainWindow(object):
 
         self.retranslateUi(MainWindow)
 
-        self.tabWidget.setCurrentIndex(3)
+        self.tabWidget.setCurrentIndex(0)
 
 
         QMetaObject.connectSlotsByName(MainWindow)
@@ -548,21 +557,67 @@ class Ui_MainWindow(object):
         self.methodList.setSortingEnabled(__sortingEnabled)
 
         self.debugCheck.setText(QCoreApplication.translate("MainWindow", u"DEBUG", None))
+        self.label_9.setText(QCoreApplication.translate("MainWindow", u"On Success", None))
+        self.label_10.setText(QCoreApplication.translate("MainWindow", u"On Fail", None))
+        self.runButton.setText(QCoreApplication.translate("MainWindow", u"Run", None))
+        self.insertButton.setText(QCoreApplication.translate("MainWindow", u"Insert", None))
+        self.editButton.setText(QCoreApplication.translate("MainWindow", u"Edit", None))
         self.searchImgLabel.setText("")
         self.searchImgNameLabel.setText(QCoreApplication.translate("MainWindow", u"No Image", None))
         self.trialsGroup.setTitle(QCoreApplication.translate("MainWindow", u"Trials", None))
+#if QT_CONFIG(tooltip)
+        self.label.setToolTip(QCoreApplication.translate("MainWindow", u"Number of image match trials until failure.", None))
+#endif // QT_CONFIG(tooltip)
         self.label.setText(QCoreApplication.translate("MainWindow", u"Count", None))
+#if QT_CONFIG(tooltip)
+        self.trialsCountSpin.setToolTip(QCoreApplication.translate("MainWindow", u"Number of image match trials until failure.", None))
+#endif // QT_CONFIG(tooltip)
+#if QT_CONFIG(tooltip)
+        self.label_3.setToolTip(QCoreApplication.translate("MainWindow", u"Interval between trials.", None))
+#endif // QT_CONFIG(tooltip)
         self.label_3.setText(QCoreApplication.translate("MainWindow", u"Interval", None))
+#if QT_CONFIG(tooltip)
+        self.trialsIntervalSpin.setToolTip(QCoreApplication.translate("MainWindow", u"Interval between trials.", None))
+#endif // QT_CONFIG(tooltip)
         self.trialsIntervalSpin.setSuffix(QCoreApplication.translate("MainWindow", u"s", None))
+#if QT_CONFIG(tooltip)
+        self.searchClickGroup.setToolTip("")
+#endif // QT_CONFIG(tooltip)
         self.searchClickGroup.setTitle(QCoreApplication.translate("MainWindow", u"Click", None))
+#if QT_CONFIG(tooltip)
+        self.label_2.setToolTip(QCoreApplication.translate("MainWindow", u"Number of clicks when image is matched.", None))
+#endif // QT_CONFIG(tooltip)
         self.label_2.setText(QCoreApplication.translate("MainWindow", u"Count", None))
+#if QT_CONFIG(tooltip)
+        self.searchClickCount.setToolTip(QCoreApplication.translate("MainWindow", u"Number of clicks when image is matched.", None))
+#endif // QT_CONFIG(tooltip)
+#if QT_CONFIG(tooltip)
+        self.label_4.setToolTip(QCoreApplication.translate("MainWindow", u"Interval between each clicks.", None))
+#endif // QT_CONFIG(tooltip)
         self.label_4.setText(QCoreApplication.translate("MainWindow", u"Interval", None))
+#if QT_CONFIG(tooltip)
+        self.searchClickInterval.setToolTip(QCoreApplication.translate("MainWindow", u"Interval between each clicks.", None))
+#endif // QT_CONFIG(tooltip)
         self.searchClickInterval.setSuffix(QCoreApplication.translate("MainWindow", u"s", None))
         self.searchImgLoadButton.setText(QCoreApplication.translate("MainWindow", u"Load Img", None))
         self.searchImgClearButton.setText(QCoreApplication.translate("MainWindow", u"Clear Img", None))
+#if QT_CONFIG(tooltip)
+        self.label_11.setToolTip(QCoreApplication.translate("MainWindow", u"<html><head/><body><p>Sets <span style=\" font-weight:600;\">minimum </span>similarity when matching image. Usually ~99% similarity is hardly useful when used in emulators due to inaccurate simulation.</p></body></html>", None))
+#endif // QT_CONFIG(tooltip)
         self.label_11.setText(QCoreApplication.translate("MainWindow", u"Precision", None))
+#if QT_CONFIG(tooltip)
+        self.searchPrecisionSpin.setToolTip(QCoreApplication.translate("MainWindow", u"<html><head/><body><p>Sets <span style=\" font-weight:600;\">minimum </span>similarity when matching image. Usually ~99% similarity is hardly useful when used in emulators due to inaccurate simulation.</p></body></html>", None))
+#endif // QT_CONFIG(tooltip)
         self.searchPrecisionSpin.setSuffix(QCoreApplication.translate("MainWindow", u"%", None))
         self.searchPrecisionSpin.setPrefix("")
+#if QT_CONFIG(tooltip)
+        self.checkBox.setToolTip(QCoreApplication.translate("MainWindow", u"<html><head/><body><p>Drift click position <span style=\" font-weight:600;\">randomly</span> to avoid macro detection in some games.</p></body></html>", None))
+#endif // QT_CONFIG(tooltip)
+        self.checkBox.setText(QCoreApplication.translate("MainWindow", u"Random Offset", None))
+#if QT_CONFIG(tooltip)
+        self.spinBox.setToolTip(QCoreApplication.translate("MainWindow", u"<html><head/><body><p>Drift click position <span style=\" font-weight:600;\">randomly</span> to avoid macro detection in some games.</p></body></html>", None))
+#endif // QT_CONFIG(tooltip)
+        self.spinBox.setSuffix(QCoreApplication.translate("MainWindow", u" Pixel(s)", None))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.imgTab), QCoreApplication.translate("MainWindow", u"Search", None))
         self.countImgLabel.setText("")
         self.countImgNameLabel.setText(QCoreApplication.translate("MainWindow", u"No Image", None))
@@ -604,11 +659,6 @@ class Ui_MainWindow(object):
         self.outputTextEdit.setPlaceholderText(QCoreApplication.translate("MainWindow", u"Standby", None))
         self.lockLogCheck.setText(QCoreApplication.translate("MainWindow", u"Lock to Log tab", None))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.debugTab), QCoreApplication.translate("MainWindow", u"Log", None))
-        self.label_9.setText(QCoreApplication.translate("MainWindow", u"On Success", None))
-        self.label_10.setText(QCoreApplication.translate("MainWindow", u"On Fail", None))
-        self.runButton.setText(QCoreApplication.translate("MainWindow", u"Run", None))
-        self.insertButton.setText(QCoreApplication.translate("MainWindow", u"Insert", None))
-        self.editButton.setText(QCoreApplication.translate("MainWindow", u"Edit", None))
 
         __sortingEnabled1 = self.sequenceList.isSortingEnabled()
         self.sequenceList.setSortingEnabled(False)

@@ -24,6 +24,9 @@ class Pos:
     def __hash__(self):
         return hash((self.x, self.y))
 
+    def __bool__(self):
+        return True if all(list(self)) else False
+
     def __str__(self):
         return str(tuple(self))
 
@@ -113,12 +116,12 @@ def imageSearch(target, area, precision=0.85):
     min_val, max_val, min_loc, max_loc = cv2.minMaxLoc(res)
     
     if max_val < precision:
-        return (-1, -1), img
+        return False, img
     else:
         pt2 = tuple(x+y for x, y in zip(img_wh, max_loc))
         cv2.rectangle(img, max_loc, pt2, (0, 0, 255), 2)
 
-        return max_loc, img
+        return Pos(max_loc), img
 
 
 def scanOccurrence(target, corner_pos, xy, precision=0.8, threshold=0.3):

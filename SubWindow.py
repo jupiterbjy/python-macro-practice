@@ -69,8 +69,8 @@ class Runner(QMainWindow, Ui_Runner):
 
         self.runButton.released.connect(self.runSeq)
         self.StopButton.released.connect(self.stopSeq)
-        self.source = list(seq)
-        self.updateHistory(self.source[0])
+        self.source = seq
+        self.updateHistory(self.source)
 
         print('GOT: ', self.source)
 
