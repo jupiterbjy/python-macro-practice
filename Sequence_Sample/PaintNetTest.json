@@ -29,6 +29,7 @@
       ],
       "clickCount": 1,
       "clickDelay": 0.01,
+      "randomOffset": 0,
       "name": "Click",
       "next": null,
       "onSuccess": null,
@@ -87,12 +88,13 @@
       "delay": 1.5
     },
     {
-      "target": {
-        "x": 0,
-        "y": 0
-      },
+      "target": [
+        0,
+        0
+      ],
       "clickCount": 1,
       "clickDelay": 0.2,
+      "randomOffset": 0,
       "name": "Blue",
       "next": null,
       "onSuccess": null,
@@ -111,11 +113,8 @@
         "y": 0
       },
       "precision": 0.9,
-      "offsetMax": 5,
       "loopDelay": 0.2,
-      "trials": 5,
-      "clickOnMatch": true,
-      "_foundFlag": false
+      "trials": 5
     },
     {
       "name": "Bla",

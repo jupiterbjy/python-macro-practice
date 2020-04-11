@@ -264,23 +264,10 @@ color: rgb(255, 255, 255);</string>
        </item>
        <item row="3" column="0">
         <layout class="QGridLayout" name="gridLayout">
-         <item row="2" column="1">
-          <widget class="QSpinBox" name="randOffsetSpin">
-           <property name="suffix">
-            <string> pixel</string>
-           </property>
-           <property name="maximum">
-            <number>50</number>
-           </property>
-           <property name="value">
-            <number>5</number>
-           </property>
-          </widget>
-         </item>
-         <item row="2" column="0">
-          <widget class="QCheckBox" name="randOffsetCheck">
+         <item row="1" column="0">
+          <widget class="QCheckBox" name="fullScreenCheck">
            <property name="text">
-            <string>Random Offset</string>
+            <string>Full Screen</string>
            </property>
           </widget>
          </item>
@@ -310,13 +297,6 @@ color: rgb(255, 255, 255);</string>
            </property>
            <property name="text">
             <string>Stop</string>
-           </property>
-          </widget>
-         </item>
-         <item row="1" column="0">
-          <widget class="QCheckBox" name="fullScreenCheck">
-           <property name="text">
-            <string>Full Screen</string>
            </property>
           </widget>
          </item>

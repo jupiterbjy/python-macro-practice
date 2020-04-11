@@ -6,10 +6,10 @@
   ],
   "data": [
     {
-      "target": {
-        "x": 0,
-        "y": 0
-      },
+      "target": [
+        0,
+        0
+      ],
       "clickCount": 2,
       "clickDelay": 0.2,
       "randomOffset": 0,
@@ -48,10 +48,10 @@
       "delay": 6.0
     },
     {
-      "target": {
-        "x": 0,
-        "y": 0
-      },
+      "target": [
+        0,
+        0
+      ],
       "clickCount": 3,
       "clickDelay": 0.3,
       "randomOffset": 0,

@@ -143,18 +143,19 @@ def scanOccurrence(target, area, precision=0.85, threshold=0.9):
 
     count = 0
     last_pt = Pos()
+    found = []
 
     for pt in sorted(zip(*loc[::-1])):
         if last_pt:
             if (last_pt + img_wh) >= Pos(*pt) >= last_pt:
                 continue
 
-        print(last_pt := Pos(*pt))
+        found.append(last_pt := Pos(*pt))
         count = count + 1
         cv2.rectangle(img, pt, (Pos(*pt) + img_wh)(), (0, 0, 255), 2)
         # need to explicitly give cv2 tuple, not tuple-type.
     
-    return count, img
+    return count, img, found
 
 
 def RandomOffset(pos, offset):

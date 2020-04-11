@@ -107,20 +107,32 @@ class _ClickBase:
         self.clickDelay = 0.01
         self.randomOffset = 0
 
-    @staticmethod
-    def finalPos(target):
-        if RAND_OFFSET:
-            return ImageModule.RandomOffset(target, OFFSET_MAX)
+    def finalPos(self, target=None):
+        if target is None:
+            target = self.target
 
-        return target
+        if self.randomOffset:
+            out = ImageModule.RandomOffset(target, self.randomOffset)
 
-    def _click(self, target):
+        else:
+            out = target
+
+        return out()
+
+    def _click(self, target=None):
 
         for i in range(self.clickCount):
             checkAbort()
             SLEEP_FUNCTION(self.clickDelay)
             pyautogui.click(self.finalPos(target))
             print(f'Click: {self.finalPos(target)}')
+
+    def _clickMultiple(self, target_list):
+
+        for idx, tgt in enumerate(target_list):
+            checkAbort()
+            print(f'Click {idx}:')
+            self._click(tgt)
 
 
 class Click(_Base, _ClickBase):
@@ -320,6 +332,10 @@ class _Image(_Base):
 
     def serialize(self):
         self.screenArea = self.screenArea()
+        try:
+            self.target = self.target()
+        except AttributeError:
+            pass
 
         buffer = io.BytesIO()
         self._targetImage.save(buffer, format='PNG')
@@ -331,6 +347,20 @@ class _Image(_Base):
 
     def deserialize(self):
         self.screenArea = ImageModule.Area(*self.screenArea)
+
+        # This code will be removed
+
+        try:
+            self.target = ImageModule.Pos(self.target)
+        except AttributeError:
+            pass
+        except TypeError:
+            print('Old value found, save file again for update.')
+            if isinstance(self.target, dict):
+                self.target = ImageModule.Pos(self.target['x'], self.target['y'])
+            else:
+                raise Exception('File is damaged.')
+
 
         buffer = io.BytesIO()
         string = self._targetImage
@@ -387,8 +417,7 @@ class ImageSearch(_Image, _ClickBase):
             self.target.set(*self.ImageCenter)
             self._click(self.absPos)
 
-            return True
-        return False
+        return bool(self.matchPoint)
 
     def reset(self):
         self.target = ImageModule.Pos()
@@ -405,21 +434,30 @@ class SearchOccurrence(_Image, _ClickBase):
     def __init__(self):
         super(SearchOccurrence, self).__init__()
 
+        self.matchPoints = []
         self.matchCount = 0
 
     def ScanOccurrence(self):
-        self.matchCount, self.capturedImage = \
+        self.matchCount, self.capturedImage, self.matchPoints = \
             ImageModule.scanOccurrence(self.targetImage, self.screenArea.region, self.precision)
 
         if DEBUG:
             self.DumpCaptured(bool(self.matchCount))
 
+    @property
+    def absPos(self):
+        return self.screenArea.p1 + self.target
+
     def action(self):
         self.ScanOccurrence()
-        return self.matchCount > 0
+        if state := self.matchCount > 0:
+            self._clickMultiple([self.absPos(i) for i in self.matchPoints])
+
+        return state
 
     def reset(self):
         self.matchCount = 0
+        self.matchPoints = []
         self.capturedImage = None
 
 

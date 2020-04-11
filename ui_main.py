@@ -439,8 +439,11 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
             obj.trials = self.trialsCountSpin.value()
             obj.loopDelay = self.trialsIntervalSpin.value()
+            obj.randomOffset = self.searchRandSpin.value()
+
             obj.clickCount = self.searchClickCount.value()
             obj.clickDelay = self.searchClickInterval.value()
+
             obj.precision = self.searchPrecisionSpin.value() / 100
             obj.targetName = self.searchImgNameLabel.text()
 
@@ -455,8 +458,13 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             except AttributeError:
                 raise AttributeError('└ No Image specified.')
 
-            obj.targetName = self.searchImgNameLabel.text()
+            obj.randomOffset = self.countRandSpin.value()
+
+            obj.clickCount = self.countClickCount.value()
+            obj.clickDelay = self.countClickInterval.value()
+
             obj.precision = self.countPrecisionSpin.value() / 100
+            obj.targetName = self.countImgNameLabel.text()
 
         @dispatch.register(MacroMethods.Variable)
         def _(obj):
@@ -479,74 +487,83 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         if target is None or isinstance(target, QModelIndex):
 
             try:
-                obj = self.selectedSequence()
+                source = self.selectedSequence()
             except IndexError:
                 nameCaller()
                 print('└ Sequence is Empty.')
                 return
             else:
-                src = type(obj).__name__
+                src = type(source).__name__
                 self.methodList.setCurrentRow(MacroMethods.__all__.index(src))
         else:
-            obj = target
+            source = target
 
         # Temporary fix
         if self.sequenceList.currentItem() is not None:
             self.editButton.setEnabled(True)
 
-        self.nameLine.setText(obj.name)
-        self._disableOptions(obj)
+        self.nameLine.setText(source.name)
+        self._disableOptions(source)
         self._comboBoxUpdateSelected()
 
         dispatch = ObjectDispatch.preset()
 
         @dispatch.register(MacroMethods.Click)
-        def _(obj_):
-            self.clickX.setValue(obj_.target.x)
-            self.clickY.setValue(obj_.target.y)
+        def _(obj):
+            self.clickX.setValue(obj.target.x)
+            self.clickY.setValue(obj.target.y)
 
         @dispatch.register(MacroMethods.Drag)
-        def _(obj_):
-            self.dragFromX.setValue(obj_.p1.x)
-            self.dragFromY.setValue(obj_.p1.y)
-            self.dragToX.setValue(obj_.p2.x)
-            self.dragToY.setValue(obj_.p2.y)
+        def _(obj):
+            self.dragFromX.setValue(obj.p1.x)
+            self.dragFromY.setValue(obj.p1.y)
+            self.dragToX.setValue(obj.p2.x)
+            self.dragToY.setValue(obj.p2.y)
 
         @dispatch.register(MacroMethods.ImageSearch)
-        def _(obj_):
-            self.searchClickCount.setValue(obj_.clickCount)
-            self.searchClickInterval.setValue(obj_.clickDelay)
+        def _(obj):
+            self.searchClickCount.setValue(obj.clickCount)
+            self.searchClickInterval.setValue(obj.clickDelay)
 
-            self.trialsCountSpin.setValue(obj_.trials)
-            self.trialsIntervalSpin.setValue(obj_.loopDelay)
+            self.searchRandSpin.setValue(obj.randomOffset)
 
-            self.searchImgNameLabel.setText(obj_.targetName)
-            self.searchImageUpdate(obj_)
+            self.trialsCountSpin.setValue(obj.trials)
+            self.trialsIntervalSpin.setValue(obj.loopDelay)
 
-            self.searchPrecisionSpin.setValue(int(obj_.precision * 100))
+            self.searchImgNameLabel.setText(obj.targetName)
+            self.searchImageUpdate(obj)
 
-            self.cachedImage['search'] = obj_.targetImage
+            self.searchPrecisionSpin.setValue(int(obj.precision * 100))
+
+            self.cachedImage['search'] = obj.targetImage
 
         @dispatch.register(MacroMethods.Loop)
-        def _(obj_):
+        def _(obj):
             pass
 
         @dispatch.register(MacroMethods.SearchOccurrence)
-        def _(obj_):
-            self.countImgNameLabel.setText(obj_.targetName)
-            self.countImageUpdate(obj_)
+        def _(obj):
+            self.countClickCount.setValue(obj.clickCount)
+            self.countClickInterval.setValue(obj.clickDelay)
 
-            self.cachedImage['count'] = obj_.targetImage
+            self.countRandSpin.setValue(obj.randomOffset)
+
+            self.countImgNameLabel.setText(obj.targetName)
+            self.countImageUpdate(obj)
+
+            self.countPrecisionSpin.setValue(int(obj.precision * 100))
+
+            self.cachedImage['count'] = obj.targetImage
 
         @dispatch.register(MacroMethods.Variable)
-        def _(obj_):
+        def _(obj):
             pass
 
         @dispatch.register(MacroMethods.Wait)
-        def _(obj_):
-            self.waitSpin.setValue(obj_.delay)
+        def _(obj):
+            self.waitSpin.setValue(obj.delay)
 
-        dispatch.dispatch(obj)
+        dispatch.dispatch(source)
 
     def _disableOptions(self, target=None):
         """
@@ -607,6 +624,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         def _(_):
             self.tabWidget.setCurrentIndex(1)
             self.tabWidget.setTabEnabled(1, True)
+            self.countClickGroup.setEnabled(True)
 
         @dispatch.register(MacroMethods.Variable)
         def _(_):

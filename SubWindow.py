@@ -76,8 +76,6 @@ class Runner(QMainWindow, Ui_Runner):
         print('GOT: ', self.source)
 
     def injectGlobals(self):
-        MacroMethods.RAND_OFFSET = self.randOffsetCheck.isChecked()
-        MacroMethods.OFFSET_MAX = self.randOffsetSpin.value()
         MacroMethods.DEBUG = self.debug
 
         for i in self.source:

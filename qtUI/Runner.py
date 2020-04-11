@@ -127,17 +127,10 @@ class Ui_MainWindow(object):
 
         self.gridLayout = QGridLayout()
         self.gridLayout.setObjectName(u"gridLayout")
-        self.randOffsetSpin = QSpinBox(self.frame)
-        self.randOffsetSpin.setObjectName(u"randOffsetSpin")
-        self.randOffsetSpin.setMaximum(50)
-        self.randOffsetSpin.setValue(5)
+        self.fullScreenCheck = QCheckBox(self.frame)
+        self.fullScreenCheck.setObjectName(u"fullScreenCheck")
 
-        self.gridLayout.addWidget(self.randOffsetSpin, 2, 1, 1, 1)
-
-        self.randOffsetCheck = QCheckBox(self.frame)
-        self.randOffsetCheck.setObjectName(u"randOffsetCheck")
-
-        self.gridLayout.addWidget(self.randOffsetCheck, 2, 0, 1, 1)
+        self.gridLayout.addWidget(self.fullScreenCheck, 1, 0, 1, 1)
 
         self.runButton = QPushButton(self.frame)
         self.runButton.setObjectName(u"runButton")
@@ -156,11 +149,6 @@ class Ui_MainWindow(object):
         self.StopButton.setSizePolicy(sizePolicy1)
 
         self.gridLayout.addWidget(self.StopButton, 0, 1, 1, 1)
-
-        self.fullScreenCheck = QCheckBox(self.frame)
-        self.fullScreenCheck.setObjectName(u"fullScreenCheck")
-
-        self.gridLayout.addWidget(self.fullScreenCheck, 1, 0, 1, 1)
 
 
         self.gridLayout_2.addLayout(self.gridLayout, 3, 0, 1, 1)
@@ -194,11 +182,9 @@ class Ui_MainWindow(object):
         self.lockLogCheck.setText(QCoreApplication.translate("MainWindow", u"Lock to Log tab", None))
         self.outputTextEdit.setPlaceholderText(QCoreApplication.translate("MainWindow", u"Standby", None))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.Log), QCoreApplication.translate("MainWindow", u"Log", None))
-        self.randOffsetSpin.setSuffix(QCoreApplication.translate("MainWindow", u" pixel", None))
-        self.randOffsetCheck.setText(QCoreApplication.translate("MainWindow", u"Random Offset", None))
+        self.fullScreenCheck.setText(QCoreApplication.translate("MainWindow", u"Full Screen", None))
         self.runButton.setText(QCoreApplication.translate("MainWindow", u"Run", None))
         self.StopButton.setText(QCoreApplication.translate("MainWindow", u"Stop", None))
-        self.fullScreenCheck.setText(QCoreApplication.translate("MainWindow", u"Full Screen", None))
         self.progressBar.setFormat(QCoreApplication.translate("MainWindow", u"%vs", None))
     # retranslateUi
 

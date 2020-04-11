@@ -7,15 +7,15 @@
   ],
   "data": [
     {
-      "target": {
-        "x": 0,
-        "y": 0
-      },
+      "target": [
+        0,
+        0
+      ],
       "clickCount": 2,
       "clickDelay": 0.2,
+      "randomOffset": 0,
       "name": "Bell",
       "next": null,
-      "actionState": -2,
       "onSuccess": null,
       "onFail": null,
       "screenArea": [
@@ -32,22 +32,19 @@
         "y": 0
       },
       "precision": 0.85,
-      "offsetMax": 5,
       "loopDelay": 0.2,
-      "trials": 3,
-      "clickOnMatch": true,
-      "_foundFlag": false
+      "trials": 3
     },
     {
-      "target": {
-        "x": 0,
-        "y": 0
-      },
+      "target": [
+        0,
+        0
+      ],
       "clickCount": 1,
       "clickDelay": 0.2,
+      "randomOffset": 0,
       "name": "Ear",
       "next": null,
-      "actionState": -2,
       "onSuccess": null,
       "onFail": null,
       "screenArea": [
@@ -64,22 +61,19 @@
         "y": 0
       },
       "precision": 0.85,
-      "offsetMax": 5,
       "loopDelay": 0.2,
-      "trials": 3,
-      "clickOnMatch": true,
-      "_foundFlag": false
+      "trials": 3
     },
     {
-      "target": {
-        "x": 0,
-        "y": 0
-      },
+      "target": [
+        0,
+        0
+      ],
       "clickCount": 1,
       "clickDelay": 0.2,
+      "randomOffset": 0,
       "name": "ID",
       "next": null,
-      "actionState": -2,
       "onSuccess": null,
       "onFail": null,
       "screenArea": [
@@ -96,16 +90,12 @@
         "y": 0
       },
       "precision": 0.85,
-      "offsetMax": 5,
       "loopDelay": 0.2,
-      "trials": 3,
-      "clickOnMatch": true,
-      "_foundFlag": false
+      "trials": 3
     },
     {
       "name": "Wait",
       "next": null,
-      "actionState": -2,
       "onSuccess": null,
       "onFail": null,
       "screenArea": [
