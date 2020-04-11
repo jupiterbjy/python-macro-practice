@@ -1,7 +1,6 @@
 import cv2
 import numpy as np
 import pyautogui as pgui
-from math import sqrt
 
 """
 This module will provide any necessary components required by MacroMethod,
@@ -34,13 +33,19 @@ class Pos:
         return tuple(self) == tuple(other)
 
     def __add__(self, other):
-        return (self.x + other.x), (self.y + other.y)
+        return Pos(self.x + other.x, self.y + other.y)
 
     def __sub__(self, other):
         return abs(self.x - other.x), abs(self.y - other.y)
 
     def __call__(self):
         return self.x, self.y
+
+    def __ge__(self, other):
+        return (self.x >= other.x) & (self.y >= other.y)
+
+    def __le__(self, other):
+        return (self.x <= other.x) & (self.y <= other.y)
     
     def set(self, x, y):
         self.x, self.y = x, y
@@ -103,8 +108,8 @@ IMG_SAVE = saveImg()      # can't move this up..
 
 
 def imageSearch(target, area, precision=0.85):
-    img = cv2.cvtColor(np.array(pgui.screenshot(region=area)), cv2.COLOR_RGB2BGR)
 
+    img = cv2.cvtColor(np.array(pgui.screenshot(region=area)), cv2.COLOR_RGB2BGR)
     img_gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 
     template = cv2.cvtColor(np.array(target), cv2.COLOR_RGB2GRAY)
@@ -122,30 +127,32 @@ def imageSearch(target, area, precision=0.85):
         pt2 = tuple(x+y for x, y in zip(img_wh, max_loc))
         cv2.rectangle(img, max_loc, pt2, (0, 0, 255), 2)
 
-        return Pos(max_loc), img
+        return Pos(*max_loc), img
 
 
-def scanOccurrence(target, corner_pos, xy, precision=0.8, threshold=0.3):
-    
-    img = np.array(pgui.screenshot(region=(*corner_pos, *xy)))
+def scanOccurrence(target, area, precision=0.85, threshold=0.9):
+
+    img = cv2.cvtColor(np.array(pgui.screenshot(region=area)), cv2.COLOR_RGB2BGR)
     img_gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-    template = cv2.imread(target, 0)
-    image_wh = template.shape[::-1]
+
+    template = cv2.cvtColor(np.array(target), cv2.COLOR_RGB2GRAY)
+    img_wh = Pos(*template.shape[::-1])
 
     res = cv2.matchTemplate(img_gray, template, cv2.TM_CCOEFF_NORMED)
     loc = np.where(res >= precision)
 
     count = 0
-    last_pt = [0, 0]
+    last_pt = Pos()
 
     for pt in sorted(zip(*loc[::-1])):
-        if sqrt(abs(last_pt[0]-pt[0])**2 + abs(last_pt[0]-pt[0])**2) < threshold*min(image_wh):
-            continue
-        else:
-            print(last_pt := pt)
-            count = count + 1
-            cv2.rectangle(img, pt, tuple(map(sum, zip(pt, image_wh))), (0, 0, 255), 1)
-            IMG_SAVE('found', img)
+        if last_pt:
+            if (last_pt + img_wh) >= Pos(*pt) >= last_pt:
+                continue
+
+        print(last_pt := Pos(*pt))
+        count = count + 1
+        cv2.rectangle(img, pt, (Pos(*pt) + img_wh)(), (0, 0, 255), 2)
+        # need to explicitly give cv2 tuple, not tuple-type.
     
     return count, img
 

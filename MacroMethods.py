@@ -30,23 +30,18 @@ def checkAbort():  # for now call this every action() to implement abort.
 
 class ExMethodIterator:
     def __init__(self, head):
-        self.current = None
-        self.next = head
+        self.method = head
 
     def __iter__(self):
         return self
 
     def __next__(self):
-        self.current = self.next
-
-        try:
-            self.next = self.current.next
-
-        except AttributeError:
+        if self.method is None:
             raise StopIteration
-
         else:
-            return self.current
+            current = self.method
+            self.method = self.method.next
+            return current
 
 
 class _Base:
@@ -373,7 +368,8 @@ class ImageSearch(_Image, _ClickBase):
 
             SLEEP_FUNCTION(self.loopDelay)
 
-        self.DumpCaptured(bool(self.matchPoint))
+        if DEBUG:
+            self.DumpCaptured(bool(self.matchPoint))
 
     @property
     def ImageCenter(self):
@@ -415,9 +411,16 @@ class SearchOccurrence(_Image, _ClickBase):
         self.matchCount, self.capturedImage = \
             ImageModule.scanOccurrence(self.targetImage, self.screenArea.region, self.precision)
 
+        if DEBUG:
+            self.DumpCaptured(bool(self.matchCount))
+
     def action(self):
         self.ScanOccurrence()
         return self.matchCount > 0
+
+    def reset(self):
+        self.matchCount = 0
+        self.capturedImage = None
 
 
 class Drag(_Base):
@@ -541,6 +544,6 @@ def Deserializer(baked):
     return out
 
 
-blacklist = {'_', 'Ex', 'Abort'}
+blacklist = {'_', 'Ex', 'Abort', 'deque'}
 __all__ = MemberLoader.ListClass(__name__, blacklist=blacklist)
 class_dict = MemberLoader.ListClass(__name__, blacklist=blacklist, return_dict=True)

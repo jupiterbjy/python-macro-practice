@@ -36,10 +36,11 @@ class Worker(QRunnable):
         """
         Initialise the runner function with passed args, kwargs.
         """
-        try:
-            self.fn(*self.args, **self.kwargs)
-        except Exception as exa:
-            print(exa)
+        self.fn(*self.args, **self.kwargs)
+        # try:
+        #     self.fn(*self.args, **self.kwargs)
+        # except Exception as exa:
+        #     print(exa)
 
 
 class CaptureCoverage(QDialog):
@@ -77,6 +78,7 @@ class Runner(QMainWindow, Ui_Runner):
     def injectGlobals(self):
         MacroMethods.RAND_OFFSET = self.randOffsetCheck.isChecked()
         MacroMethods.OFFSET_MAX = self.randOffsetSpin.value()
+        MacroMethods.DEBUG = self.debug
 
         for i in self.source:
             i.reset()

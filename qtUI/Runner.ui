@@ -96,11 +96,17 @@
         <property name="editTriggers">
          <set>QAbstractItemView::NoEditTriggers</set>
         </property>
+        <property name="dragDropMode">
+         <enum>QAbstractItemView::NoDragDrop</enum>
+        </property>
+        <property name="defaultDropAction">
+         <enum>Qt::IgnoreAction</enum>
+        </property>
         <property name="alternatingRowColors">
          <bool>true</bool>
         </property>
         <property name="movement">
-         <enum>QListView::Free</enum>
+         <enum>QListView::Static</enum>
         </property>
         <property name="flow">
          <enum>QListView::TopToBottom</enum>

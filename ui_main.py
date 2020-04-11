@@ -4,7 +4,6 @@ from PySide2.QtWidgets import QFileDialog, QListWidgetItem, QApplication, QMainW
 import sys
 import os
 import json
-import copy
 
 from Toolset import QtTools, ObjectDispatch, Tools, TextTools
 from Toolset.QtTools import IMG_CONVERT, ICON_LOCATION, ICON_ASSIGN, appendText
@@ -443,7 +442,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             obj.clickCount = self.searchClickCount.value()
             obj.clickDelay = self.searchClickInterval.value()
             obj.precision = self.searchPrecisionSpin.value() / 100
-            obj.targetName = self.searchImgNameLabel.value()
+            obj.targetName = self.searchImgNameLabel.text()
 
         @dispatch.register(MacroMethods.Loop)
         def _(obj):
@@ -451,7 +450,12 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         @dispatch.register(MacroMethods.SearchOccurrence)
         def _(obj):
-            obj.targetImage = self.cachedImage['count']
+            try:
+                obj.targetImage = self.cachedImage['count']
+            except AttributeError:
+                raise AttributeError('└ No Image specified.')
+
+            obj.targetName = self.searchImgNameLabel.text()
             obj.precision = self.countPrecisionSpin.value() / 100
 
         @dispatch.register(MacroMethods.Variable)
@@ -529,7 +533,10 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         @dispatch.register(MacroMethods.SearchOccurrence)
         def _(obj_):
+            self.countImgNameLabel.setText(obj_.targetName)
             self.countImageUpdate(obj_)
+
+            self.cachedImage['count'] = obj_.targetImage
 
         @dispatch.register(MacroMethods.Variable)
         def _(obj_):

@@ -12,10 +12,9 @@
       },
       "clickCount": 2,
       "clickDelay": 0.2,
-      "preDelay": 0,
+      "randomOffset": 0,
       "name": "t1",
       "next": null,
-      "actionState": -2,
       "onSuccess": null,
       "onFail": null,
       "screenArea": [
@@ -32,16 +31,12 @@
         "y": 0
       },
       "precision": 0.85,
-      "offsetMax": 5,
       "loopDelay": 0.2,
-      "trials": 11,
-      "clickOnMatch": true,
-      "_foundFlag": false
+      "trials": 11
     },
     {
       "name": "t2",
       "next": null,
-      "actionState": -2,
       "onSuccess": null,
       "onFail": null,
       "screenArea": [
@@ -59,9 +54,9 @@
       },
       "clickCount": 3,
       "clickDelay": 0.3,
+      "randomOffset": 0,
       "name": "t3",
       "next": null,
-      "actionState": -2,
       "onSuccess": null,
       "onFail": null,
       "screenArea": [
@@ -78,11 +73,8 @@
         "y": 0
       },
       "precision": 0.85,
-      "offsetMax": 5,
       "loopDelay": 0.2,
-      "trials": 11,
-      "clickOnMatch": true,
-      "_foundFlag": false
+      "trials": 11
     }
   ],
   "reference": [
