@@ -145,6 +145,7 @@ class Click(_Base, _ClickBase):
 
     def action(self):
         self._click(self.absPos)
+        return True
 
     def serialize(self):
         self.screenArea = self.screenArea()
@@ -545,6 +546,9 @@ def Serializer(obj_list):
             reference_list[idx].append(None)
         else:
             reference_list[idx].append(index)
+
+        element.onFail = None
+        element.onSuccess = None
 
         out.append(copy.deepcopy(element.serialize()))
 

@@ -513,8 +513,13 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         @dispatch.register(MacroMethods.Click)
         def _(obj):
-            self.clickX.setValue(obj.target.x)
-            self.clickY.setValue(obj.target.y)
+            try:
+                self.clickX.setValue(obj.target.x)
+                self.clickY.setValue(obj.target.y)
+            except AttributeError:
+                print(AttributeError, obj.target)
+                self.clickX.setValue(obj.target[0])
+                self.clickY.setValue(obj.target[1])
 
         @dispatch.register(MacroMethods.Drag)
         def _(obj):

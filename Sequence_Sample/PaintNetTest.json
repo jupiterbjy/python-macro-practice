@@ -6,7 +6,8 @@
     "Drag",
     "Wait",
     "ImageSearch",
-    "Drag"
+    "Drag",
+    "SearchOccurrence"
   ],
   "data": [
     {
@@ -66,16 +67,16 @@
         0
       ],
       "p1": [
-        20,
+        80,
         30
       ],
       "p2": [
         30,
-        20
+        80
       ]
     },
     {
-      "name": "Wait",
+      "name": "Wait - ABC",
       "next": null,
       "onSuccess": null,
       "onFail": null,
@@ -100,17 +101,17 @@
       "onSuccess": null,
       "onFail": null,
       "screenArea": [
-        0,
-        0,
-        0,
-        0
+        88,
+        226,
+        1121,
+        805
       ],
       "_targetImage": "iVBORw0KGgoAAAANSUhEUgAAAC8AAAAvCAIAAAD8RQT7AAAEaklEQVR4nK2XS0tcQRCFq6r7qiQxICSBPCALg4gLF2YpxGV+gVsXWQQCIbsEXAluAwEhkD+oREXJEBx1HPRmcftRj+47o0Z60dOjU98951T1iMvLy3Dvn+HZu7+nH28u3zYEjYOG9PIEDUJD4DHsfbdX654co9Gb05PPF2fvG4KmAUdxubwnjBsCh/GkO0Sx7kVzMvhycvLJAXgfypPkCCcMpQeI7kwzHK0fD76Nr5b8DDgAB5mDuuXCJmBh3nCgsDo4uBPN8fDrn7MPBOBnwLVAAA5iGaMNVyhb9l+curxeObrYGY1XO0kIwLVsQ0AchUmVWJUwQa24bkEzuN48vNx1CMmdLEy3wVg+2kRKJBRAiePW2hzdbA9utjIHV4VhERqnXEhGTnSKDjNrWm2uYf43fT+HDU8MhS1q2QajJNwm1VNxw1M8lTZXtHjgf4xhyZc4hFkJC8E5bRNJIKvN5A6/cGsHs3stPvEAPjYOtynLw81q5egjYZNIMckO76EZNuv7D34SzvlIMKU8BLEAa7FkkErxVNqczb7bf/zLAzkUHDUgneVWDB4eHcK8EdGpaTOcW99f+OWRuredtMkCpanDLSMQ41jE2QpDlZ66mFvbf/rTk0ZJfimRiGMxpiCP1YZkaEiMHEFzNbt48HyP3Fwqz1GquSn5FVZRm1JutDbXNH/w8kc7+yT5krVBEx00NCk0TKcU53ybcm1IzBtB8/v19/HDpSRDjzbeotggp71qb3ZzZWFUhx+92j5f2PBRCacgSnGesrnUtcCznKIjnBo82xy82Eoc+dFrZk2iUcPQDkAyQQ5OXT5aOXyzGwqgqWdOat1OlolPRRtnFuQ8b46WdlzDCtvyRionDa3Kk7IM+XrKTEWnRgurWomKMNlKKPAVtFGhtijWqSCMQpHlJ1pWCLL0S1xemAejdsp5U3KSVIUgV5jERdFWg5xvBvIFVQoEFbW8ZNJ+RRTHup0qbRWc6mS0takikjCrZxIyhSjdYio37Os6cacoPVkvStE4+5ID6QDJ/7O4PNqpjul2KBUs1epZJ/kVx7H0SKcq6Uk+En/Zz2SBol9JHt5iLMWxUjCLQUylk0w0oaZR0cndbqaOd16nOEBAwUFFo0/SL/fLwy4v3VPk4+RWYkiFlGtFs0ihYInGfBczKVYlOZk6TJKoSClVesziWOZrV9CGuEexMFnBTKJ7/Kq2Okh5WIZybmxh21lUEYn6adDQqMuLO6VoaiK5kkiimAmTwC1mGUo0mmCSWVkb2W7ir5hUZRpgl1fnFDkgBKwT2EMrXiE9ptfKNDLOHn2FY4qXyi9+LtqwXx6IWpDKzSSnBEflvDA/a1mWfmFHgx1g/Ai8jUKps1RidAeAkLBAAyw3dAegCpkySwSfC8OkojaY5dEz5yxQBUW/W8pTfnTUBIUsAxCAJxc+OgOxkgiFdkOGiL1qcSYxeEp+IUhtEDIZf3qMJyhR+rPSvynK49HlMlakHkeQCZMeZiKKmMuoaf4BHNym6i6oxlAAAAAASUVORK5CYII=",
       "targetName": null,
       "capturedImage": null,
       "matchPoint": {
-        "x": 0,
-        "y": 0
+        "x": 931,
+        "y": 411
       },
       "precision": 0.9,
       "loopDelay": 0.2,
@@ -128,22 +129,52 @@
         0
       ],
       "p1": [
-        30,
-        30
+        100,
+        100
       ],
       "p2": [
         40,
         40
       ]
+    },
+    {
+      "target": [
+        0,
+        0
+      ],
+      "clickCount": 1,
+      "clickDelay": 0.2,
+      "randomOffset": 10,
+      "name": "SearchOccurrence",
+      "next": null,
+      "onSuccess": null,
+      "onFail": null,
+      "screenArea": [
+        88,
+        226,
+        1121,
+        805
+      ],
+      "_targetImage": "iVBORw0KGgoAAAANSUhEUgAAAD4AAAAXCAYAAABTYvy6AAACRklEQVR4nO2Xv6qjQBTGf3fZbh5DAheL1OkFuY2FPoJFGhFSmWdIqoVgk8JHMIWNCPbWKUIgzGNMvVvEyR9v9BpuQnY3+cBqZr5zvjPfOeqbUuo3T4gfj07gUXgJfza8hP+9KAitGHlj1nbhMsYSFvF3Ip5xSGLrm3yd/NfhZ+uKEVCq4BtZ3YjjTvwdVi8IRUgB+8qe2e1krbZiEVsIIRBCYB2uQO+TxNaQqKqIhgKhuWSMVZ8R4Z5Nx4pDgTjEANnJD0Uo0BSnPG1muE2PVxEzliilUGqFGY0b9jMIyjXz0Yj5WqHKAIOCcJjirRVKKVa4x8SriK2jUGqB3YsfbMcnyY7KZZ5iTgOMuwrHZxroEDaTOaT5F41XZCT+FH3Mdnw2O33Gx7G7+bdNetvBT7LaIZI8NRsc57iN8NF7a2XbIHcbSNyDfYWbUGk1Tb4L/Mciadg4fkJWADInNR06dN/K6tuzXpLbCnPQXQpjYDKar2v71s+iJdWe/NruMk8xu66bvsKNAWaVot0r4xnJ2YaEWXxYZJY0rQpgMDCro0WNd4h+HYYXRdzxWurDD9gT5psZ4y9sDr1v3GaxMvcTWQjGePiny6M53na4t+wwxVsvLtrMdnwSt57qRkC5AldbPRsc+v0TevKDwYcHeJNOmwO8tf+WFoTWjknZPhmv23cPNGNLYmsMy7K9iDXab7zISMzBA8RcgWaOMifF46NH0p+F648KF1Ztw+bRuJBjEdZtsOznvA6r/9/4B/7O7oOX8GfD0wr/AwfWHwkhe2HQAAAAAElFTkSuQmCC",
+      "targetName": "occuranceTarget.PNG",
+      "capturedImage": null,
+      "matchPoint": null,
+      "precision": 0.85,
+      "matchPoints": [],
+      "matchCount": 0
     }
   ],
   "reference": [
     [
-      null,
+      2,
       null
     ],
     [
-      null,
+      3,
+      null
+    ],
+    [
+      1,
       null
     ],
     [

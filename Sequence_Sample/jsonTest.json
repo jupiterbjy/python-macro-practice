@@ -9,55 +9,7 @@
     {
       "name": "1",
       "next": null,
-      "onSuccess": {
-        "name": "5",
-        "next": null,
-        "onSuccess": {
-          "name": "3",
-          "next": null,
-          "onSuccess": {
-            "name": "7",
-            "next": null,
-            "onSuccess": null,
-            "onFail": null,
-            "screenArea": {
-              "p1": {
-                "x": 0,
-                "y": 0
-              },
-              "p2": {
-                "x": 0,
-                "y": 0
-              }
-            },
-            "delay": 1.0
-          },
-          "onFail": null,
-          "screenArea": {
-            "p1": {
-              "x": 0,
-              "y": 0
-            },
-            "p2": {
-              "x": 0,
-              "y": 0
-            }
-          },
-          "delay": 1.0
-        },
-        "onFail": null,
-        "screenArea": {
-          "p1": {
-            "x": 0,
-            "y": 0
-          },
-          "p2": {
-            "x": 0,
-            "y": 0
-          }
-        },
-        "delay": 1.0
-      },
+      "onSuccess": null,
       "onFail": null,
       "screenArea": [
         0,
@@ -70,23 +22,7 @@
     {
       "name": "3",
       "next": null,
-      "onSuccess": {
-        "name": "7",
-        "next": null,
-        "onSuccess": null,
-        "onFail": null,
-        "screenArea": {
-          "p1": {
-            "x": 0,
-            "y": 0
-          },
-          "p2": {
-            "x": 0,
-            "y": 0
-          }
-        },
-        "delay": 1.0
-      },
+      "onSuccess": null,
       "onFail": null,
       "screenArea": [
         0,
@@ -99,35 +35,7 @@
     {
       "name": "5",
       "next": null,
-      "onSuccess": {
-        "name": "3",
-        "next": null,
-        "onSuccess": {
-          "name": "7",
-          "next": null,
-          "onSuccess": null,
-          "onFail": null,
-          "screenArea": {
-            "p1": {
-              "x": 0,
-              "y": 0
-            },
-            "p2": {
-              "x": 0,
-              "y": 0
-            }
-          },
-          "delay": 1.0
-        },
-        "onFail": null,
-        "screenArea": [
-          0,
-          0,
-          0,
-          0
-        ],
-        "delay": 1.0
-      },
+      "onSuccess": null,
       "onFail": null,
       "screenArea": [
         0,
@@ -153,15 +61,15 @@
   ],
   "reference": [
     [
-      2,
+      null,
       null
     ],
     [
-      3,
+      null,
       null
     ],
     [
-      1,
+      null,
       null
     ],
     [
