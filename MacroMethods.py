@@ -3,9 +3,9 @@ from functools import singledispatch
 from collections import deque
 import time
 import pyautogui
-import copy
 import io
 import base64
+import copy
 from PIL import Image
 
 import ImageModule
@@ -351,7 +351,7 @@ class _Image(_Base):
         # This code will be removed
 
         try:
-            self.target = ImageModule.Pos(self.target)
+            self.target = ImageModule.Pos(*self.target)
         except AttributeError:
             pass
         except TypeError:
@@ -360,7 +360,6 @@ class _Image(_Base):
                 self.target = ImageModule.Pos(self.target['x'], self.target['y'])
             else:
                 raise Exception('File is damaged.')
-
 
         buffer = io.BytesIO()
         string = self._targetImage
@@ -445,13 +444,18 @@ class SearchOccurrence(_Image, _ClickBase):
             self.DumpCaptured(bool(self.matchCount))
 
     @property
-    def absPos(self):
-        return self.screenArea.p1 + self.target
+    def ImageCenter(self):
+        w, h = self.targetImage.size
+        return self.matchPoint + ImageModule.Pos(w//2, h//2)
+
+    def absPos(self, target):
+        return self.screenArea.p1 + target
 
     def action(self):
         self.ScanOccurrence()
         if state := self.matchCount > 0:
-            self._clickMultiple([self.absPos(i) for i in self.matchPoints])
+            tmp = [self.absPos(i) for i in self.matchPoints]
+            self._clickMultiple(tmp)
 
         return state
 

@@ -33,7 +33,11 @@ class Pos:
         return tuple(self) == tuple(other)
 
     def __add__(self, other):
-        return Pos(self.x + other.x, self.y + other.y)
+        try:
+            return Pos(self.x + other.x, self.y + other.y)
+        except AttributeError:
+            tmp = Pos(*other)
+            return Pos(self.x + tmp.x, self.y + tmp.y)
 
     def __sub__(self, other):
         return abs(self.x - other.x), abs(self.y - other.y)

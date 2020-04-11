@@ -1,0 +1,111 @@
+{
+  "type": [
+    "SearchOccurrence",
+    "Wait"
+  ],
+  "data": [
+    {
+      "target": [
+        0,
+        0
+      ],
+      "clickCount": 0,
+      "clickDelay": 0.2,
+      "randomOffset": 0,
+      "name": "SearchOccurrence",
+      "next": null,
+      "onSuccess": {
+        "name": "Wait",
+        "next": null,
+        "onSuccess": {
+          "target": [
+            0,
+            0
+          ],
+          "clickCount": 0,
+          "clickDelay": 0.2,
+          "randomOffset": 0,
+          "name": "SearchOccurrence",
+          "next": null
+        },
+        "onFail": null,
+        "screenArea": {
+          "p1": {
+            "x": 0,
+            "y": 0
+          },
+          "p2": {
+            "x": 0,
+            "y": 0
+          }
+        },
+        "delay": 5.0
+      },
+      "onFail": null,
+      "screenArea": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "_targetImage": "iVBORw0KGgoAAAANSUhEUgAAAD4AAAAXCAYAAABTYvy6AAACRklEQVR4nO2Xv6qjQBTGf3fZbh5DAheL1OkFuY2FPoJFGhFSmWdIqoVgk8JHMIWNCPbWKUIgzGNMvVvEyR9v9BpuQnY3+cBqZr5zvjPfOeqbUuo3T4gfj07gUXgJfza8hP+9KAitGHlj1nbhMsYSFvF3Ip5xSGLrm3yd/NfhZ+uKEVCq4BtZ3YjjTvwdVi8IRUgB+8qe2e1krbZiEVsIIRBCYB2uQO+TxNaQqKqIhgKhuWSMVZ8R4Z5Nx4pDgTjEANnJD0Uo0BSnPG1muE2PVxEzliilUGqFGY0b9jMIyjXz0Yj5WqHKAIOCcJjirRVKKVa4x8SriK2jUGqB3YsfbMcnyY7KZZ5iTgOMuwrHZxroEDaTOaT5F41XZCT+FH3Mdnw2O33Gx7G7+bdNetvBT7LaIZI8NRsc57iN8NF7a2XbIHcbSNyDfYWbUGk1Tb4L/Mciadg4fkJWADInNR06dN/K6tuzXpLbCnPQXQpjYDKar2v71s+iJdWe/NruMk8xu66bvsKNAWaVot0r4xnJ2YaEWXxYZJY0rQpgMDCro0WNd4h+HYYXRdzxWurDD9gT5psZ4y9sDr1v3GaxMvcTWQjGePiny6M53na4t+wwxVsvLtrMdnwSt57qRkC5AldbPRsc+v0TevKDwYcHeJNOmwO8tf+WFoTWjknZPhmv23cPNGNLYmsMy7K9iDXab7zISMzBA8RcgWaOMifF46NH0p+F648KF1Ztw+bRuJBjEdZtsOznvA6r/9/4B/7O7oOX8GfD0wr/AwfWHwkhe2HQAAAAAElFTkSuQmCC",
+      "targetName": "SearchOccurrence",
+      "capturedImage": null,
+      "matchPoint": null,
+      "precision": 0.85,
+      "matchPoints": [],
+      "matchCount": 0
+    },
+    {
+      "name": "Wait",
+      "next": null,
+      "onSuccess": {
+        "target": [
+          0,
+          0
+        ],
+        "clickCount": 0,
+        "clickDelay": 0.2,
+        "randomOffset": 0,
+        "name": "SearchOccurrence",
+        "next": null,
+        "onSuccess": {
+          "name": "Wait",
+          "next": null
+        },
+        "onFail": null,
+        "screenArea": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "_targetImage": "iVBORw0KGgoAAAANSUhEUgAAAD4AAAAXCAYAAABTYvy6AAACRklEQVR4nO2Xv6qjQBTGf3fZbh5DAheL1OkFuY2FPoJFGhFSmWdIqoVgk8JHMIWNCPbWKUIgzGNMvVvEyR9v9BpuQnY3+cBqZr5zvjPfOeqbUuo3T4gfj07gUXgJfza8hP+9KAitGHlj1nbhMsYSFvF3Ip5xSGLrm3yd/NfhZ+uKEVCq4BtZ3YjjTvwdVi8IRUgB+8qe2e1krbZiEVsIIRBCYB2uQO+TxNaQqKqIhgKhuWSMVZ8R4Z5Nx4pDgTjEANnJD0Uo0BSnPG1muE2PVxEzliilUGqFGY0b9jMIyjXz0Yj5WqHKAIOCcJjirRVKKVa4x8SriK2jUGqB3YsfbMcnyY7KZZ5iTgOMuwrHZxroEDaTOaT5F41XZCT+FH3Mdnw2O33Gx7G7+bdNetvBT7LaIZI8NRsc57iN8NF7a2XbIHcbSNyDfYWbUGk1Tb4L/Mciadg4fkJWADInNR06dN/K6tuzXpLbCnPQXQpjYDKar2v71s+iJdWe/NruMk8xu66bvsKNAWaVot0r4xnJ2YaEWXxYZJY0rQpgMDCro0WNd4h+HYYXRdzxWurDD9gT5psZ4y9sDr1v3GaxMvcTWQjGePiny6M53na4t+wwxVsvLtrMdnwSt57qRkC5AldbPRsc+v0TevKDwYcHeJNOmwO8tf+WFoTWjknZPhmv23cPNGNLYmsMy7K9iDXab7zISMzBA8RcgWaOMifF46NH0p+F648KF1Ztw+bRuJBjEdZtsOznvA6r/9/4B/7O7oOX8GfD0wr/AwfWHwkhe2HQAAAAAElFTkSuQmCC",
+        "targetName": "SearchOccurrence",
+        "capturedImage": null,
+        "matchPoint": null,
+        "precision": 0.85,
+        "matchPoints": [],
+        "matchCount": 0
+      },
+      "onFail": null,
+      "screenArea": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "delay": 5.0
+    }
+  ],
+  "reference": [
+    [
+      1,
+      null
+    ],
+    [
+      0,
+      null
+    ]
+  ]
+}

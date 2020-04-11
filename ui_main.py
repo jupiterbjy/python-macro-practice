@@ -184,6 +184,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                                            directory=self.recentIoDir, filter='*.json')[0]
         self.recentIoDir = os.path.dirname(name)
 
+        for i in self.seqStorage:
+            i.reset()
+
         baked = MacroMethods.Serializer(self.seqStorage)
         try:
             json.dump(baked, open(name, 'w'), indent=2, default=lambda x: x.__dict__)
