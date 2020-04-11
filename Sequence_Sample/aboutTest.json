@@ -14,6 +14,7 @@
       },
       "clickCount": 0,
       "clickDelay": 0.2,
+      "randomOffset": 0,
       "name": "GTX960",
       "next": null,
       "onSuccess": null,
@@ -33,9 +34,7 @@
       ],
       "precision": 0.85,
       "loopDelay": 0.2,
-      "trials": 1,
-      "clickOnMatch": true,
-      "_foundFlag": false
+      "trials": 1
     },
     {
       "name": "Wait",
@@ -57,6 +56,7 @@
       },
       "clickCount": 0,
       "clickDelay": 0.2,
+      "randomOffset": 0,
       "name": "head",
       "next": null,
       "onSuccess": null,
@@ -76,9 +76,7 @@
       ],
       "precision": 0.85,
       "loopDelay": 0.2,
-      "trials": 1,
-      "clickOnMatch": true,
-      "_foundFlag": false
+      "trials": 1
     },
     {
       "name": "Wait",
@@ -100,6 +98,7 @@
       },
       "clickCount": 0,
       "clickDelay": 0.2,
+      "randomOffset": 0,
       "name": "jupiterbjy",
       "next": null,
       "onSuccess": null,
@@ -119,9 +118,7 @@
       ],
       "precision": 0.85,
       "loopDelay": 0.2,
-      "trials": 1,
-      "clickOnMatch": true,
-      "_foundFlag": false
+      "trials": 1
     }
   ],
   "reference": [

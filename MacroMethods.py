@@ -1,5 +1,6 @@
 
 from functools import singledispatch
+from collections import deque
 import time
 import pyautogui
 import copy
@@ -359,7 +360,6 @@ class ImageSearch(_Image, _ClickBase):
 
         self.loopDelay = 0.2
         self.trials = 5
-        self._foundFlag = False
 
     def ImageSearch(self):
         self.matchPoint, self.capturedImage = \
@@ -371,7 +371,9 @@ class ImageSearch(_Image, _ClickBase):
             if self.matchPoint:
                 break
 
-        self.DumpCaptured(self._foundFlag)
+            SLEEP_FUNCTION(self.loopDelay)
+
+        self.DumpCaptured(bool(self.matchPoint))
 
     @property
     def ImageCenter(self):
@@ -394,7 +396,6 @@ class ImageSearch(_Image, _ClickBase):
 
     def reset(self):
         self.target = ImageModule.Pos()
-        self._foundFlag = False
         self.capturedImage = None
 
 
@@ -511,13 +512,15 @@ def Deserializer(baked):
     error handling should happen outside of this function, where it is called.
     """
     out = []
-    inject = baked['data']
+    inject = deque(baked['data'])
     ref = baked['reference']
     type_list = baked['type']
 
     for obj in type_list:
         obj = class_dict[obj]()
-        obj.__dict__ = inject.pop(0)
+        dict_source = inject.popleft()
+        obj.__dict__.update((k, dict_source[k]) for k in
+                            dict_source.keys() & obj.__dict__.keys())
         out.append(obj)
 
     for obj in out:
