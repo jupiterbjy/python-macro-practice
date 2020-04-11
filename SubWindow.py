@@ -164,7 +164,7 @@ class Runner(QMainWindow, Ui_Runner):
         self.areaInject()
         self.runLine.setText('Macro started.')
 
-        worker = Worker(self.runSeq_Threaded, self.source[0])
+        worker = Worker(self.runSeq_Threaded, self.source)
         worker.run()
 
     @staticmethod

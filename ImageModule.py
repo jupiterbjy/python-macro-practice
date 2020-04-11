@@ -25,7 +25,7 @@ class Pos:
         return hash((self.x, self.y))
 
     def __bool__(self):
-        return True if all(list(self)) else False
+        return True if all((self.x, self.y)) else False
 
     def __str__(self):
         return str(tuple(self))
@@ -67,9 +67,10 @@ class Area:
         return *self.p1, *(self.p1 - self.p2)
 
     def sort(self):
-        x, y = [sorted(list(i)) for i in zip(self.p1, self.p2)]
-        self.p1.set(x[0], y[0])
-        self.p2.set(x[1], y[1])
+        if all((self.p1, self.p2)):
+            x, y = [sorted(list(i)) for i in zip(self.p1, self.p2)]
+            self.p1.set(x[0], y[0])
+            self.p2.set(x[1], y[1])
 
     def set(self, x1, y1, x2, y2):
         self.__init__(x1, y1, x2, y2)

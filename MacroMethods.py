@@ -27,6 +27,27 @@ def checkAbort():  # for now call this every action() to implement abort.
         raise AbortException
 
 
+class ExMethodIterator:
+    def __init__(self, head):
+        self.current = None
+        self.next = head
+
+    def __iter__(self):
+        return self
+
+    def __next__(self):
+        self.current = self.next
+
+        try:
+            self.next = self.current.next
+
+        except AttributeError:
+            raise StopIteration
+
+        else:
+            return self.current
+
+
 class _Base:
     """
     Defines minimum interfaces that subclasses need to function.
@@ -73,11 +94,8 @@ class _Base:
     def reset(self):
         self.screenArea = ImageModule.Area()
 
-    def __next__(self):
-        return self.next
-
     def __iter__(self):
-        return self
+        return ExMethodIterator(self)
 
 # --------------------------------------------------------
 
@@ -144,19 +162,19 @@ class Loop:
     @staticmethod
     def generate(name, loops):
 
-        looper = sLoopStart(), sLoopEnd()
+        start, end = ExLoopStart(), ExLoopEnd()
 
-        looper[0].next = looper[1]
-        looper[1].onSuccess = looper[0]
+        start.next = end
+        end.onSuccess = start
 
-        for i in looper:
+        for i in (start, end):
             i.name = name
             i.loopTime = loops
 
-        return looper
+        return start, end
 
 
-class sLoopStart(_Base, Loop):
+class ExLoopStart(_Base, Loop):
     """
     Placeholder for Loop. No special functionality is needed for loop start.
     Not for standalone usage.
@@ -171,7 +189,7 @@ class sLoopStart(_Base, Loop):
         return True
 
 
-class sLoopEnd(_Base, Loop):
+class ExLoopEnd(_Base, Loop):
     """
     Implements Loop via setting next/onSuccess to LoopStart Object.
     Not for standalone usage.
@@ -520,5 +538,6 @@ def Deserializer(baked):
     return out
 
 
-__all__ = MemberLoader.ListClass(__name__, blacklist={'_', 's', 'Abort'})
-class_dict = MemberLoader.ListClass(__name__, blacklist={'_', 's', 'Abort'}, return_dict=True)
+blacklist = {'_', 'Ex', 'Abort'}
+__all__ = MemberLoader.ListClass(__name__, blacklist=blacklist)
+class_dict = MemberLoader.ListClass(__name__, blacklist=blacklist, return_dict=True)
