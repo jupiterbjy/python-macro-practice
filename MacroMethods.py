@@ -436,10 +436,12 @@ class SearchOccurrence(_Image, _ClickBase):
 
         self.matchPoints = []
         self.matchCount = 0
+        self.threshold = 0
 
     def ScanOccurrence(self):
         self.matchCount, self.capturedImage, self.matchPoints = \
-            ImageModule.scanOccurrence(self.targetImage, self.screenArea.region, self.precision)
+            ImageModule.scanOccurrence(self.targetImage, self.screenArea.region,
+                                       self.precision, self.threshold)
 
         if DEBUG:
             self.DumpCaptured(bool(self.matchCount))

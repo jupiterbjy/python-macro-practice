@@ -13,8 +13,6 @@ from SubWindow import Runner, About
 import MacroMethods
 
 # <Bug fix>
-# Fix image disappear upon exporting to json.
-# Fix sequence that have ran before still having .target parameter in imageserach.
 
 # <References>
 # https://doc.qt.io/qt-5/qthread.html
@@ -178,12 +176,12 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         """
         Saves current sequence into json serialized format.
         """
+
+        print(self.recentImageDir, self.recentIoDir)
         nameCaller((225, 8, 0))
 
         name = QFileDialog.getSaveFileName(self, 'Save file',
-                                           directory=self.recentIoDir, filter='*.json')[0]
-        self.recentIoDir = os.path.dirname(name)
-
+                                           self.recentIoDir, filter='*.json')[0]
         for i in self.seqStorage:
             i.reset()
 
@@ -192,16 +190,19 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             json.dump(baked, open(name, 'w'), indent=2, default=lambda x: x.__dict__)
         except FileNotFoundError:
             print('└ Save canceled')
+        else:
+            self.recentIoDir = os.path.dirname(name)
 
     def seqLoad(self):
         """
         Loads json serialized Macro Sequence.
         """
+
+        print(self.recentImageDir, self.recentIoDir)
         nameCaller((225, 8, 0))
 
         name = QFileDialog.getOpenFileName(self, 'Load File',
-                                           directory=self.recentIoDir, filter='*.json')[0]
-        self.recentIoDir = os.path.dirname(name)
+                                           self.recentIoDir, filter='*.json')[0]
 
         try:
             baked = json.load(open(name, 'r'))
@@ -223,6 +224,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         else:
             deserialized = MacroMethods.Deserializer(baked)
+            self.recentIoDir = os.path.dirname(name)
 
         self.initializing(manual=True)
 
@@ -360,15 +362,17 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         :param cache_name: string key for cached image name.
         :return: return false on TypeError.
         """
+        print(self.recentImageDir, self.recentIoDir)
+
         try:
             img, file_name, self.recentImageDir = \
                 QtTools.loadImage(self, self.recentImageDir)
 
         except TypeError:
-            return False
+            return
 
         except ValueError:
-            return False
+            return
 
         else:
             if img is not None:
@@ -393,7 +397,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         else:
             img_label.setPixmap(QtTools.setPix(obj.targetImage).scaled(*IMG_CONVERT))
-            name_label.setText(obj.name)
+            # name_label.setText(obj.name)
             img_label.setStyleSheet('background-color: rgba(40, 40, 40, 255);')
 
     def _configObject(self, target, clear_text=True):
@@ -462,6 +466,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 raise AttributeError('└ No Image specified.')
 
             obj.randomOffset = self.countRandSpin.value()
+
+            obj.threshold = self.countThreshold.value() / 100
 
             obj.clickCount = self.countClickCount.value()
             obj.clickDelay = self.countClickInterval.value()
@@ -556,6 +562,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
             self.countRandSpin.setValue(obj.randomOffset)
 
+            self.countThreshold.setValue(int(obj.threshold * 100))
+
             self.countImgNameLabel.setText(obj.targetName)
             self.countImageUpdate(obj)
 
@@ -581,19 +589,18 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         :param target: If not specified, will config with selection from method list.
         """
 
+        groups = [self.waitGroup, self.clickGroup,
+                  self.loopGroup, self.varGroup, self.dragGroup]
+
         if self.lockLogCheck.isChecked():
-            # Assuming users are in log tab as they have toggled checkbox.
             return
 
-        # release-connect args with row index for currentRowChanged.
+        # release-connect args with row index for currentRowChanged. Counting this in.
         if target is None or isinstance(target, int):
             selected = self.selectedClass()
             self.nameLine.clear()
         else:
             selected = target
-
-        groups = [self.waitGroup, self.searchClickGroup, self.clickGroup,
-                  self.loopGroup, self.trialsGroup, self.varGroup, self.dragGroup]
 
         for g in groups:
             g.setEnabled(False)
@@ -618,9 +625,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         @dispatch.register(MacroMethods.ImageSearch)
         def _(_):
             self.tabWidget.setCurrentIndex(0)
-            self.trialsGroup.setEnabled(True)
             self.tabWidget.setTabEnabled(0, True)
-            self.searchClickGroup.setEnabled(True)
 
         @dispatch.register(MacroMethods.Loop)
         def _(_):
@@ -632,7 +637,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         def _(_):
             self.tabWidget.setCurrentIndex(1)
             self.tabWidget.setTabEnabled(1, True)
-            self.countClickGroup.setEnabled(True)
 
         @dispatch.register(MacroMethods.Variable)
         def _(_):

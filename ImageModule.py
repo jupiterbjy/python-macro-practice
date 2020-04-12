@@ -29,6 +29,9 @@ class Pos:
     def __str__(self):
         return str(tuple(self))
 
+    def __mul__(self, other):
+        return Pos(int(self.x * other), (self.y * other))
+
     def __eq__(self, other):
         return tuple(self) == tuple(other)
 
@@ -40,7 +43,7 @@ class Pos:
             return Pos(self.x + tmp.x, self.y + tmp.y)
 
     def __sub__(self, other):
-        return abs(self.x - other.x), abs(self.y - other.y)
+        return Pos(self.x - other.x, self.y - other.y)
 
     def __call__(self):
         return self.x, self.y
@@ -51,7 +54,7 @@ class Pos:
     def __le__(self, other):
         return (self.x <= other.x) & (self.y <= other.y)
     
-    def set(self, x, y):
+    def set(self, x, y=None):
         self.x, self.y = x, y
 
 
@@ -112,8 +115,10 @@ IMG_SAVE = saveImg()      # can't move this up..
 
 
 def imageSearch(target, area, precision=0.85):
+    a = pgui.screenshot(region=area)
+    b = np.array(a)
 
-    img = cv2.cvtColor(np.array(pgui.screenshot(region=area)), cv2.COLOR_RGB2BGR)
+    img = cv2.cvtColor(b, cv2.COLOR_RGB2BGR)
     img_gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 
     template = cv2.cvtColor(np.array(target), cv2.COLOR_RGB2GRAY)
@@ -134,7 +139,7 @@ def imageSearch(target, area, precision=0.85):
         return Pos(*max_loc), img
 
 
-def scanOccurrence(target, area, precision=0.85, threshold=0.9):
+def scanOccurrence(target, area, precision=0.85, threshold=0.1):
 
     img = cv2.cvtColor(np.array(pgui.screenshot(region=area)), cv2.COLOR_RGB2BGR)
     img_gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
@@ -146,15 +151,18 @@ def scanOccurrence(target, area, precision=0.85, threshold=0.9):
     loc = np.where(res >= precision)
 
     count = 0
-    last_pt = Pos()
     found = []
+    threshold_pixel = img_wh * threshold
 
     for pt in sorted(zip(*loc[::-1])):
-        if last_pt:
-            if (last_pt + img_wh) >= Pos(*pt) >= last_pt:
+        try:
+            if (found[-1] + img_wh + threshold_pixel) >= \
+                    Pos(*pt) >= (found[-1] - threshold_pixel):
                 continue
+        except IndexError:      # intentionally causing first run of for loop catch this
+            pass
 
-        found.append(last_pt := Pos(*pt))
+        found.append(Pos(*pt))
         count = count + 1
         cv2.rectangle(img, pt, (Pos(*pt) + img_wh)(), (0, 0, 255), 2)
         # need to explicitly give cv2 tuple, not tuple-type.

@@ -129,7 +129,7 @@ def loadImage(self, recent):
     import os
     nameCaller()
 
-    file_dir = QFileDialog.getOpenFileName(self, directory=recent)[0]
+    file_dir = QFileDialog.getOpenFileName(self, 'Select Image', recent)[0]
     file_name = os.path.basename(file_dir)
 
     if not file_dir:
