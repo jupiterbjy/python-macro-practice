@@ -1,5 +1,4 @@
 
-from PySide2.QtCore import QModelIndex
 from PySide2.QtWidgets import QFileDialog, QListWidgetItem, QApplication, QMainWindow
 import sys
 import os
@@ -15,7 +14,9 @@ import MacroMethods
 # <Bug fix>
 
 # <To-Do>
-# Change pyinstaller to cx-freeze
+# Change pyinstaller to cx-freeze << hardly works
+# implement order up/down
+# implement loop
 
 # <References>
 # https://doc.qt.io/qt-5/qthread.html
@@ -43,16 +44,20 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.insertButton.released.connect(self.AddToSequence)
         self.methodList.currentRowChanged.connect(self._disableOptions)
 
-        self.delButton.released.connect(self.remove)
+        self.delButton.released.connect(self.removeElement)
         self.runButton.released.connect(self.runSeq)
         self.editButton.released.connect(self.editSelected)
 
-        self.searchImgLoadButton.released.connect(self.searchLoadImage)
-        self.searchImgClearButton.released.connect(self.searchImageUpdate)
+        self.upButton.released.connect(lambda: self._moveOrder(up=True))
+        self.downButton.released.connect(lambda: self._moveOrder())
+
+        self.searchImgLoadButton.released.connect(lambda: self.searchLoadImage())
+        self.searchImgClearButton.released.connect(lambda: self.searchImageUpdate())
 
         self.countImgLoadButton.released.connect(self.countLoadImage)
         self.countImgClearButton.released.connect(self.countImageUpdate)
-        self.sequenceList.clicked.connect(self._updateToSelected)
+
+        self.sequenceList.clicked.connect(lambda: self._updateToSelected())
 
         self.actionSave.triggered.connect(self.seqSave)
         self.actionLoad.triggered.connect(self.seqLoad)
@@ -73,6 +78,36 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             'count': None
         }
 
+    def _moveOrder(self, up=True):
+
+        sel_idx = self.sequenceList.currentRow()
+        move_idx = (sel_idx - 1) if up else (sel_idx + 1)
+
+        if move_idx == -1:      # Qt set -1 as False
+            print('Cannot move selected object.')
+            return
+
+        try:
+            element_move = self.seqStorage[move_idx]
+        except IndexError:
+            print('Cannot move selected object.')
+        else:
+            element_current = self.seqStorage[sel_idx]
+
+            self.seqStorage[sel_idx], self.seqStorage[move_idx] = \
+                element_move, element_current
+
+            item_move = self.sequenceList.item(move_idx)
+            item_sel = self.sequenceList.currentItem()
+
+            widget_move = QtTools.GenerateWidget(element_move)
+            widget_sel = QtTools.GenerateWidget(element_current)
+
+            self.sequenceList.setItemWidget(item_move, widget_sel)
+            self.sequenceList.setItemWidget(item_sel, widget_move)
+
+            self._updateToSelected()
+
     def StdRedirect(self):
         if self.debugCheck.isChecked():
             self._stdout.stop()
@@ -86,14 +121,14 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         ui = About(self)
         ui.show()
 
-    def remove(self):
+    def removeElement(self, idx=None):
         """
         When called, removes selected item from both seqStorage & GUI.
         """
         self.backupSeq()
 
         try:
-            del self.seqStorage[QtTools.returnRow(self.sequenceList)]
+            out = self.seqStorage.pop(idx if idx else QtTools.returnRow(self.sequenceList))
 
         except IndexError as err:
             print(err)
@@ -102,8 +137,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             print(err)
 
         else:
-            item = self.sequenceList.currentRow()
+            item = self.sequenceList.itemFromIndex(idx)
             self.sequenceList.takeItem(item)
+            return out
 
     def backupSeq(self):
         """
@@ -147,11 +183,11 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         if self.debugCheck.isChecked():
             self._stdout.start()
 
-    def selectedClass(self):
+    def selectedMethod(self):
         out = MacroMethods.class_dict[MacroMethods.__all__[self.methodList.currentRow()]]
         return out()
 
-    def selectedSequence(self):
+    def selectedElement(self):
         widget = self.sequenceList.itemWidget(self.sequenceList.currentItem())
         return widget.source
 
@@ -168,10 +204,10 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self._LoadImage(self.countImgLabel, self.countImgNameLabel, 'count')
 
     def editSelected(self):
-        print(f'Edit: {self.selectedSequence().name}')
-        self._configObject(self.selectedSequence(), clear_text=False)
+        print(f'Edit: {self.selectedElement().name}')
+        self._configObject(self.selectedElement(), clear_text=False)
         self._comboBoxUpdateNew()
-        item = QtTools.GenerateWidget(self.selectedSequence())
+        item = QtTools.GenerateWidget(self.selectedElement())
 
         self.sequenceList.setItemWidget(self.sequenceList.currentItem(), item)
 
@@ -293,7 +329,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         """
 
         if tgt is None:
-            target = self.selectedClass()
+            target = self.selectedMethod()
 
             try:
                 self._configObject(target)
@@ -332,7 +368,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.onFailCombo.setCurrentIndex(fail_bk)
 
     def _comboBoxUpdateSelected(self):
-        obj = self.selectedSequence()
+        obj = self.selectedElement()
 
         try:
             index = self.seqStorage.index(obj.onSuccess)
@@ -410,7 +446,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         """
 
         text = self.nameLine.text()
-        target.name = type(target).__name__ if text == '' else text
+        target.name = type(target).__name__ if not text else text
 
         if clear_text:
             self.nameLine.clear()
@@ -429,6 +465,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             pass
 
         dispatch = ObjectDispatch.preset()
+
+        # Dispatching =====================================
 
         @dispatch.register(MacroMethods.Click)
         def _(obj):
@@ -459,6 +497,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         @dispatch.register(MacroMethods.Loop)
         def _(obj):
+
             pass
 
         @dispatch.register(MacroMethods.SearchOccurrence)
@@ -486,6 +525,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         def _(obj):
             obj.delay = self.waitSpin.value()
 
+        # Dispatching =====================================
+
         return dispatch(target)
 
     def _updateToSelected(self, target=None):
@@ -494,12 +535,10 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         :param target: If specified, will try to update with given object.
         """
 
-        # 'onClick' signal args with QModel. Making case for it.
-
-        if target is None or isinstance(target, QModelIndex):
+        if target is None:
 
             try:
-                source = self.selectedSequence()
+                source = self.selectedElement()
             except IndexError:
                 nameCaller()
                 print('└ Sequence is Empty.')
@@ -510,15 +549,18 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         else:
             source = target
 
-        # Temporary fix
         if self.sequenceList.currentItem() is not None:
             self.editButton.setEnabled(True)
+        else:
+            self.editButton.setDisabled(True)
 
         self.nameLine.setText(source.name)
         self._disableOptions(source)
         self._comboBoxUpdateSelected()
 
         dispatch = ObjectDispatch.preset()
+
+        # Dispatching =====================================
 
         @dispatch.register(MacroMethods.Click)
         def _(obj):
@@ -582,6 +624,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         def _(obj):
             self.waitSpin.setValue(obj.delay)
 
+        # Dispatching =====================================
+
         dispatch.dispatch(source)
 
     def _disableOptions(self, target=None):
@@ -600,7 +644,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         # release-connect args with row index for currentRowChanged. Counting this in.
         if target is None or isinstance(target, int):
-            selected = self.selectedClass()
+            selected = self.selectedMethod()
             self.nameLine.clear()
         else:
             selected = target
@@ -612,6 +656,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.tabWidget.setTabEnabled(i, False)
 
         dispatch = ObjectDispatch.preset()
+
+        # Dispatching =====================================
 
         @dispatch.register(MacroMethods.Click)
         def _(_):
@@ -652,6 +698,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.tabWidget.setCurrentIndex(2)
             self.tabWidget.setTabEnabled(2, True)
             self.waitGroup.setEnabled(True)
+
+        # Dispatching =====================================
 
         dispatch.dispatch(selected)
 
