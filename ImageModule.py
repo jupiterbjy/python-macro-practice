@@ -45,6 +45,9 @@ class Pos:
     def __sub__(self, other):
         return Pos(self.x - other.x, self.y - other.y)
 
+    def __abs__(self):
+        return Pos(abs(self.x), abs(self.y))
+
     def __call__(self):
         return self.x, self.y
 
@@ -76,7 +79,7 @@ class Area:
 
     @property
     def region(self):
-        return *self.p1, *(self.p1 - self.p2)
+        return *self.p1, *abs(self.p1 - self.p2)
 
     def sort(self):
         if all((self.p1, self.p2)):
@@ -115,10 +118,10 @@ IMG_SAVE = saveImg()      # can't move this up..
 
 
 def imageSearch(target, area, precision=0.85):
-    a = pgui.screenshot(region=area)
-    b = np.array(a)
 
-    img = cv2.cvtColor(b, cv2.COLOR_RGB2BGR)
+    array = np.array(pgui.screenshot(region=area))
+
+    img = cv2.cvtColor(array, cv2.COLOR_RGB2BGR)
     img_gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 
     template = cv2.cvtColor(np.array(target), cv2.COLOR_RGB2GRAY)
@@ -141,7 +144,9 @@ def imageSearch(target, area, precision=0.85):
 
 def scanOccurrence(target, area, precision=0.85, threshold=0.1):
 
-    img = cv2.cvtColor(np.array(pgui.screenshot(region=area)), cv2.COLOR_RGB2BGR)
+    array = np.array(pgui.screenshot(region=area))
+
+    img = cv2.cvtColor(array, cv2.COLOR_RGB2BGR)
     img_gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 
     template = cv2.cvtColor(np.array(target), cv2.COLOR_RGB2GRAY)

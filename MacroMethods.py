@@ -127,13 +127,6 @@ class _ClickBase:
             pyautogui.click(self.finalPos(target))
             print(f'Click: {self.finalPos(target)}')
 
-    def _clickMultiple(self, target_list):
-
-        for idx, tgt in enumerate(target_list):
-            checkAbort()
-            print(f'Click {idx}:')
-            self._click(tgt)
-
 
 class Click(_Base, _ClickBase):
     """
@@ -451,14 +444,17 @@ class SearchOccurrence(_Image, _ClickBase):
         w, h = self.targetImage.size
         return self.matchPoint + ImageModule.Pos(w//2, h//2)
 
-    def absPos(self, target):
-        return self.screenArea.p1 + target
+    @property
+    def absPos(self):
+        return self.screenArea.p1 + self.target
 
     def action(self):
         self.ScanOccurrence()
         if state := self.matchCount > 0:
-            tmp = [self.absPos(i) for i in self.matchPoints]
-            self._clickMultiple(tmp)
+            for p in self.matchPoints:
+                self.matchPoint = p
+                self.target.set(*self.ImageCenter)
+                self._click(self.absPos)
 
         return state
 
