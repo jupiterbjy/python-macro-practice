@@ -18,13 +18,21 @@ This script will read off from .txt file which contains macro actions. But curre
 
 Completely rewriting with GUI, OOP.
 
-**Current State:** (1e24343)
-![Imgur](https://imgur.com/JSpTtFS.jpg) 
-[Demonstration video - v0.0.2](https://youtu.be/ujzYg3-SDe0)
-
 Now has separated Macro Editor & Player window. Many functions are not implemented yet.
-But basic functions - edit/save/load/play/stop - works without significant issue when only using basic components. (ImageSearch, Wait, Click, Drag)
+But basic functions works without significant issue. (Variables, Loops don't work yet)
 
-Uses Pickle to save & load macro sequence.
+
+**Current State:** (v0.0.3)
+![Imgur](https://imgur.com/JSpTtFS.jpg) 
+[Demo video - v0.0.3](https://youtu.be/X6gr9fZ5Vk8)
+
+
+###### Features (Will format this later):
+
+Support on-Success / on-Fail conditional macro sequencing.
+With this, one can easily make IF-like branching sequence or infinite loop too.
+This is demonstrated in demo video above.
+
+FYI, uses json serialization to save & load macro sequence, too.
 
 Still working on other macro components.
