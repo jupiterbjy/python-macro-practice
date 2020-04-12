@@ -14,6 +14,9 @@ import MacroMethods
 
 # <Bug fix>
 
+# <To-Do>
+# Change pyinstaller to cx-freeze
+
 # <References>
 # https://doc.qt.io/qt-5/qthread.html
 # https://devblogs.microsoft.com/python/idiomatic-python-eafp-versus-lbyl/

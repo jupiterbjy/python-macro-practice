@@ -564,7 +564,7 @@ class Ui_MainWindow(object):
     # setupUi
 
     def retranslateUi(self, MainWindow):
-        MainWindow.setWindowTitle(QCoreApplication.translate("MainWindow", u"Python ImageMacro - Test Build", None))
+        MainWindow.setWindowTitle(QCoreApplication.translate("MainWindow", u"Python Macro Sequencer - Test Build v0.0.3", None))
         self.actionSave.setText(QCoreApplication.translate("MainWindow", u"Save (ctrl+s)", None))
         self.actionLoad.setText(QCoreApplication.translate("MainWindow", u"Load (ctrl+l)", None))
         self.actionExit.setText(QCoreApplication.translate("MainWindow", u"Exit (ctrl+q)", None))
