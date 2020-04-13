@@ -10,8 +10,8 @@ from PySide2.QtWidgets import (
     QLabel,
     QGridLayout,
 )
-from PIL import Image
-from PIL.ImageQt import ImageQt
+
+from PIL import Image, ImageQt
 import sys
 import pyautogui
 import keyboard
@@ -22,8 +22,12 @@ from ImageModule import Pos, Area
 
 # Module to store all necessary Qt-Related tools for UI.
 
+
+TIMER_RUNNING = []
+
 ABOUT_IMAGE = "About.png"
 IMG_CONVERT = (226, 151, Qt.KeepAspectRatio)
+
 ICON_LOCATION = "icons/"
 ICON_ASSIGN = {
     "Click": "click.png",
@@ -130,7 +134,7 @@ def setPix(image):
     if isinstance(image, str):
         return QPixmap(image)
 
-    tmp = ImageQt(image).copy()  # Plain ImageQt() call don't return QImage.
+    tmp = ImageQt.ImageQt(image).copy()  # Plain ImageQt() call don't return QImage.
     return QPixmap(tmp)
 
     # TransformMode => Qt::SmoothTransformation for better quality is possible.
@@ -178,27 +182,26 @@ def GenerateWidget(tgt):
 def AddToListWidget(tgt, item_list_widget, index=None):
     """
     Adds macro object to given QItemListWidget.
+    :param index: if given, tries to insert item in given index.
     :param tgt: macro object to Add
     :param item_list_widget: QItemListWidget
     """
-    nameCaller()
 
-    print(f'└ Add: {type(tgt).__name__} "{QtColorize(tgt.name, (0, 217, 127))}"')
+    print(f"'Add: {type(tgt).__name__} '{QtColorize(tgt.name, (0, 217, 127))}''")
+    print(f" To: '{item_list_widget.objectName()}'\n")
 
     item = GenerateWidget(tgt)
 
     list_item = QListWidgetItem(item_list_widget)
     list_item.setSizeHint(item.sizeHint())
 
-    if index:
-        item_list_widget.insertItem(0, list_item)
+    if index is not None:
+        item_list_widget.insertItem(index, list_item)
+        print('inserting to', index)
 
     else:
         item_list_widget.addItem(list_item)
     item_list_widget.setItemWidget(list_item, item)
-
-
-TIMER_RUNNING = []
 
 
 def AbortTimers():

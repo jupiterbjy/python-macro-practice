@@ -1,6 +1,6 @@
-import cv2
-import numpy as np
 import pyautogui as pgui
+import numpy as np
+import cv2
 
 """
 This module will provide any necessary components required by MacroMethod,

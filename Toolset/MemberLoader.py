@@ -1,6 +1,6 @@
+from sys import modules
 import inspect
 import re
-from sys import modules
 
 
 def ListTarget(name, target, prefix_mode, blacklist, return_dict):

@@ -1,14 +1,15 @@
 from functools import singledispatch
 from collections import deque
+from PIL import Image
 import time
 import pyautogui
 import io
 import base64
 import copy
-from PIL import Image
 
-import ImageModule
 from Toolset import MemberLoader
+import ImageModule
+
 
 SLEEP_FUNCTION = time.sleep  # Will be override-d by ui_main.
 IMG_SAVER = ImageModule.saveImg()
