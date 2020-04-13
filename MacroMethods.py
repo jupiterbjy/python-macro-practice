@@ -1,4 +1,3 @@
-
 from functools import singledispatch
 from collections import deque
 import time
@@ -11,7 +10,7 @@ from PIL import Image
 import ImageModule
 from Toolset import MemberLoader
 
-SLEEP_FUNCTION = time.sleep     # Will be override-d by ui_main.
+SLEEP_FUNCTION = time.sleep  # Will be override-d by ui_main.
 IMG_SAVER = ImageModule.saveImg()
 ABORT = False
 RAND_OFFSET = False
@@ -24,7 +23,7 @@ class AbortException(Exception):
 
 
 def checkAbort():  # for now call this every action() to implement abort.
-    if ABORT:      # inefficient to check if every run.
+    if ABORT:  # inefficient to check if every run.
         raise AbortException
 
 
@@ -52,8 +51,8 @@ class _Base:
 
     def __init__(self):
         super(_Base, self).__init__()
-        self.name = ''
-        self.next = None           # assign obj to run next.
+        self.name = ""
+        self.next = None  # assign obj to run next.
         self.onSuccess = None
         self.onFail = None
         self.screenArea = ImageModule.Area()
@@ -93,6 +92,7 @@ class _Base:
     def __iter__(self):
         return ExMethodIterator(self)
 
+
 # --------------------------------------------------------
 
 
@@ -101,6 +101,7 @@ class _ClickBase:
     Super class for click operation.
     Separated from click object to prevent diamond inherit.
     """
+
     def __init__(self):
         self.target = ImageModule.Pos()
         self.clickCount = 1
@@ -125,13 +126,14 @@ class _ClickBase:
             checkAbort()
             SLEEP_FUNCTION(self.clickDelay)
             pyautogui.click(self.finalPos(target))
-            print(f'Click: {self.finalPos(target)}')
+            print(f"Click: {self.finalPos(target)}")
 
 
 class Click(_Base, _ClickBase):
     """
     Interface of Simple Click method.
     """
+
     @property
     def absPos(self):
         return self.screenArea.p1 + self.target
@@ -155,9 +157,10 @@ class Loop:
     Interface. Internally generate loopStart, LoopEnd.
     LoopEnd set next to
     """
+
     def __init__(self):
 
-        self.loopName = ''
+        self.loopName = ""
         self.loopTime = 3
         self.currentLoop = 0
 
@@ -181,10 +184,11 @@ class ExLoopStart(_Base, Loop):
     Placeholder for Loop. No special functionality is needed for loop start.
     Not for standalone usage.
     """
+
     def __init__(self):
         super().__init__()
 
-        self.name = ''
+        self.name = ""
         self.next = None
 
     def action(self):
@@ -196,10 +200,11 @@ class ExLoopEnd(_Base, Loop):
     Implements Loop via setting next/onSuccess to LoopStart Object.
     Not for standalone usage.
     """
+
     def __init__(self):
         super().__init__()
 
-        self.name = ''
+        self.name = ""
         self.next = None
         # self.onFail = None
         # self.onSuccess = None
@@ -230,9 +235,10 @@ class Variable(_Base):
     Will expand to simple add, subtract, multiply, divide, mod operation between variables.
     Not worked yet.
     """
+
     def __init__(self):
         super().__init__()
-        self.name = 'variable'
+        self.name = "variable"
         self.value = 0
 
     def __iadd__(self, other):
@@ -283,14 +289,14 @@ class _Image(_Base):
     """
     superclass of all Macro classes dealing with image.
     """
-    
+
     def __init__(self):
         super().__init__()
 
         self._targetImage = None
         self.targetName = None
         self.capturedImage = None
-        self.matchPoint = None      # expects pos object
+        self.matchPoint = None  # expects pos object
         self.precision = 0.85
 
     def DumpCaptured(self, name=None):
@@ -299,26 +305,26 @@ class _Image(_Base):
     def DumpTarget(self):
         IMG_SAVER(self.targetImage, self.targetName)
 
-    def DumpCoordinates(self):      # Do I need this?
+    def DumpCoordinates(self):  # Do I need this?
         return self.screenArea, self.matchPoint
 
-    @property           # not sure if this use-case is for class method.
+    @property  # not sure if this use-case is for class method.
     def targetImage(self):
         return self._targetImage
 
     @targetImage.setter
     def targetImage(self, img):
         try:
-            img.convert('RGB')
+            img.convert("RGB")
 
         except AttributeError:
-            raise AttributeError('Onl PIL-type images are supported.')
+            raise AttributeError("Onl PIL-type images are supported.")
 
         else:
-            if img.format != 'PNG':     # Non-png images has trouble with cv2 conversion
+            if img.format != "PNG":  # Non-png images has trouble with cv2 conversion
 
                 byte_io = io.BytesIO()
-                img.save(byte_io, 'PNG')
+                img.save(byte_io, "PNG")
                 self._targetImage = Image.open(byte_io)
 
             else:
@@ -332,9 +338,9 @@ class _Image(_Base):
             pass
 
         buffer = io.BytesIO()
-        self._targetImage.save(buffer, format='PNG')
+        self._targetImage.save(buffer, format="PNG")
         string = base64.b64encode(buffer.getvalue())
-        self._targetImage = string.decode('utf-8')
+        self._targetImage = string.decode("utf-8")
         buffer.close()
 
         return self.__dict__
@@ -349,17 +355,17 @@ class _Image(_Base):
         except AttributeError:
             pass
         except TypeError:
-            print('Old value found, save file again for update.')
+            print("Old value found, save file again for update.")
             if isinstance(self.target, dict):
-                self.target = ImageModule.Pos(self.target['x'], self.target['y'])
+                self.target = ImageModule.Pos(self.target["x"], self.target["y"])
             else:
-                raise Exception('File is damaged.')
+                raise Exception("File is damaged.")
 
         buffer = io.BytesIO()
         string = self._targetImage
 
         buffer.write(base64.b64decode(string))
-        self._targetImage = Image.open(buffer, 'r').copy()
+        self._targetImage = Image.open(buffer, "r").copy()
         buffer.close()
 
     def reset(self):
@@ -380,8 +386,9 @@ class ImageSearch(_Image, _ClickBase):
         self.trials = 5
 
     def ImageSearch(self):
-        self.matchPoint, self.capturedImage = \
-            ImageModule.imageSearch(self.targetImage, self.screenArea.region, self.precision)
+        self.matchPoint, self.capturedImage = ImageModule.imageSearch(
+            self.targetImage, self.screenArea.region, self.precision
+        )
 
     def ImageSearchMultiple(self):
         for i in range(self.trials):
@@ -397,7 +404,7 @@ class ImageSearch(_Image, _ClickBase):
     @property
     def ImageCenter(self):
         w, h = self.targetImage.size
-        return self.matchPoint + ImageModule.Pos(w//2, h//2)
+        return self.matchPoint + ImageModule.Pos(w // 2, h // 2)
 
     @property
     def absPos(self):
@@ -432,9 +439,13 @@ class SearchOccurrence(_Image, _ClickBase):
         self.threshold = 0
 
     def ScanOccurrence(self):
-        self.matchCount, self.capturedImage, self.matchPoints = \
-            ImageModule.scanOccurrence(self.targetImage, self.screenArea.region,
-                                       self.precision, self.threshold)
+        (
+            self.matchCount,
+            self.capturedImage,
+            self.matchPoints,
+        ) = ImageModule.scanOccurrence(
+            self.targetImage, self.screenArea.region, self.precision, self.threshold
+        )
 
         if DEBUG:
             self.DumpCaptured(bool(self.matchCount))
@@ -442,7 +453,7 @@ class SearchOccurrence(_Image, _ClickBase):
     @property
     def ImageCenter(self):
         w, h = self.targetImage.size
-        return self.matchPoint + ImageModule.Pos(w//2, h//2)
+        return self.matchPoint + ImageModule.Pos(w // 2, h // 2)
 
     @property
     def absPos(self):
@@ -468,6 +479,7 @@ class Drag(_Base):
     """
     Drag from p1 to p2.
     """
+
     def __init__(self):
         super().__init__()
 
@@ -488,7 +500,7 @@ class Drag(_Base):
 
     def action(self):
         pyautogui.moveTo(*self.From)
-        pyautogui.dragTo(*self.To, button='left')
+        pyautogui.dragTo(*self.To, button="left")
         return True
 
     def serialize(self):
@@ -550,7 +562,7 @@ def Serializer(obj_list):
 
         out.append(copy.deepcopy(element.serialize()))
 
-    return {'type': obj_type, 'data': out, 'reference': reference_list}
+    return {"type": obj_type, "data": out, "reference": reference_list}
 
 
 def Deserializer(baked):
@@ -559,15 +571,16 @@ def Deserializer(baked):
     error handling should happen outside of this function, where it is called.
     """
     out = []
-    inject = deque(baked['data'])
-    ref = baked['reference']
-    type_list = baked['type']
+    inject = deque(baked["data"])
+    ref = baked["reference"]
+    type_list = baked["type"]
 
     for obj in type_list:
         obj = class_dict[obj]()
         dict_source = inject.popleft()
-        obj.__dict__.update((k, dict_source[k]) for k in
-                            dict_source.keys() & obj.__dict__.keys())
+        obj.__dict__.update(
+            (k, dict_source[k]) for k in dict_source.keys() & obj.__dict__.keys()
+        )
         out.append(obj)
 
     for obj in out:
@@ -588,6 +601,6 @@ def Deserializer(baked):
     return out
 
 
-blacklist = {'_', 'Ex', 'Abort', 'deque'}
+blacklist = {"_", "Ex", "Abort", "deque"}
 __all__ = MemberLoader.ListClass(__name__, blacklist=blacklist)
 class_dict = MemberLoader.ListClass(__name__, blacklist=blacklist, return_dict=True)

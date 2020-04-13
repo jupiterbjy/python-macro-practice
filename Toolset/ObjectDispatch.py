@@ -5,15 +5,14 @@ use decorator function 'register' to do what that name implies.
 
 
 def preset():
-
     def defaultBehavior(obj):
-        print('preset:')
-        print(f'└ {type(obj).__name__} Not listed.')
+        print("preset:")
+        print(f"└ {type(obj).__name__} Not listed.")
 
-    return dispatcher(defaultBehavior)
+    return Dispatcher(defaultBehavior)
 
 
-class dispatcher:
+class Dispatcher:
     def __init__(self, default=None):
         self.function_map = {}
         self.registerNotice = True
@@ -23,14 +22,13 @@ class dispatcher:
         return self.dispatch(obj, *args, **kwargs)
 
     def template(self, *args, **kwargs):
-        raise RuntimeError('Default function is not assigned to function_map.')
+        raise RuntimeError("Default function is not assigned to function_map.")
 
     def dispatch(self, obj, *args, **kwargs):
         func = self.function_map.get(type(obj), self.default)
         return func(obj)
 
     def register(self, type_obj):
-
         def decorator(func):
 
             self.function_map[type_obj] = func
@@ -39,6 +37,7 @@ class dispatcher:
                 return func(*args, **kwargs)
 
             return wrapper
+
         return decorator
 
 
@@ -63,4 +62,5 @@ def obj_dispatch():
             out(obj, *args, **kwargs)
 
         return wrapper
+
     return deco

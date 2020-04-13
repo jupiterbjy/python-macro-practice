@@ -1,4 +1,3 @@
-
 from PySide2.QtCore import QRunnable, Slot
 from PySide2.QtWidgets import QMainWindow, QDialog
 import pyautogui
@@ -54,6 +53,7 @@ class CaptureCoverage(QDialog):
 # https://horensic.tistory.com/85
 # https://stackoverflow.com/questions/12827305
 
+
 class Runner(QMainWindow, Ui_Runner):
     def __init__(self, parent, seq, finish_signal, debug):
         super(Runner, self).__init__(parent)
@@ -73,7 +73,7 @@ class Runner(QMainWindow, Ui_Runner):
         self.source = seq
         self.updateHistory(self.source)
 
-        print('GOT: ', self.source)
+        print("GOT: ", self.source)
 
     def injectGlobals(self):
         MacroMethods.DEBUG = self.debug
@@ -89,11 +89,13 @@ class Runner(QMainWindow, Ui_Runner):
             self._stdout.stop()
         else:
             self._stdout.start()
-            self._stdout.printOccur.connect(lambda x: appendText(self.outputTextEdit, x))
+            self._stdout.printOccur.connect(
+                lambda x: appendText(self.outputTextEdit, x)
+            )
 
     def areaInject(self):
 
-        self.runLine.setText('Press f2 at 2 diagonal corner.')
+        self.runLine.setText("Press f2 at 2 diagonal corner.")
         area = QtTools.getCaptureArea()
 
         self.runLine.setText(str(area))
@@ -127,24 +129,24 @@ class Runner(QMainWindow, Ui_Runner):
                 obj = obj.run()
 
             except pyautogui.FailSafeException:
-                print('└ PyAutoGui FailSafe')
-                self.runLine.setText('Cannot Click (0,0)')
+                print("└ PyAutoGui FailSafe")
+                self.runLine.setText("Cannot Click (0,0)")
                 break
 
             except ZeroDivisionError:
-                print('└ Division by Zero')
-                self.runLine.setText('Tried to divide by 0')
+                print("└ Division by Zero")
+                self.runLine.setText("Tried to divide by 0")
                 break
 
             except MacroMethods.AbortException:
-                print('└ Abort Signaled')
-                self.runLine.setText('Aborted')
+                print("└ Abort Signaled")
+                self.runLine.setText("Aborted")
                 break
 
             else:
                 seq_count += 1
         else:
-            self.runLine.setText('Macro finished.')
+            self.runLine.setText("Macro finished.")
             self.updateHistory()
 
         self.sequenceStarted = False
@@ -162,7 +164,7 @@ class Runner(QMainWindow, Ui_Runner):
 
         self.injectGlobals()
         self.areaInject()
-        self.runLine.setText('Macro started.')
+        self.runLine.setText("Macro started.")
 
         worker = Worker(self.runSeq_Threaded, self.source)
         worker.run()

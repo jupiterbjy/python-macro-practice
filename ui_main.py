@@ -1,4 +1,3 @@
-
 from PySide2.QtWidgets import QFileDialog, QListWidgetItem, QApplication, QMainWindow
 import sys
 import os
@@ -36,7 +35,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.setupUi(self)
 
         self.seqStorage = []
-        self.seqBackup = []     # Consumes memory!
+        self.seqBackup = []  # Consumes memory!
 
         self.runner_signal = QtTools.RunnerSignal()
         self.runner_signal.signal.connect(self.SeqStopped)
@@ -48,16 +47,16 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.runButton.released.connect(self.runSeq)
         self.editButton.released.connect(self.editSelected)
 
-        self.upButton.released.connect(lambda: self.moveOrder())
-        self.downButton.released.connect(lambda: self.moveOrder(up=False))
+        self.upButton.released.connect(self.moveOrder)
+        self.downButton.released.connect(lambda up=False: self.moveOrder(up))
 
-        self.searchImgLoadButton.released.connect(lambda: self.searchLoadImage())
-        self.searchImgClearButton.released.connect(lambda: self.searchImageUpdate())
+        self.searchImgLoadButton.released.connect(self.searchLoadImage)
+        self.searchImgClearButton.released.connect(self.searchImageUpdate)
 
         self.countImgLoadButton.released.connect(self.countLoadImage)
         self.countImgClearButton.released.connect(self.countImageUpdate)
 
-        self.sequenceList.clicked.connect(lambda: self._updateToSelected())
+        self.sequenceList.clicked.connect(self._updateToSelected)
 
         self.actionSave.triggered.connect(self.seqSave)
         self.actionLoad.triggered.connect(self.seqLoad)
@@ -73,34 +72,32 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.recentImageDir = os.getcwd()
         self.recentIoDir = os.getcwd()
 
-        self.cachedImage = {
-            'search': None,
-            'count': None
-        }
+        self.cachedImage = {"search": None, "count": None}
 
     def moveOrder(self, up=True):
         """
         Move up or down selected element.
-        Wrap this with lambda so signal.connect won't argument trash values.
         """
 
         sel_idx = self.sequenceList.currentRow()
         move_idx = (sel_idx - 1) if up else (sel_idx + 1)
 
         try:
-            if move_idx == -1:      # Qt set -1 as false, sadly.
+            if move_idx == -1:  # Qt set -1 as false, sadly.
                 raise IndexError
             element_move = self.seqStorage[move_idx]
 
         except IndexError:
-            print('Move ' + ('up' if up else 'down') + ':')
-            print('Cannot move selected object.')
+            print("Move " + ("up" if up else "down") + ":")
+            print("Cannot move selected object.")
 
         else:
             element_current = self.seqStorage[sel_idx]
 
-            self.seqStorage[sel_idx], self.seqStorage[move_idx] = \
-                element_move, element_current
+            self.seqStorage[sel_idx], self.seqStorage[move_idx] = (
+                element_move,
+                element_current,
+            )
 
             item_move = self.sequenceList.item(move_idx)
             item_sel = self.sequenceList.currentItem()
@@ -124,7 +121,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             TextTools.COLORIZE_ENABLE = False
         else:
             self._stdout.start()
-            self._stdout.printOccur.connect(lambda x: appendText(self.outputTextEdit, x))
+            self._stdout.printOccur.connect(
+                lambda x: appendText(self.outputTextEdit, x)
+            )
             TextTools.COLORIZE_ENABLE = True
 
     def openAbout(self):
@@ -137,16 +136,19 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         :return returns removed object.
         """
         self.backupSeq()
-        idx = idx if idx else QtTools.returnRow(self.sequenceList)
+        idx = idx if idx else self.sequenceList.currentRow()
 
         try:
+            if idx == -1:
+                raise IndexError
             out = self.seqStorage.pop(idx)
 
         except IndexError:
-            print('remove: Index out of range')
+            print("remove: Index out of range")
 
         else:
             self.sequenceList.takeItem(idx)
+            self._updateToSelected()
             return out
 
     def backupSeq(self):
@@ -157,7 +159,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.seqBackup.pop(0)
 
         self.seqBackup.append(self.seqStorage)
-        print(f'- Backup: {len(self.seqBackup)}')
+        print(f"- Backup: {len(self.seqBackup)}")
 
     def undoSeq(self):
         """
@@ -172,11 +174,15 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         MacroMethods.SetNext(self.seqStorage)
 
         try:
-            runner = Runner(self, self.seqStorage[0], self.runner_signal,
-                            self.debugCheck.isChecked())
+            runner = Runner(
+                self,
+                self.seqStorage[0],
+                self.runner_signal,
+                self.debugCheck.isChecked(),
+            )
         except IndexError:
             self.StdRedirect()
-            print('runSeq: Nothing To play.')
+            print("runSeq: Nothing To play.")
 
         else:
             self._stdout.stop()
@@ -191,7 +197,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self._stdout.start()
 
     def selectedMethod(self):
-        out = MacroMethods.class_dict[MacroMethods.__all__[self.methodList.currentRow()]]
+        out = MacroMethods.class_dict[
+            MacroMethods.__all__[self.methodList.currentRow()]
+        ]
         return out()
 
     def selectedElement(self):
@@ -205,13 +213,13 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self._ImageUpdateToObject(self.countImgLabel, self.countImgNameLabel, obj)
 
     def searchLoadImage(self):
-        self._LoadImage(self.searchImgLabel, self.searchImgNameLabel, 'search')
+        self._LoadImage(self.searchImgLabel, self.searchImgNameLabel, "search")
 
     def countLoadImage(self):
-        self._LoadImage(self.countImgLabel, self.countImgNameLabel, 'count')
+        self._LoadImage(self.countImgLabel, self.countImgNameLabel, "count")
 
     def editSelected(self):
-        print(f'Edit: {self.selectedElement().name}')
+        print(f"Edit: {self.selectedElement().name}")
         self._configObject(self.selectedElement(), clear_text=False)
         self._comboBoxUpdateNew()
         item = QtTools.GenerateWidget(self.selectedElement())
@@ -226,16 +234,17 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         print(self.recentImageDir, self.recentIoDir)
         nameCaller((225, 8, 0))
 
-        name = QFileDialog.getSaveFileName(self, 'Save file',
-                                           self.recentIoDir, filter='*.json')[0]
+        name = QFileDialog.getSaveFileName(
+            self, "Save file", self.recentIoDir, filter="*.json"
+        )[0]
         for i in self.seqStorage:
             i.reset()
 
         baked = MacroMethods.Serializer(self.seqStorage)
         try:
-            json.dump(baked, open(name, 'w'), indent=2, default=lambda x: x.__dict__)
+            json.dump(baked, open(name, "w"), indent=2, default=lambda x: x.__dict__)
         except FileNotFoundError:
-            print('└ Save canceled')
+            print("└ Save canceled")
         else:
             self.recentIoDir = os.path.dirname(name)
 
@@ -247,25 +256,26 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         print(self.recentImageDir, self.recentIoDir)
         nameCaller((225, 8, 0))
 
-        name = QFileDialog.getOpenFileName(self, 'Load File',
-                                           self.recentIoDir, filter='*.json')[0]
+        name = QFileDialog.getOpenFileName(
+            self, "Load File", self.recentIoDir, filter="*.json"
+        )[0]
 
         try:
-            baked = json.load(open(name, 'r'))
+            baked = json.load(open(name, "r"))
 
         except json.JSONDecodeError:
-            print('└ JSONDecodeError')
+            print("└ JSONDecodeError")
             return
 
         except UnicodeDecodeError:
             if name is None:
                 raise FileNotFoundError
 
-            print('└ UnicodeDecodeError')
+            print("└ UnicodeDecodeError")
             return
 
         except FileNotFoundError:
-            print('└ Load canceled')
+            print("└ Load canceled")
             return
 
         else:
@@ -306,7 +316,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         """
 
         def iconSet(name):
-            temp = ICON_LOCATION + ICON_ASSIGN.setdefault(name, 'default')
+            temp = ICON_LOCATION + ICON_ASSIGN.setdefault(name, "default")
             return Tools.resource_path(temp)
 
         def setItems(item_list):
@@ -344,7 +354,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             except AttributeError as err:
                 nameCaller()
                 print(*err.args)
-                print('└ Object config Failed.')
+                print("└ Object config Failed.")
                 return
 
             else:
@@ -364,8 +374,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.onSuccessCombo.clear()
         self.onFailCombo.clear()
 
-        self.onSuccessCombo.addItem('Default')
-        self.onFailCombo.addItem('Default')
+        self.onSuccessCombo.addItem("Default")
+        self.onFailCombo.addItem("Default")
 
         for i in self.seqStorage:
             self.onSuccessCombo.addItem(i.name)
@@ -411,8 +421,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         print(self.recentImageDir, self.recentIoDir)
 
         try:
-            img, file_name, self.recentImageDir = \
-                QtTools.loadImage(self, self.recentImageDir)
+            img, file_name, self.recentImageDir = QtTools.loadImage(
+                self, self.recentImageDir
+            )
 
         except TypeError:
             return
@@ -425,7 +436,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 self.cachedImage[cache_name] = img
                 name_label.setText(file_name)
                 img_label.setPixmap(QtTools.setPix(img).scaled(*IMG_CONVERT))
-                img_label.setStyleSheet('background-color: rgba(40, 40, 40, 255);')
+                img_label.setStyleSheet("background-color: rgba(40, 40, 40, 255);")
 
     @staticmethod
     def _ImageUpdateToObject(img_label, name_label, obj):
@@ -438,13 +449,13 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         """
         if obj is None:
             img_label.clear()
-            name_label.setText('No Image')
-            img_label.setStyleSheet('background-color: rgba(240, 240, 240, 255);')
+            name_label.setText("No Image")
+            img_label.setStyleSheet("background-color: rgba(240, 240, 240, 255);")
 
         else:
             img_label.setPixmap(QtTools.setPix(obj.targetImage).scaled(*IMG_CONVERT))
             # name_label.setText(obj.name)
-            img_label.setStyleSheet('background-color: rgba(40, 40, 40, 255);')
+            img_label.setStyleSheet("background-color: rgba(40, 40, 40, 255);")
 
     def _configObject(self, target, clear_text=True):
         """
@@ -460,7 +471,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         try:
             if self.onSuccessCombo.currentIndex() != 0:
-                target.onSuccess = self.seqStorage[self.onSuccessCombo.currentIndex() - 1]
+                target.onSuccess = self.seqStorage[
+                    self.onSuccessCombo.currentIndex() - 1
+                ]
 
             elif self.onFailCombo.currentIndex() != 0:
                 target.onFail = self.seqStorage[self.onFailCombo.currentIndex() - 1]
@@ -488,9 +501,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         @dispatch.register(MacroMethods.ImageSearch)
         def _(obj):
             try:
-                obj.targetImage = self.cachedImage['search']
+                obj.targetImage = self.cachedImage["search"]
             except AttributeError:
-                raise AttributeError('└ No Image specified.')
+                raise AttributeError("└ No Image specified.")
 
             obj.trials = self.trialsCountSpin.value()
             obj.loopDelay = self.trialsIntervalSpin.value()
@@ -510,9 +523,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         @dispatch.register(MacroMethods.SearchOccurrence)
         def _(obj):
             try:
-                obj.targetImage = self.cachedImage['count']
+                obj.targetImage = self.cachedImage["count"]
             except AttributeError:
-                raise AttributeError('└ No Image specified.')
+                raise AttributeError("└ No Image specified.")
 
             obj.randomOffset = self.countRandSpin.value()
 
@@ -546,15 +559,21 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
             try:
                 source = self.selectedElement()
+
             except IndexError:
                 nameCaller()
-                print('└ Sequence is Empty.')
+                print("└ Sequence is Empty.")
                 return
+
             else:
                 src = type(source).__name__
                 self.methodList.setCurrentRow(MacroMethods.__all__.index(src))
         else:
-            source = target
+            try:
+                source = self.seqStorage[target.row()]
+
+            except AttributeError:
+                source = target
 
         if self.sequenceList.currentItem() is not None:
             self.editButton.setEnabled(True)
@@ -601,7 +620,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
             self.searchPrecisionSpin.setValue(int(obj.precision * 100))
 
-            self.cachedImage['search'] = obj.targetImage
+            self.cachedImage["search"] = obj.targetImage
 
         @dispatch.register(MacroMethods.Loop)
         def _(obj):
@@ -621,7 +640,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
             self.countPrecisionSpin.setValue(int(obj.precision * 100))
 
-            self.cachedImage['count'] = obj.targetImage
+            self.cachedImage["count"] = obj.targetImage
 
         @dispatch.register(MacroMethods.Variable)
         def _(obj):
@@ -643,8 +662,13 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         :param target: If not specified, will config with selection from method list.
         """
 
-        groups = [self.waitGroup, self.clickGroup,
-                  self.loopGroup, self.varGroup, self.dragGroup]
+        groups = [
+            self.waitGroup,
+            self.clickGroup,
+            self.loopGroup,
+            self.varGroup,
+            self.dragGroup,
+        ]
 
         if self.lockLogCheck.isChecked():
             return
@@ -718,7 +742,7 @@ def main():
     sys.exit(app.exec_())
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     Tools.IsFrozen()
     Tools.MAIN_LOCATION = __file__
 

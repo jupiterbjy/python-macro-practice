@@ -17,7 +17,7 @@ def ListTarget(name, target, prefix_mode, blacklist, return_dict):
     """
 
     if prefix_mode and blacklist is None:
-        blacklist = {'_'}
+        blacklist = {"_"}
 
     elif blacklist is None:
         blacklist = {}
@@ -25,8 +25,8 @@ def ListTarget(name, target, prefix_mode, blacklist, return_dict):
     members = inspect.getmembers(modules[name], target)
 
     if prefix_mode:
-        exclude = ''.join([str(i) for i in blacklist])
-        regex = '^[' + exclude + ']'
+        exclude = "".join([str(i) for i in blacklist])
+        regex = "^[" + exclude + "]"
 
         filtered = [i for i in members if not bool(re.match(regex, i[0]))]
     else:

@@ -7,7 +7,7 @@ This module will provide any necessary components required by MacroMethod,
 especially Image-related functions.
 """
 
-IMG_PATH = './testingEnv/'
+IMG_PATH = "./testingEnv/"
 
 
 class Pos:
@@ -15,7 +15,7 @@ class Pos:
 
     def __init__(self, x=0, y=0):
         self.x = int(x)
-        self.y = int(y)     # limiting what x could be, catching error here.
+        self.y = int(y)  # limiting what x could be, catching error here.
 
     def __iter__(self):
         return iter((self.x, self.y))
@@ -56,13 +56,12 @@ class Pos:
 
     def __le__(self, other):
         return (self.x <= other.x) & (self.y <= other.y)
-    
+
     def set(self, x, y=None):
         self.x, self.y = x, y
 
 
 class Area:
-
     def __init__(self, x1=0, y1=0, x2=0, y2=0):
         self.p1 = Pos(x1, y1)
         self.p2 = Pos(x2, y2)
@@ -94,7 +93,7 @@ class Area:
     def fromPos(p1, p2):
         return Area(*p1, *p2)
 
-    
+
 def saveImg():
     """
     Save Image with ascending ordered numeric names. Closure demonstration.
@@ -107,14 +106,15 @@ def saveImg():
         nonlocal order
 
         if name is None:
-            name = ''
+            name = ""
 
-        cv2.imwrite(f'{IMG_PATH}{str(order)}_{name}.png', img)
+        cv2.imwrite(f"{IMG_PATH}{str(order)}_{name}.png", img)
         order += 1
+
     return save
 
 
-IMG_SAVE = saveImg()      # can't move this up..
+IMG_SAVE = saveImg()  # can't move this up..
 
 
 def imageSearch(target, area, precision=0.85):
@@ -132,11 +132,11 @@ def imageSearch(target, area, precision=0.85):
 
     res = cv2.matchTemplate(img_gray, template, cv2.TM_CCOEFF_NORMED)
     min_val, max_val, min_loc, max_loc = cv2.minMaxLoc(res)
-    
+
     if max_val < precision:
         return False, img
     else:
-        pt2 = tuple(x+y for x, y in zip(img_wh, max_loc))
+        pt2 = tuple(x + y for x, y in zip(img_wh, max_loc))
         cv2.rectangle(img, max_loc, pt2, (0, 0, 255), 2)
 
         return Pos(*max_loc), img
@@ -161,22 +161,26 @@ def scanOccurrence(target, area, precision=0.85, threshold=0.1):
 
     for pt in sorted(zip(*loc[::-1])):
         try:
-            if (found[-1] + img_wh + threshold_pixel) >= \
-                    Pos(*pt) >= (found[-1] - threshold_pixel):
+            if (
+                (found[-1] + img_wh + threshold_pixel)
+                >= Pos(*pt)
+                >= (found[-1] - threshold_pixel)
+            ):
                 continue
-        except IndexError:      # intentionally causing first run of for loop catch this
+        except IndexError:  # intentionally causing first run of for loop catch this
             pass
 
         found.append(Pos(*pt))
         count = count + 1
         cv2.rectangle(img, pt, (Pos(*pt) + img_wh)(), (0, 0, 255), 2)
         # need to explicitly give cv2 tuple, not tuple-type.
-    
+
     return count, img, found
 
 
 def RandomOffset(pos, offset):
     import random
+
     x_offset = random.randrange(0, offset)
     y_offset = random.randrange(0, offset - x_offset)
     off = Pos(x_offset, y_offset)

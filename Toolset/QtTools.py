@@ -1,8 +1,15 @@
-
 from PySide2.QtGui import QPixmap, QTextCursor
 from PySide2.QtCore import Qt, QObject, Signal, QSize, QTimer, QEventLoop
-from PySide2.QtWidgets import QFileDialog, QListWidgetItem, QApplication, QWidget, \
-                            QVBoxLayout, QHBoxLayout, QLabel, QGridLayout
+from PySide2.QtWidgets import (
+    QFileDialog,
+    QListWidgetItem,
+    QApplication,
+    QWidget,
+    QVBoxLayout,
+    QHBoxLayout,
+    QLabel,
+    QGridLayout,
+)
 from PIL import Image
 from PIL.ImageQt import ImageQt
 import sys
@@ -15,20 +22,20 @@ from ImageModule import Pos, Area
 
 # Module to store all necessary Qt-Related tools for UI.
 
-ABOUT_IMAGE = 'About.png'
+ABOUT_IMAGE = "About.png"
 IMG_CONVERT = (226, 151, Qt.KeepAspectRatio)
-ICON_LOCATION = 'icons/'
+ICON_LOCATION = "icons/"
 ICON_ASSIGN = {
-    'Click': 'click.png',
-    'Drag': 'drag.png',
-    'Loop': 'loop.png',
-    'sLoopEnd': 'loopEnd.png',
-    'sLoopStart': 'loopStart.png',
-    'ImageSearch': 'imageSearch.png',
-    'Variable': 'variable.png',
-    'Wait': 'wait.png',
-    'default': 'template.png',
-    'SearchOccurrence': 'count.png',
+    "Click": "click.png",
+    "Drag": "drag.png",
+    "Loop": "loop.png",
+    "sLoopEnd": "loopEnd.png",
+    "sLoopStart": "loopStart.png",
+    "ImageSearch": "imageSearch.png",
+    "Variable": "variable.png",
+    "Wait": "wait.png",
+    "default": "template.png",
+    "SearchOccurrence": "count.png",
 }
 
 
@@ -78,12 +85,16 @@ class SeqItemWidget(QWidget):
         self.allHBoxLayOut.addLayout(self.textLayOut, 1)
         self.setLayout(self.allHBoxLayOut)
 
-        self.textUpLabel.setStyleSheet('''
+        self.textUpLabel.setStyleSheet(
+            """
                     color: rgb(0, 0, 255);
-                ''')
-        self.textDownLabel.setStyleSheet('''
+                """
+        )
+        self.textDownLabel.setStyleSheet(
+            """
                     color: rgb(255, 0, 0);
-                ''')
+                """
+        )
 
         self.source = None
 
@@ -119,7 +130,7 @@ def setPix(image):
     if isinstance(image, str):
         return QPixmap(image)
 
-    tmp = ImageQt(image).copy()     # Plain ImageQt() call don't return QImage.
+    tmp = ImageQt(image).copy()  # Plain ImageQt() call don't return QImage.
     return QPixmap(tmp)
 
     # TransformMode => Qt::SmoothTransformation for better quality is possible.
@@ -127,24 +138,25 @@ def setPix(image):
 
 def loadImage(self, recent):
     import os
+
     nameCaller()
 
-    file_dir = QFileDialog.getOpenFileName(self, 'Select Image', recent)[0]
+    file_dir = QFileDialog.getOpenFileName(self, "Select Image", recent)[0]
     file_name = os.path.basename(file_dir)
 
     if not file_dir:
-        print('└ Canceled')
+        print("└ Canceled")
         return False
 
     try:
         img = Image.open(file_dir)
 
     except NameError:
-        print(f'└ {file_name} not found.')
+        print(f"└ {file_name} not found.")
         return False
 
     except Image.UnidentifiedImageError:
-        print(f'└ {file_name} is not an image.')
+        print(f"└ {file_name} is not an image.")
         return False
 
     else:
@@ -152,10 +164,12 @@ def loadImage(self, recent):
 
 
 def GenerateWidget(tgt):
-    img = ICON_ASSIGN.setdefault(type(tgt).__name__, 'default')
+    img = ICON_ASSIGN.setdefault(type(tgt).__name__, "default")
 
     item = SeqItemWidget()
-    item.setup(tgt.name, str(type(tgt).__name__ + 'Object'), ''.join([ICON_LOCATION, img]))
+    item.setup(
+        tgt.name, str(type(tgt).__name__ + "Object"), "".join([ICON_LOCATION, img])
+    )
     item.assign(tgt)
 
     return item
@@ -221,10 +235,10 @@ def QSleep(delay, output=False):
     class context:
         def __enter__(self):
             nameCaller()
-            print(f'└ Wait {delay} start')
+            print(f"└ Wait {delay} start")
 
         def __exit__(self, exc_type, exc_val, exc_tb):
-            print(f'└ Finish')
+            print(f"└ Finish")
 
     if output:
         with context():
@@ -236,23 +250,22 @@ def QSleep(delay, output=False):
 def getCaptureArea():
     """
     Get area to work with.
-    :return:
     """
     p1 = Pos()
     p2 = Pos()
-    kill_key = 'f2'
+    kill_key = "f2"
 
-    class breakKeyInput:
+    class BreakKeyInput:
         # Delays until key is up, to prevent next input skipping.
         def __enter__(self):
             nameCaller()
-            print(f'└ Waiting for press:{kill_key}')
+            print(f"└ Waiting for press:{kill_key}")
 
             while not keyboard.is_pressed(kill_key):
                 QSleep(0.05)
 
         def __exit__(self, exc_type, exc_val, exc_tb):
-            print(f'└ Waiting for release:{kill_key}')
+            print(f"└ Waiting for release:{kill_key}")
 
             while keyboard.is_pressed(kill_key):
                 QSleep(0.05)
@@ -260,7 +273,7 @@ def getCaptureArea():
     def getPos(p):
         nonlocal kill_key
 
-        with breakKeyInput():
+        with BreakKeyInput():
             p.set(*pyautogui.position())
 
     getPos(p1)
@@ -271,7 +284,7 @@ def getCaptureArea():
 
 def appendText(text_edit, msg, newline=True):
     text_edit.moveCursor(QTextCursor.End)
-    text_edit.insertHtml(msg + '<br>' if newline else msg)
+    text_edit.insertHtml(msg + "<br>" if newline else msg)
     QApplication.processEvents(QEventLoop.ExcludeUserInputEvents)
 
 
@@ -284,9 +297,9 @@ def returnRow(q_list):
     try:
         row = q_list.currentRow()
     except AttributeError:
-        raise AttributeError(f'Expected QListWidget, got {type(q_list)}.')
+        raise AttributeError(f"Expected QListWidget, got {type(q_list)}.")
 
     if row == -1:
-        raise IndexError('Nothing Selected.')
+        raise IndexError("Nothing Selected.")
 
     return row
