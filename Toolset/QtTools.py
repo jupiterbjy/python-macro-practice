@@ -32,7 +32,7 @@ ICON_ASSIGN = {
 }
 
 
-class runnerSignal(QObject):
+class RunnerSignal(QObject):
     signal = Signal()
 
 

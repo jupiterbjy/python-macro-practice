@@ -38,7 +38,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.seqStorage = []
         self.seqBackup = []     # Consumes memory!
 
-        self.runner_signal = QtTools.runnerSignal()
+        self.runner_signal = QtTools.RunnerSignal()
         self.runner_signal.signal.connect(self.SeqStopped)
 
         self.insertButton.released.connect(self.AddToSequence)
@@ -48,8 +48,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.runButton.released.connect(self.runSeq)
         self.editButton.released.connect(self.editSelected)
 
-        self.upButton.released.connect(lambda: self._moveOrder(up=True))
-        self.downButton.released.connect(lambda: self._moveOrder())
+        self.upButton.released.connect(lambda: self.moveOrder())
+        self.downButton.released.connect(lambda: self.moveOrder(up=False))
 
         self.searchImgLoadButton.released.connect(lambda: self.searchLoadImage())
         self.searchImgClearButton.released.connect(lambda: self.searchImageUpdate())
@@ -78,19 +78,24 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             'count': None
         }
 
-    def _moveOrder(self, up=True):
+    def moveOrder(self, up=True):
+        """
+        Move up or down selected element.
+        Wrap this with lambda so signal.connect won't argument trash values.
+        """
 
         sel_idx = self.sequenceList.currentRow()
         move_idx = (sel_idx - 1) if up else (sel_idx + 1)
 
-        if move_idx == -1:      # Qt set -1 as False
-            print('Cannot move selected object.')
-            return
-
         try:
+            if move_idx == -1:      # Qt set -1 as false, sadly.
+                raise IndexError
             element_move = self.seqStorage[move_idx]
+
         except IndexError:
+            print('Move ' + ('up' if up else 'down') + ':')
             print('Cannot move selected object.')
+
         else:
             element_current = self.seqStorage[sel_idx]
 
@@ -106,9 +111,14 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.sequenceList.setItemWidget(item_move, widget_sel)
             self.sequenceList.setItemWidget(item_sel, widget_move)
 
+            self.sequenceList.setCurrentRow(move_idx)
             self._updateToSelected()
 
     def StdRedirect(self):
+        """
+        Redirects print event to TextEdit.
+        Check StdoutRedirect class in QtTools for more detail.
+        """
         if self.debugCheck.isChecked():
             self._stdout.stop()
             TextTools.COLORIZE_ENABLE = False
@@ -124,21 +134,19 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     def removeElement(self, idx=None):
         """
         When called, removes selected item from both seqStorage & GUI.
+        :return returns removed object.
         """
         self.backupSeq()
+        idx = idx if idx else QtTools.returnRow(self.sequenceList)
 
         try:
-            out = self.seqStorage.pop(idx if idx else QtTools.returnRow(self.sequenceList))
+            out = self.seqStorage.pop(idx)
 
-        except IndexError as err:
-            print(err)
-
-        except AttributeError as err:
-            print(err)
+        except IndexError:
+            print('remove: Index out of range')
 
         else:
-            item = self.sequenceList.itemFromIndex(idx)
-            self.sequenceList.takeItem(item)
+            self.sequenceList.takeItem(idx)
             return out
 
     def backupSeq(self):
@@ -149,7 +157,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.seqBackup.pop(0)
 
         self.seqBackup.append(self.seqStorage)
-        print(f'└ Backup: {len(self.seqBackup)}')
+        print(f'- Backup: {len(self.seqBackup)}')
 
     def undoSeq(self):
         """
@@ -168,8 +176,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                             self.debugCheck.isChecked())
         except IndexError:
             self.StdRedirect()
-            nameCaller()
-            print('└ Nothing To play.')
+            print('runSeq: Nothing To play.')
 
         else:
             self._stdout.stop()
