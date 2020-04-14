@@ -202,8 +202,13 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         return out()
 
     def selectedElement(self):
-        widget = self.sequenceList.itemWidget(self.sequenceList.currentItem())
-        return widget.source
+        try:
+            widget = self.sequenceList.itemWidget(self.sequenceList.currentItem())
+            source = widget.source
+        except AttributeError:
+            pass
+        else:
+            return source
 
     def searchImageUpdate(self, obj=None):
         self._ImageUpdateToObject(self.searchImgLabel, self.searchImgNameLabel, obj)
@@ -364,7 +369,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         QtTools.AddToListWidget(obj, self.sequenceList)
         self.seqStorage.append(obj)
-        self._comboBoxUpdateNew()
+        self.sequenceList.setCurrentRow(self.seqStorage.index(obj))
+        self._updateToSelected(obj)
 
     def _comboBoxUpdateNew(self):
         success_bk = self.onSuccessCombo.currentIndex()
@@ -383,8 +389,11 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.onSuccessCombo.setCurrentIndex(success_bk)
         self.onFailCombo.setCurrentIndex(fail_bk)
 
-    def _comboBoxUpdateSelected(self):
-        obj = self.selectedElement()
+    def _comboBoxUpdateSelected(self, target=None):
+        if target:
+            obj = target
+        else:
+            obj = self.selectedElement()
 
         try:
             index = self.seqStorage.index(obj.onSuccess)
@@ -581,7 +590,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         self.nameLine.setText(source.name)
         self._disableOptions(source)
-        self._comboBoxUpdateSelected()
+        self._comboBoxUpdateSelected(source)
 
         dispatch = ObjectDispatch.preset()
 

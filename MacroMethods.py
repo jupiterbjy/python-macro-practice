@@ -270,6 +270,7 @@ class Variable(_Base):
             pass
         else:
             self.value = value
+            return
 
         try:
             value = float(text)
