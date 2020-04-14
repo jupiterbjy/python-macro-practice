@@ -187,7 +187,7 @@ def AddToListWidget(tgt, item_list_widget, index=None):
     :param item_list_widget: QItemListWidget
     """
 
-    print(f"'Add: {type(tgt).__name__} '{QtColorize(tgt.name, (0, 217, 127))}''")
+    print(f"Add: {type(tgt).__name__} '{QtColorize(tgt.name, (0, 217, 127))}'")
     print(f" To: '{item_list_widget.objectName()}'\n")
 
     item = GenerateWidget(tgt)

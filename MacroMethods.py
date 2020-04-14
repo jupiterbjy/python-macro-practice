@@ -43,7 +43,7 @@ class ExMethodIterator:
             return current
 
 
-class _Base:
+class ExBase:   # Excluded - Ex
     """
     Defines minimum interfaces that subclasses need to function.
     Override action, reset, serialize and deserialize when necessary.
@@ -55,7 +55,7 @@ class _Base:
     # meaning-of-the-super-keyword-in-the-parent-class-python
 
     def __init__(self):
-        super(_Base, self).__init__()  # Refer above link for this call
+        super(ExBase, self).__init__()  # Refer above link for this call
         self.name = ""
         self.next = None  # Assign next object here when running.
         self.onSuccess = None
@@ -136,7 +136,7 @@ class _ClickBase:
             print(f"Click: {self.finalPos(target)}")
 
 
-class Click(_Base, _ClickBase):
+class Click(ExBase, _ClickBase):
     """
     Interface of Simple Click method.
     """
@@ -186,7 +186,7 @@ class Loop:
         return start, end
 
 
-class ExLoopStart(_Base, Loop):
+class ExLoopStart(ExBase, Loop):
     """
     Placeholder for Loop. No special functionality is needed for loop start.
     Not for standalone usage.
@@ -202,7 +202,7 @@ class ExLoopStart(_Base, Loop):
         return True
 
 
-class ExLoopEnd(_Base, Loop):
+class ExLoopEnd(ExBase, Loop):
     """
     Implements Loop via setting next/onSuccess to LoopStart Object.
     Not for standalone usage.
@@ -221,7 +221,7 @@ class ExLoopEnd(_Base, Loop):
         return self.currentLoop < self.loopTime
 
 
-class Wait(_Base):
+class Wait(ExBase):
     """
     Using Asynchronous sleep for Qt.
     but will default to normal time.sleep in case this is used on CLI.
@@ -236,7 +236,7 @@ class Wait(_Base):
         return True
 
 
-class Variable(_Base):
+class Variable(ExBase):
     """
     Class that trying to mimic what makes fRep different from plain macros.
     Will expand to simple add, subtract, multiply, divide, mod operation between variables.
@@ -250,9 +250,10 @@ class Variable(_Base):
         Variable._created_instances += 1
         self.name = "variable-" + str(type(self)._created_instances)
         self.value = 0
-        _Base.variables.append(self)
+        ExBase.variables.append(self)
 
     def __del__(self):
+        ExBase.variables.remove(self)
         Variable._deleted_instances += 1
 
         # Manual value refreshing when all instances are removed.
@@ -283,7 +284,7 @@ class Variable(_Base):
         return True
 
 
-class _Image(_Base):
+class _Image(ExBase):
     """
     superclass of all Macro classes dealing with image.
     """
@@ -471,7 +472,7 @@ class SearchOccurrence(_Image, _ClickBase):
         self.capturedImage = None
 
 
-class Drag(_Base):
+class Drag(ExBase):
     """
     Drag from p1 to p2.
     """

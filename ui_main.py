@@ -562,6 +562,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         Updates configuration GUI with selected object.
         :param target: If specified, will try to update with given object.
         """
+        print(MacroMethods.ExBase.variables)
 
         if target is None:
 
@@ -573,15 +574,15 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 print("└ Sequence is Empty.")
                 return
 
-            else:
-                src = type(source).__name__
-                self.methodList.setCurrentRow(MacroMethods.__all__.index(src))
         else:
             try:
                 source = self.seqStorage[target.row()]
 
             except AttributeError:
                 source = target
+
+        src = type(source).__name__
+        self.methodList.setCurrentRow(MacroMethods.__all__.index(src))
 
         if self.sequenceList.currentItem() is not None:
             self.editButton.setEnabled(True)
