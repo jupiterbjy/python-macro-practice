@@ -1,4 +1,3 @@
-from functools import singledispatch
 from collections import deque
 from PIL import Image
 import time
@@ -47,19 +46,26 @@ class ExMethodIterator:
 class _Base:
     """
     Defines minimum interfaces that subclasses need to function.
-    Override when necessary.
+    Override action, reset, serialize and deserialize when necessary.
     """
 
+    variables = []
+
+    # https://stackoverflow.com/questions/30849383/
+    # meaning-of-the-super-keyword-in-the-parent-class-python
+
     def __init__(self):
-        super(_Base, self).__init__()
+        super(_Base, self).__init__()  # Refer above link for this call
         self.name = ""
-        self.next = None  # assign obj to run next.
+        self.next = None  # Assign next object here when running.
         self.onSuccess = None
         self.onFail = None
-        self.screenArea = ImageModule.Area()
+        self.screenArea = None
+
+    def setName(self, text):
+        self.name = str(text)
 
     def run(self):
-
         checkAbort()
 
         if self.action():
@@ -81,14 +87,13 @@ class _Base:
         self.screenArea = ImageModule.Area(x1, y1, x2, y2)
 
     def serialize(self):
-        self.screenArea = self.screenArea()
         return self.__dict__
 
     def deserialize(self):
-        self.screenArea = ImageModule.Area(*self.screenArea)
+        pass
 
     def reset(self):
-        self.screenArea = ImageModule.Area()
+        self.screenArea = None
 
     def __iter__(self):
         return ExMethodIterator(self)
@@ -104,6 +109,7 @@ class _ClickBase:
     """
 
     def __init__(self):
+        super(_ClickBase, self).__init__()
         self.target = ImageModule.Pos()
         self.clickCount = 1
         self.clickDelay = 0.01
@@ -134,6 +140,8 @@ class Click(_Base, _ClickBase):
     """
     Interface of Simple Click method.
     """
+    def __init__(self):
+        super().__init__()
 
     @property
     def absPos(self):
@@ -144,12 +152,10 @@ class Click(_Base, _ClickBase):
         return True
 
     def serialize(self):
-        self.screenArea = self.screenArea()
         self.target = self.target()
         return self.__dict__
 
     def deserialize(self):
-        self.screenArea = ImageModule.Area(*self.screenArea)
         self.target = ImageModule.Pos(*self.target)
 
 
@@ -160,7 +166,7 @@ class Loop:
     """
 
     def __init__(self):
-
+        super(Loop, self).__init__()
         self.loopName = ""
         self.loopTime = 3
         self.currentLoop = 0
@@ -236,54 +242,44 @@ class Variable(_Base):
     Will expand to simple add, subtract, multiply, divide, mod operation between variables.
     Not worked yet.
     """
+    _created_instances = 0
+    _deleted_instances = 0
 
     def __init__(self):
         super().__init__()
-        self.name = "variable"
+        Variable._created_instances += 1
+        self.name = "variable-" + str(type(self)._created_instances)
         self.value = 0
+        _Base.variables.append(self)
 
-    def __iadd__(self, other):
-        self.value = self.value + other.value
-        return self
+    def __del__(self):
+        Variable._deleted_instances += 1
 
-    def __isub__(self, other):
-        self.value = self.value - other.value
-        return self
+        # Manual value refreshing when all instances are removed.
+        # Hopefully this will only run when all variables call is removed.
 
-    def __imul__(self, other):
-        self.value = self.value * other.value
-        return self
+        if Variable._created_instances == Variable._deleted_instances:
+            Variable._deleted_instances = 0
+            Variable._created_instances = 0
 
-    def __idiv__(self, other):
-        self.value = self.value / other.value
-        return self
+    def setValue(self, text):
+        try:
+            value = int(text)
+        except ValueError:
+            print("int failed, Passing to float")
+            pass
+        else:
+            self.value = value
 
-    def __ifloordiv__(self, other):
-        self.value = self.value // other.value
-        return self
-
-    def __imod__(self, other):
-        self.value = self.value // other.value
-        return self
-
-    @singledispatch
-    def valueType(self):
-        pass
-
-    @valueType.register(int)
-    def _(self):
-        pass
-
-    @valueType.register(float)
-    def _(self):
-        pass
-
-    @valueType.register(str)
-    def _(self):
-        pass
+        try:
+            value = float(text)
+        except ValueError:
+            raise AttributeError("String is not convertible.")
+        else:
+            self.value = value
 
     def action(self):
-        pass
+        return True
 
 
 class _Image(_Base):
@@ -332,7 +328,6 @@ class _Image(_Base):
                 self._targetImage = img
 
     def serialize(self):
-        self.screenArea = self.screenArea()
         try:
             self.target = self.target()
         except AttributeError:
@@ -347,10 +342,6 @@ class _Image(_Base):
         return self.__dict__
 
     def deserialize(self):
-        self.screenArea = ImageModule.Area(*self.screenArea)
-
-        # This code will be removed
-
         try:
             self.target = ImageModule.Pos(*self.target)
         except AttributeError:
@@ -370,6 +361,7 @@ class _Image(_Base):
         buffer.close()
 
     def reset(self):
+        self.screenArea = None
         self.capturedImage = None
         self.matchPoint = None
 
@@ -381,8 +373,8 @@ class ImageSearch(_Image, _ClickBase):
     """
 
     def __init__(self):
-        super(ImageSearch, self).__init__()
 
+        super().__init__()
         self.loopDelay = 0.2
         self.trials = 5
 
@@ -421,6 +413,7 @@ class ImageSearch(_Image, _ClickBase):
         return bool(self.matchPoint)
 
     def reset(self):
+        self.screenArea = None
         self.target = ImageModule.Pos()
         self.capturedImage = None
 
@@ -433,8 +426,8 @@ class SearchOccurrence(_Image, _ClickBase):
     """
 
     def __init__(self):
-        super(SearchOccurrence, self).__init__()
 
+        super().__init__()
         self.matchPoints = []
         self.matchCount = 0
         self.threshold = 0
@@ -471,6 +464,7 @@ class SearchOccurrence(_Image, _ClickBase):
         return state
 
     def reset(self):
+        self.screenArea = None
         self.matchCount = 0
         self.matchPoints = []
         self.capturedImage = None
@@ -505,13 +499,11 @@ class Drag(_Base):
         return True
 
     def serialize(self):
-        self.screenArea = self.screenArea()
         self.p1 = self.p1()
         self.p2 = self.p2()
         return self.__dict__
 
     def deserialize(self):
-        self.screenArea = ImageModule.Area(*self.screenArea)
         self.p1 = ImageModule.Pos(*self.p1)
         self.p2 = ImageModule.Pos(*self.p2)
 

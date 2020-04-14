@@ -14,8 +14,7 @@ import MacroMethods
 
 # <To-Do>
 # Change pyinstaller to cx-freeze << hardly works
-# implement order up/down
-# implement loop
+# Support variable assign on objects other than Variables.
 
 # <References>
 # https://doc.qt.io/qt-5/qthread.html
@@ -353,7 +352,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
             except AttributeError as err:
                 nameCaller()
-                print(*err.args)
+                print("└ " + err.args[0])
                 print("└ Object config Failed.")
                 return
 
@@ -464,7 +463,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         """
 
         text = self.nameLine.text()
-        target.name = type(target).__name__ if not text else text
+        target.setName(type(target).__name__ if not text else text)
 
         if clear_text:
             self.nameLine.clear()
@@ -503,7 +502,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             try:
                 obj.targetImage = self.cachedImage["search"]
             except AttributeError:
-                raise AttributeError("└ No Image specified.")
+                raise AttributeError("No Image specified.")
 
             obj.trials = self.trialsCountSpin.value()
             obj.loopDelay = self.trialsIntervalSpin.value()
@@ -525,7 +524,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             try:
                 obj.targetImage = self.cachedImage["count"]
             except AttributeError:
-                raise AttributeError("└ No Image specified.")
+                raise AttributeError("No Image specified.")
 
             obj.randomOffset = self.countRandSpin.value()
 
@@ -539,7 +538,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         @dispatch.register(MacroMethods.Variable)
         def _(obj):
-            pass
+            obj.setValue(self.variableLine.text())
 
         @dispatch.register(MacroMethods.Wait)
         def _(obj):
@@ -644,7 +643,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         @dispatch.register(MacroMethods.Variable)
         def _(obj):
-            pass
+            self.variableLine.setText(str(obj.value))
 
         @dispatch.register(MacroMethods.Wait)
         def _(obj):
