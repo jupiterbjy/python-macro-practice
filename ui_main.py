@@ -148,6 +148,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         else:
             self.sequenceList.takeItem(idx)
             self._updateToSelected()
+
             return out
 
     def backupSeq(self):
@@ -654,6 +655,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         @dispatch.register(MacroMethods.Variable)
         def _(obj):
             self.variableLine.setText(str(obj.value))
+            obj.action()
 
         @dispatch.register(MacroMethods.Wait)
         def _(obj):

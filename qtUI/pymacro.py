@@ -389,6 +389,7 @@ class Ui_MainWindow(object):
         self.newValueRadio = QRadioButton(self.varGroup)
         self.newValueRadio.setObjectName(u"newValueRadio")
         self.newValueRadio.setGeometry(QRect(10, 20, 101, 16))
+        self.newValueRadio.setChecked(True)
         self.variableArg2 = QComboBox(self.varGroup)
         self.variableArg2.setObjectName(u"variableArg2")
         self.variableArg2.setGeometry(QRect(10, 160, 101, 22))

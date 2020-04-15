@@ -49,7 +49,7 @@ class ExBase:   # Excluded - Ex
     Override action, reset, serialize and deserialize when necessary.
     """
 
-    variables = []
+    variables = dict()
 
     # https://stackoverflow.com/questions/30849383/
     # meaning-of-the-super-keyword-in-the-parent-class-python
@@ -239,8 +239,7 @@ class Wait(ExBase):
 class Variable(ExBase):
     """
     Class that trying to mimic what makes fRep different from plain macros.
-    Will expand to simple add, subtract, multiply, divide, mod operation between variables.
-    Not worked yet.
+    Creating Same-name Variable will overwrite existing variable.
     """
     _created_instances = 0
     _deleted_instances = 0
@@ -250,20 +249,12 @@ class Variable(ExBase):
         Variable._created_instances += 1
         self.name = "variable-" + str(type(self)._created_instances)
         self.value = 0
-        ExBase.variables.append(self)
 
     def __del__(self):
-        ExBase.variables.remove(self)
         Variable._deleted_instances += 1
 
-        # Manual value refreshing when all instances are removed.
-        # Hopefully this will only run when all variables call is removed.
-
-        if Variable._created_instances == Variable._deleted_instances:
-            Variable._deleted_instances = 0
-            Variable._created_instances = 0
-
     def setValue(self, text):
+
         try:
             value = int(text)
         except ValueError:
@@ -281,6 +272,7 @@ class Variable(ExBase):
             self.value = value
 
     def action(self):
+        ExBase.variables[self.name] = self.value
         return True
 
 
