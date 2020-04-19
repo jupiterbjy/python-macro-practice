@@ -43,7 +43,7 @@ class ExMethodIterator:
             return current
 
 
-class ExBase:   # Excluded - Ex
+class ExBase:  # Excluded - Ex
     """
     Defines minimum interfaces that subclasses need to function.
     Override action, reset, serialize and deserialize when necessary.
@@ -140,6 +140,7 @@ class Click(ExBase, _ClickBase):
     """
     Interface of Simple Click method.
     """
+
     def __init__(self):
         super().__init__()
 
@@ -241,6 +242,7 @@ class Variable(ExBase):
     Class that trying to mimic what makes fRep different from plain macros.
     Creating Same-name Variable will overwrite existing variable.
     """
+
     _created_instances = 0
     _deleted_instances = 0
 
@@ -251,7 +253,8 @@ class Variable(ExBase):
         self.value = 0
 
     def __del__(self):
-        Variable._deleted_instances += 1
+        # Variable._deleted_instances += 1
+        ExBase.variables.pop(self.name, None)
 
     def setValue(self, text):
 
@@ -272,6 +275,9 @@ class Variable(ExBase):
             self.value = value
 
     def action(self):
+        if self.name in ExBase.variables.keys():
+            self.name = self.name + str(self._created_instances)
+
         ExBase.variables[self.name] = self.value
         return True
 

@@ -563,7 +563,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         Updates configuration GUI with selected object.
         :param target: If specified, will try to update with given object.
         """
-        print(MacroMethods.ExBase.variables)
 
         if target is None:
 
@@ -655,7 +654,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         @dispatch.register(MacroMethods.Variable)
         def _(obj):
             self.variableLine.setText(str(obj.value))
-            obj.action()
+            # print("Current Variables: ", MacroMethods.ExBase.variables)
 
         @dispatch.register(MacroMethods.Wait)
         def _(obj):
