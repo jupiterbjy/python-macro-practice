@@ -6,9 +6,7 @@ import io
 import base64
 import copy
 
-from Toolset import MemberLoader
-import ImageModule
-
+from Toolset import MemberLoader, ImageModule
 
 SLEEP_FUNCTION = time.sleep  # Will be override-d by ui_main.
 IMG_SAVER = ImageModule.saveImg()

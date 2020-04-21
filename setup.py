@@ -1,4 +1,3 @@
-
 import sys
 from cx_Freeze import setup, Executable
 
@@ -10,15 +9,17 @@ from cx_Freeze import setup, Executable
 base = None
 
 options = {
-    'build_exe': r'X:\build',
+    "build_exe": r"X:\build",
     # 'include-files':
 }
 
 if sys.platform == "win32":
     base = "Win32GUI"
 
-setup(  name = "Python Macro Sequencer",
-        version = "0.0.3",
-        description = "Image-based macro sequencer providing GUI",
-        options = {'build_exe': options},
-        executables = [Executable(r"Z:\github\python-macro-practice\ui_main.py", base=base)])
+setup(
+    name="Python Macro Sequencer",
+    version="0.0.4",
+    description="Image-based macro sequencer providing GUI",
+    options={"build_exe": options},
+    executables=[Executable(r"Z:\github\python-macro-practice\ui_main.py", base=base)],
+)

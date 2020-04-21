@@ -7,7 +7,7 @@ This module will provide any necessary components required by MacroMethod,
 especially Image-related functions.
 """
 
-IMG_PATH = "./testingEnv/"
+IMG_PATH = "../testingEnv/"
 
 
 class Pos:

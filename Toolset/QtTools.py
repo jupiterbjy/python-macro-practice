@@ -18,7 +18,7 @@ import keyboard
 
 from Toolset.Tools import nameCaller, resource_path
 from Toolset.TextTools import QtColorize
-from ImageModule import Pos, Area
+from Toolset.ImageModule import Pos, Area
 
 # Module to store all necessary Qt-Related tools for UI.
 

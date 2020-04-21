@@ -1,4 +1,4 @@
-from PySide2.QtCore import QRunnable, Slot
+from PySide2.QtCore import QRunnable, Slot, Signal
 from PySide2.QtWidgets import QMainWindow, QDialog
 import pyautogui
 
@@ -54,9 +54,12 @@ class CaptureCoverage(QDialog):
 # https://stackoverflow.com/questions/12827305
 
 
-class Runner(QMainWindow, Ui_Runner):
+class RunnerWindow(QMainWindow, Ui_Runner):
+
+    windowSwitchSignal = Signal()
+
     def __init__(self, parent, seq, finish_signal, debug):
-        super(Runner, self).__init__(parent)
+        super(RunnerWindow, self).__init__(parent)
         self.setupUi(self)
 
         self.debug = debug

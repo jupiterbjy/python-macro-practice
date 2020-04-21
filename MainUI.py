@@ -1,4 +1,5 @@
 from PySide2.QtWidgets import QFileDialog, QListWidgetItem, QApplication, QMainWindow
+from PySide2.QtCore import Signal
 import sys
 import os
 import json
@@ -7,28 +8,19 @@ from Toolset import QtTools, ObjectDispatch, Tools, TextTools
 from Toolset.QtTools import IMG_CONVERT, ICON_LOCATION, ICON_ASSIGN, appendText
 from qtUI.pymacro import Ui_MainWindow
 from Toolset.Tools import nameCaller
-from SubWindow import Runner, About
+from SubWindows import RunnerWindow, About
 import MacroMethods
-
-# <Bug fix>
 
 # <To-Do>
 # Change pyinstaller to cx-freeze << hardly works
 # Support variable assign on objects other than Variables.
-
-# <References>
-# https://doc.qt.io/qt-5/qthread.html
-# https://devblogs.microsoft.com/python/idiomatic-python-eafp-versus-lbyl/
-# https://stackoverflow.com/questions/44955656/
-# https://machinekoder.com/how-to-not-shoot-yourself-in-the-foot-using-python-qt/
-# https://doc.qt.io/qt-5/threads-technologies.html
-# https://wikidocs.net/22413
-
-# <Reference To-Do>
-# https://stackoverflow.com/questions/17129362
+# Change to ListView or ScrollArea from ListItem.
 
 
 class MainWindow(QMainWindow, Ui_MainWindow):
+
+    windowSwitchSignal = Signal(object)
+
     def __init__(self, *args, **kwargs):
         super(MainWindow, self).__init__(*args, **kwargs)
         self.setupUi(self)
@@ -174,7 +166,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         MacroMethods.SetNext(self.seqStorage)
 
         try:
-            runner = Runner(
+            runner = RunnerWindow(
                 self,
                 self.seqStorage[0],
                 self.runner_signal,
@@ -755,5 +747,4 @@ def main():
 if __name__ == "__main__":
     Tools.IsFrozen()
     Tools.MAIN_LOCATION = __file__
-
     main()
