@@ -3,9 +3,9 @@ from PySide2.QtWidgets import QMainWindow, QDialog
 import pyautogui
 
 from Toolset import QtTools, Tools
-from Toolset.QtTools import appendText, setPix, ABOUT_IMAGE, ICON_LOCATION
+from Toolset.QtTools import setPix, ABOUT_IMAGE, ICON_LOCATION
 from Toolset.Tools import nameCaller
-from qtUI.Runner import Ui_MainWindow as Ui_Runner
+from qtUI.Runner import Ui_RunnerWindow
 from qtUI.aboutDialog import Ui_About
 import MacroMethods
 
@@ -36,10 +36,6 @@ class Worker(QRunnable):
         Initialise the runner function with passed args, kwargs.
         """
         self.fn(*self.args, **self.kwargs)
-        # try:
-        #     self.fn(*self.args, **self.kwargs)
-        # except Exception as exa:
-        #     print(exa)
 
 
 class CaptureCoverage(QDialog):
@@ -54,47 +50,34 @@ class CaptureCoverage(QDialog):
 # https://stackoverflow.com/questions/12827305
 
 
-class RunnerWindow(QMainWindow, Ui_Runner):
+class RunnerWindow(QMainWindow, Ui_RunnerWindow):
 
     windowSwitchSignal = Signal()
 
-    def __init__(self, parent, seq, finish_signal, debug):
-        super(RunnerWindow, self).__init__(parent)
+    def __init__(self, source):
+        QMainWindow.__init__(self)
+        Ui_RunnerWindow.__init__(self)
+
         self.setupUi(self)
 
-        self.debug = debug
-        self._stdout = QtTools.StdoutRedirect()
-        self.StdRedirect()
-
-        self.finish_signal = finish_signal
-        self.finish_signal.signal.connect(self.close)
+        self.windowSwitchSignal.connect(self.close)
 
         self.sequenceStarted = False
 
         self.runButton.released.connect(self.runSeq)
-        self.StopButton.released.connect(self.stopSeq)
-        self.source = seq
+        self.stopButton.released.connect(self.stopSeq)
+        self.source = source
         self.updateHistory(self.source)
 
-        print("GOT: ", self.source)
-
     def injectGlobals(self):
-        MacroMethods.DEBUG = self.debug
+        MacroMethods.DUMP = self.dumpImageCheck.isChecked()
 
+        # To be removed
         for i in self.source:
             i.reset()
 
     def closeEvent(self, *args, **kwargs):
         self.deleteLater()
-
-    def StdRedirect(self):
-        if self.debug:
-            self._stdout.stop()
-        else:
-            self._stdout.start()
-            self._stdout.printOccur.connect(
-                lambda x: appendText(self.outputTextEdit, x)
-            )
 
     def areaInject(self):
 
@@ -152,9 +135,7 @@ class RunnerWindow(QMainWindow, Ui_Runner):
             self.runLine.setText("Macro finished.")
             self.updateHistory()
 
-        self.sequenceStarted = False
-        self.updateButtonState()
-        MacroMethods.ABORT = False
+        self.endSeq()
 
     def runSeq(self):
         nameCaller()
@@ -172,6 +153,16 @@ class RunnerWindow(QMainWindow, Ui_Runner):
         worker = Worker(self.runSeq_Threaded, self.source)
         worker.run()
 
+    def endSeq(self):
+        nameCaller()
+
+        for i in self.source:
+            i.reset()
+
+        self.sequenceStarted = False
+        self.updateButtonState()
+        MacroMethods.ABORT = False
+
     @staticmethod
     def stopSeq():
         MacroMethods.ABORT = True
@@ -186,12 +177,9 @@ class RunnerWindow(QMainWindow, Ui_Runner):
             self.runButton.setEnabled(True)
             self.StopButton.setDisabled(True)
 
-    def _getPos(self):
-        pass
 
-
-class About(QMainWindow, Ui_About):
+class AboutWindow(QMainWindow, Ui_About):
     def __init__(self, parent):
-        super(About, self).__init__(parent)
+        super(AboutWindow, self).__init__(parent)
         self.setupUi(self)
         self.label.setPixmap(setPix(Tools.resource_path(ICON_LOCATION + ABOUT_IMAGE)))

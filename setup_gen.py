@@ -13,7 +13,7 @@ executables = [Executable("MainUI.py", base=base, targetName="pym")]
 setup(
     name="test",
     version="0.0.4",
-    description="test of cx-freeze",
+    description="cx-freeze",
     options={"build_exe": build_options},
     executables=executables,
 )

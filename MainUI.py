@@ -1,6 +1,5 @@
-from PySide2.QtWidgets import QFileDialog, QListWidgetItem, QApplication, QMainWindow
+from PySide2.QtWidgets import QFileDialog, QListWidgetItem, QMainWindow
 from PySide2.QtCore import Signal
-import sys
 import os
 import json
 
@@ -8,13 +7,14 @@ from Toolset import QtTools, ObjectDispatch, Tools, TextTools
 from Toolset.QtTools import IMG_CONVERT, ICON_LOCATION, ICON_ASSIGN, appendText
 from qtUI.pymacro import Ui_MainWindow
 from Toolset.Tools import nameCaller
-from SubWindows import RunnerWindow, About
+from SubWindows import AboutWindow
 import MacroMethods
 
 # <To-Do>
-# Change pyinstaller to cx-freeze << hardly works
 # Support variable assign on objects other than Variables.
 # Change to ListView or ScrollArea from ListItem.
+# Add automatic version listing on about window.
+# Add image showing on double-click to object in history.
 
 
 class MainWindow(QMainWindow, Ui_MainWindow):
@@ -27,9 +27,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         self.seqStorage = []
         self.seqBackup = []  # Consumes memory!
-
-        self.runner_signal = QtTools.RunnerSignal()
-        self.runner_signal.signal.connect(self.SeqStopped)
 
         self.insertButton.released.connect(self.AddToSequence)
         self.methodList.currentRowChanged.connect(self._disableOptions)
@@ -118,7 +115,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             TextTools.COLORIZE_ENABLE = True
 
     def openAbout(self):
-        ui = About(self)
+        ui = AboutWindow(self)
         ui.show()
 
     def removeElement(self, idx=None):
@@ -166,27 +163,14 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         MacroMethods.SetNext(self.seqStorage)
 
         try:
-            runner = RunnerWindow(
-                self,
-                self.seqStorage[0],
-                self.runner_signal,
-                self.debugCheck.isChecked(),
-            )
+            self.windowSwitchSignal.emit(self.seqStorage[0])
+
         except IndexError:
             self.StdRedirect()
             print("runSeq: Nothing To play.")
 
         else:
-            self._stdout.stop()
-            # self.hide()
-            runner.show()
-
-    def SeqStopped(self):
-        """
-        Runs when SubWindow is closed.
-        """
-        if self.debugCheck.isChecked():
-            self._stdout.start()
+            self.hide()
 
     def selectedMethod(self):
         out = MacroMethods.class_dict[
@@ -735,16 +719,3 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         # Dispatching =====================================
 
         dispatch.dispatch(selected)
-
-
-def main():
-    app = QApplication(sys.argv)
-    window = MainWindow()
-    window.show()
-    sys.exit(app.exec_())
-
-
-if __name__ == "__main__":
-    Tools.IsFrozen()
-    Tools.MAIN_LOCATION = __file__
-    main()

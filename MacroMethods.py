@@ -13,7 +13,7 @@ IMG_SAVER = ImageModule.saveImg()
 ABORT = False
 RAND_OFFSET = False
 OFFSET_MAX = 5
-DEBUG = False
+DUMP = False
 
 
 class AbortException(Exception):
@@ -389,7 +389,7 @@ class ImageSearch(_Image, _ClickBase):
 
             SLEEP_FUNCTION(self.loopDelay)
 
-        if DEBUG:
+        if DUMP:
             self.DumpCaptured(bool(self.matchPoint))
 
     @property
@@ -439,7 +439,7 @@ class SearchOccurrence(_Image, _ClickBase):
             self.targetImage, self.screenArea.region, self.precision, self.threshold
         )
 
-        if DEBUG:
+        if DUMP:
             self.DumpCaptured(bool(self.matchCount))
 
     @property
