@@ -16,25 +16,27 @@ from PySide2.QtGui import (QBrush, QColor, QConicalGradient, QCursor, QFont,
 from PySide2.QtWidgets import *
 
 
-class Ui_RunnerWindow(object):
-    def setupUi(self, RunnerWindow):
-        if not RunnerWindow.objectName():
-            RunnerWindow.setObjectName(u"RunnerWindow")
-        RunnerWindow.resize(305, 587)
-        sizePolicy = QSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
+class Ui_Form(object):
+    def setupUi(self, Form):
+        if not Form.objectName():
+            Form.setObjectName(u"Form")
+        Form.resize(305, 471)
+        sizePolicy = QSizePolicy(QSizePolicy.Ignored, QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(RunnerWindow.sizePolicy().hasHeightForWidth())
-        RunnerWindow.setSizePolicy(sizePolicy)
-        RunnerWindow.setMinimumSize(QSize(305, 587))
-        RunnerWindow.setMaximumSize(QSize(305, 587))
-        RunnerWindow.setStyleSheet(u"")
-        self.centralwidget = QWidget(RunnerWindow)
-        self.centralwidget.setObjectName(u"centralwidget")
-        self.verticalLayout_2 = QVBoxLayout(self.centralwidget)
+        sizePolicy.setHeightForWidth(Form.sizePolicy().hasHeightForWidth())
+        Form.setSizePolicy(sizePolicy)
+        Form.setMinimumSize(QSize(305, 0))
+        Form.setMaximumSize(QSize(305, 16777215))
+        self.verticalLayout_2 = QVBoxLayout(Form)
         self.verticalLayout_2.setObjectName(u"verticalLayout_2")
-        self.frame = QFrame(self.centralwidget)
+        self.frame = QFrame(Form)
         self.frame.setObjectName(u"frame")
+        sizePolicy1 = QSizePolicy(QSizePolicy.Fixed, QSizePolicy.Preferred)
+        sizePolicy1.setHorizontalStretch(0)
+        sizePolicy1.setVerticalStretch(0)
+        sizePolicy1.setHeightForWidth(self.frame.sizePolicy().hasHeightForWidth())
+        self.frame.setSizePolicy(sizePolicy1)
         self.frame.setFrameShape(QFrame.StyledPanel)
         self.frame.setFrameShadow(QFrame.Raised)
         self.verticalLayout = QVBoxLayout(self.frame)
@@ -44,18 +46,18 @@ class Ui_RunnerWindow(object):
         self.stopButton = QPushButton(self.frame)
         self.stopButton.setObjectName(u"stopButton")
         self.stopButton.setEnabled(False)
-        sizePolicy1 = QSizePolicy(QSizePolicy.Preferred, QSizePolicy.Fixed)
-        sizePolicy1.setHorizontalStretch(0)
-        sizePolicy1.setVerticalStretch(0)
-        sizePolicy1.setHeightForWidth(self.stopButton.sizePolicy().hasHeightForWidth())
-        self.stopButton.setSizePolicy(sizePolicy1)
+        sizePolicy2 = QSizePolicy(QSizePolicy.Preferred, QSizePolicy.Fixed)
+        sizePolicy2.setHorizontalStretch(0)
+        sizePolicy2.setVerticalStretch(0)
+        sizePolicy2.setHeightForWidth(self.stopButton.sizePolicy().hasHeightForWidth())
+        self.stopButton.setSizePolicy(sizePolicy2)
 
         self.gridLayout.addWidget(self.stopButton, 1, 0, 1, 1)
 
         self.runButton = QPushButton(self.frame)
         self.runButton.setObjectName(u"runButton")
-        sizePolicy1.setHeightForWidth(self.runButton.sizePolicy().hasHeightForWidth())
-        self.runButton.setSizePolicy(sizePolicy1)
+        sizePolicy2.setHeightForWidth(self.runButton.sizePolicy().hasHeightForWidth())
+        self.runButton.setSizePolicy(sizePolicy2)
 
         self.gridLayout.addWidget(self.runButton, 0, 0, 1, 1)
 
@@ -75,11 +77,11 @@ class Ui_RunnerWindow(object):
         self.runLine = QLineEdit(self.frame)
         self.runLine.setObjectName(u"runLine")
         self.runLine.setEnabled(True)
-        sizePolicy2 = QSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
-        sizePolicy2.setHorizontalStretch(0)
-        sizePolicy2.setVerticalStretch(0)
-        sizePolicy2.setHeightForWidth(self.runLine.sizePolicy().hasHeightForWidth())
-        self.runLine.setSizePolicy(sizePolicy2)
+        sizePolicy3 = QSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
+        sizePolicy3.setHorizontalStretch(0)
+        sizePolicy3.setVerticalStretch(0)
+        sizePolicy3.setHeightForWidth(self.runLine.sizePolicy().hasHeightForWidth())
+        self.runLine.setSizePolicy(sizePolicy3)
         self.runLine.setMinimumSize(QSize(0, 20))
         self.runLine.setMaximumSize(QSize(287, 20))
         self.runLine.setReadOnly(True)
@@ -88,8 +90,8 @@ class Ui_RunnerWindow(object):
 
         self.currentSeq = QListWidget(self.frame)
         self.currentSeq.setObjectName(u"currentSeq")
-        sizePolicy2.setHeightForWidth(self.currentSeq.sizePolicy().hasHeightForWidth())
-        self.currentSeq.setSizePolicy(sizePolicy2)
+        sizePolicy3.setHeightForWidth(self.currentSeq.sizePolicy().hasHeightForWidth())
+        self.currentSeq.setSizePolicy(sizePolicy3)
         self.currentSeq.setMinimumSize(QSize(267, 70))
         self.currentSeq.setMaximumSize(QSize(287, 70))
         self.currentSeq.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
@@ -104,21 +106,21 @@ class Ui_RunnerWindow(object):
 
         self.historyButton = QPushButton(self.frame)
         self.historyButton.setObjectName(u"historyButton")
-        sizePolicy1.setHeightForWidth(self.historyButton.sizePolicy().hasHeightForWidth())
-        self.historyButton.setSizePolicy(sizePolicy1)
+        sizePolicy2.setHeightForWidth(self.historyButton.sizePolicy().hasHeightForWidth())
+        self.historyButton.setSizePolicy(sizePolicy2)
 
         self.verticalLayout.addWidget(self.historyButton)
 
 
         self.verticalLayout_2.addWidget(self.frame)
 
-        self.sequenceList = QListWidget(self.centralwidget)
+        self.sequenceList = QListWidget(Form)
         self.sequenceList.setObjectName(u"sequenceList")
-        sizePolicy3 = QSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
-        sizePolicy3.setHorizontalStretch(0)
-        sizePolicy3.setVerticalStretch(0)
-        sizePolicy3.setHeightForWidth(self.sequenceList.sizePolicy().hasHeightForWidth())
-        self.sequenceList.setSizePolicy(sizePolicy3)
+        sizePolicy4 = QSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
+        sizePolicy4.setHorizontalStretch(0)
+        sizePolicy4.setVerticalStretch(0)
+        sizePolicy4.setHeightForWidth(self.sequenceList.sizePolicy().hasHeightForWidth())
+        self.sequenceList.setSizePolicy(sizePolicy4)
         self.sequenceList.setMaximumSize(QSize(16777215, 16777215))
         self.sequenceList.setFrameShape(QFrame.NoFrame)
         self.sequenceList.setFrameShadow(QFrame.Plain)
@@ -135,20 +137,19 @@ class Ui_RunnerWindow(object):
 
         self.verticalLayout_2.addWidget(self.sequenceList)
 
-        RunnerWindow.setCentralWidget(self.centralwidget)
 
-        self.retranslateUi(RunnerWindow)
+        self.retranslateUi(Form)
 
-        QMetaObject.connectSlotsByName(RunnerWindow)
+        QMetaObject.connectSlotsByName(Form)
     # setupUi
 
-    def retranslateUi(self, RunnerWindow):
-        RunnerWindow.setWindowTitle(QCoreApplication.translate("RunnerWindow", u"Macro Controller", None))
-        self.stopButton.setText(QCoreApplication.translate("RunnerWindow", u"Stop", None))
-        self.runButton.setText(QCoreApplication.translate("RunnerWindow", u"Run", None))
-        self.fullScreenCheck.setText(QCoreApplication.translate("RunnerWindow", u"Full Screen", None))
-        self.dumpImageCheck.setText(QCoreApplication.translate("RunnerWindow", u"Dump Image", None))
-        self.runLine.setPlaceholderText(QCoreApplication.translate("RunnerWindow", u"Standby...", None))
-        self.historyButton.setText(QCoreApplication.translate("RunnerWindow", u"Show / Hide History", None))
+    def retranslateUi(self, Form):
+        Form.setWindowTitle(QCoreApplication.translate("Form", u"Form", None))
+        self.stopButton.setText(QCoreApplication.translate("Form", u"Stop", None))
+        self.runButton.setText(QCoreApplication.translate("Form", u"Run", None))
+        self.fullScreenCheck.setText(QCoreApplication.translate("Form", u"Full Screen", None))
+        self.dumpImageCheck.setText(QCoreApplication.translate("Form", u"Dump Image", None))
+        self.runLine.setPlaceholderText(QCoreApplication.translate("Form", u"Standby...", None))
+        self.historyButton.setText(QCoreApplication.translate("Form", u"Show / Hide History", None))
     # retranslateUi
 
