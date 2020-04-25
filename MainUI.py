@@ -51,8 +51,11 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.actionExit.triggered.connect(self.close)
         self.actionAbout.triggered.connect(self.openAbout)
 
-        self._stdout = QtTools.StdoutRedirect()
-        self.StdRedirect()
+        try:
+            self._stdout = QtTools.StdoutRedirect()
+            self.StdRedirect()
+        except AttributeError:
+            pass
         self.debugCheck.stateChanged.connect(self.StdRedirect)
 
         self.initializing()
