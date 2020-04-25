@@ -1,12 +1,12 @@
 from collections import deque
 from PIL import Image
+from copy import deepcopy
 import time
 import pyautogui
 import io
 import base64
-import copy
 
-from Toolset import MemberLoader, ImageModule, Tools
+from Toolset import MemberLoader, ImageModule
 
 SLEEP_FUNCTION = time.sleep  # Will be override-d by ui_main.
 IMG_SAVER = False
@@ -158,37 +158,9 @@ class Click(ExBase, _ClickBase):
         self.target = ImageModule.Pos(*self.target)
 
 
-class Loop:
-    """
-    Interface. Internally generate loopStart, LoopEnd.
-    LoopEnd set next to
-    """
-
-    def __init__(self):
-        super(Loop, self).__init__()
-        self.loopName = ""
-        self.loopTime = 3
-        self.currentLoop = 0
-
-    @staticmethod
-    def generate(name, loops):
-
-        start, end = ExLoopStart(), ExLoopEnd()
-
-        start.next = end
-        end.onSuccess = start
-
-        for i in (start, end):
-            i.name = name
-            i.loopTime = loops
-
-        return start, end
-
-
-class ExLoopStart(ExBase, Loop):
+class LoopStart(ExBase):
     """
     Placeholder for Loop. No special functionality is needed for loop start.
-    Not for standalone usage.
     """
 
     def __init__(self):
@@ -201,7 +173,7 @@ class ExLoopStart(ExBase, Loop):
         return True
 
 
-class ExLoopEnd(ExBase, Loop):
+class LoopEnd(ExBase):
     """
     Implements Loop via setting next/onSuccess to LoopStart Object.
     Not for standalone usage.
@@ -212,12 +184,16 @@ class ExLoopEnd(ExBase, Loop):
 
         self.name = ""
         self.next = None
-        # self.onFail = None
-        # self.onSuccess = None
-        # Will override onSuccess for loop, onFail for loop end.
+        self.loopCount = 3
+        self.loopTime = 0
 
     def action(self):
-        return self.currentLoop < self.loopTime
+        self.loopTime += 1
+        return self.loopTime < self.loopCount
+
+    def reset(self):
+        self.screenArea = None
+        self.loopTime = 0
 
 
 class Wait(ExBase):
@@ -251,7 +227,6 @@ class Variable(ExBase):
         self.value = 0
 
     def __del__(self):
-        # Variable._deleted_instances += 1
         ExBase.variables.pop(self.name, None)
 
     def setValue(self, text):
@@ -274,7 +249,7 @@ class Variable(ExBase):
 
     def action(self):
         if self.name in ExBase.variables.keys():
-            self.name = self.name + str(self._created_instances)
+            self.name += str(self._created_instances)
 
         ExBase.variables[self.name] = self.value
         return True
@@ -551,7 +526,7 @@ def Serializer(obj_list):
         element.onFail = None
         element.onSuccess = None
 
-        out.append(copy.deepcopy(element.serialize()))
+        out.append(deepcopy(element.serialize()))
 
     return {"type": obj_type, "data": out, "reference": reference_list}
 
