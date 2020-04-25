@@ -30,6 +30,12 @@ MAIN_LOCATION = __file__
 base_path = os.path.dirname(os.path.abspath(MAIN_LOCATION))
 
 
+def relative_path_set(main_script_file):
+    global MAIN_LOCATION, base_path
+    MAIN_LOCATION = main_script_file
+    base_path = os.path.dirname(os.path.abspath(MAIN_LOCATION))
+
+
 # https://stackoverflow.com/questions/7674790
 def resource_path_pyinstaller(relative_path):
     """ Get absolute path to resource, works for dev and for PyInstaller """
@@ -43,12 +49,6 @@ def resource_path_pyinstaller(relative_path):
 def resource_path(relative_path):
     """ All other than PyInstaller onefile. """
     return os.path.join(base_path, relative_path)
-
-
-def relative_path_set(main_script_file):
-    global MAIN_LOCATION, base_path
-    MAIN_LOCATION = main_script_file
-    base_path = os.path.dirname(os.path.abspath(MAIN_LOCATION))
 
 
 def nameCaller(color=None, raw=False):

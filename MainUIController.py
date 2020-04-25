@@ -23,7 +23,7 @@ class Controller:
     def show_runner(self, source):
         print('calling Runner')
         self.runner = SubWindows.RunnerWindow(source)
-        self.runner.windowSwitchSignal.connect(self.show_editor)
+        self.runner.exitSignal.connect(self.show_editor)
         self.runner.show()
 
     # def show_about(self):

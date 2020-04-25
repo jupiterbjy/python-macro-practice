@@ -52,13 +52,11 @@ class CaptureCoverage(QDialog):
 
 class RunnerWindow(QWidget, Ui_Form):
 
-    windowSwitchSignal = Signal()
+    exitSignal = Signal()
 
     def __init__(self, source):
         super().__init__()
         self.setupUi(self)
-
-        self.windowSwitchSignal.connect(self.close)
 
         self.sequenceStarted = False
 
@@ -75,6 +73,7 @@ class RunnerWindow(QWidget, Ui_Form):
             i.reset()
 
     def closeEvent(self, *args, **kwargs):
+        self.exitSignal.emit()
         self.deleteLater()
 
     def areaInject(self):
