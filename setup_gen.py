@@ -18,7 +18,7 @@ executables = [Executable("MainUIController.py", base=base, targetName="pym")]
 
 setup(
     name="Python Image Macro Project",
-    version="version",
+    version=version,
     description="cx-freeze",
     options={"build_exe": build_options},
     executables=executables,
