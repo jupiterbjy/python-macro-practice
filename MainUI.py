@@ -1,5 +1,5 @@
 from PySide2.QtWidgets import QFileDialog, QListWidgetItem, QMainWindow
-from PySide2.QtCore import Signal
+from PySide2 import QtCore
 import os
 import json
 
@@ -21,7 +21,8 @@ import MacroMethods
 
 class MainWindow(QMainWindow, Ui_MainWindow):
 
-    windowSwitchSignal = Signal(object)
+    windowSwitchSignal = QtCore.Signal(object)
+    showAbout = QtCore.Signal()
 
     def __init__(self, *args, **kwargs):
         super(MainWindow, self).__init__(*args, **kwargs)
@@ -51,7 +52,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.actionSave.triggered.connect(self.seqSave)
         self.actionLoad.triggered.connect(self.seqLoad)
         self.actionExit.triggered.connect(self.close)
-        self.actionAbout.triggered.connect(self.openAbout)
+        self.actionAbout.triggered.connect(self.showAbout.emit)
 
         self._stdout = QtTools.StdoutRedirect()
         self.StdRedirect()
@@ -115,10 +116,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 lambda x: appendText(self.outputTextEdit, x)
             )
             TextTools.COLORIZE_ENABLE = True
-
-    def openAbout(self):
-        ui = AboutWindow(self)
-        ui.show()
 
     def removeElement(self, idx=None):
         """
@@ -244,7 +241,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         )[0]
 
         try:
-            baked = json.load(open(name, "r"))
+            baked = json.load(open(name))
 
         except json.JSONDecodeError:
             print("└ JSONDecodeError")

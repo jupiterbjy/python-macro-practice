@@ -10,11 +10,14 @@ class Controller:
     def __init__(self):
 
         call_runner = QtCore.Signal(object)
+        call_about = QtCore.Signal()
         abort_signal = QtCore.Signal()
 
         self.editor = MainUI.MainWindow()
         self.editor.windowSwitchSignal.connect(self.show_runner)
+        self.editor.showAbout.connect(self.show_about)
         self.runner = None
+        self.about = SubWindows.AboutWindow()
 
     def show_editor(self):
         print('calling Editor')
@@ -26,8 +29,9 @@ class Controller:
         self.runner.exitSignal.connect(self.show_editor)
         self.runner.show()
 
-    # def show_about(self):
-    #     about = SubWindows.AboutWindow()
+    def show_about(self):
+        print('calling About')
+        self.about.show()
 
 
 if __name__ == '__main__':

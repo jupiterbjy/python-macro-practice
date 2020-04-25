@@ -169,14 +169,14 @@ class RunnerWindow(QWidget, Ui_Form):
 
         if self.sequenceStarted:
             self.runButton.setDisabled(True)
-            self.StopButton.setEnabled(True)
+            self.stopButton.setEnabled(True)
         else:
             self.runButton.setEnabled(True)
-            self.StopButton.setDisabled(True)
+            self.stopButton.setDisabled(True)
 
 
 class AboutWindow(QMainWindow, Ui_About):
-    def __init__(self, parent):
-        super(AboutWindow, self).__init__(parent)
+    def __init__(self):
+        super(AboutWindow, self).__init__()
         self.setupUi(self)
         self.label.setPixmap(setPix(Tools.resource_path(ICON_LOCATION + ABOUT_IMAGE)))
