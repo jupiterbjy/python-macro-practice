@@ -13,6 +13,7 @@ from PySide2.QtWidgets import (
 
 from PIL import Image, ImageQt
 import sys
+import io
 import pyautogui
 import keyboard
 
@@ -47,8 +48,27 @@ class RunnerSignal(QObject):
     signal = Signal()
 
 
+class StdToFile(QObject):
+
+    printOccur = Signal(str, name="print")
+
+    def __init__(self):
+        QObject.__init__(self, None)
+        self.stdFile = io.StringIO()
+        self.print_bak = print
+
+    def start(self):
+        print = lambda *args: self.print_bak(args, file=self.stdFile)
+
+    def stop(self):
+        print = self.print_bak
+
+    def write(self, s):
+        self.printOccur.emit(s)
+
+
 class StdoutRedirect(QObject):
-    # Codes from below.
+    # Based off from below.
     # https://4uwingnet.tistory.com/9
 
     printOccur = Signal(str, name="print")
@@ -56,16 +76,16 @@ class StdoutRedirect(QObject):
     def __init__(self):
         QObject.__init__(self, None)
         self.daemon = True
-        self.sys_stdout = sys.stdout.write
-        self.sys_stderr = sys.stderr.write
+        self.sys_stdout = sys.stdout
+        self.sys_stderr = sys.stderr
 
     def stop(self):
-        sys.stdout.write = self.sys_stdout
-        sys.stderr.write = self.sys_stderr
+        sys.stdout = self.sys_stdout
+        sys.stderr = self.sys_stderr
 
     def start(self):
-        sys.stdout.write = self.write
-        sys.stderr.write = self.write
+        sys.stdout = self.write
+        sys.stderr = self.write
 
     def write(self, s):
         sys.stdout.flush()

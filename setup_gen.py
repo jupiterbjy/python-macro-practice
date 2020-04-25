@@ -6,7 +6,8 @@ import sys
 build_options = {"packages": [], "excludes": []}
 
 
-base = "Win32GUI" if sys.platform == "win32" else None
+# base = "Win32GUI" if sys.platform == "win32" else None
+base = None
 
 executables = [Executable("MainUIController.py", base=base, targetName="pym")]
 

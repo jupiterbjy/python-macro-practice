@@ -9,6 +9,7 @@ def IsFrozen(change_dir=True):
     :return: Returns True-False according to frozen state.
     """
     if getattr(sys, "frozen", False):
+        print('Frozen')
         if change_dir:
             try:
                 os.chdir(os.path.dirname(sys.executable))
@@ -26,15 +27,28 @@ def IsFrozen(change_dir=True):
 
 
 MAIN_LOCATION = __file__
+base_path = os.path.dirname(os.path.abspath(MAIN_LOCATION))
 
 
 # https://stackoverflow.com/questions/7674790
-def resource_path(relative_path):
+def resource_path_pyinstaller(relative_path):
     """ Get absolute path to resource, works for dev and for PyInstaller """
     base_path = getattr(
         sys, "_MEIPASS", os.path.dirname(os.path.abspath(MAIN_LOCATION))
     )
+
     return os.path.join(base_path, relative_path)
+
+
+def resource_path(relative_path):
+    """ All other than PyInstaller onefile. """
+    return os.path.join(base_path, relative_path)
+
+
+def relative_path_set(main_script_file):
+    global MAIN_LOCATION, base_path
+    MAIN_LOCATION = main_script_file
+    base_path = os.path.dirname(os.path.abspath(MAIN_LOCATION))
 
 
 def nameCaller(color=None, raw=False):

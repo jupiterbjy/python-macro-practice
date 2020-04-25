@@ -14,7 +14,9 @@ import MacroMethods
 # Support variable assign on objects other than Variables.
 # Change to ListView or ScrollArea from ListItem.
 # Add automatic version listing on about window.
+# Redirect print event to file
 # Add image showing on double-click to object in history.
+# Remove obsolete debug signals.
 
 
 class MainWindow(QMainWindow, Ui_MainWindow):
@@ -51,11 +53,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.actionExit.triggered.connect(self.close)
         self.actionAbout.triggered.connect(self.openAbout)
 
-        try:
-            self._stdout = QtTools.StdoutRedirect()
-            self.StdRedirect()
-        except AttributeError:
-            pass
+        self._stdout = QtTools.StdoutRedirect()
+        self.StdRedirect()
         self.debugCheck.stateChanged.connect(self.StdRedirect)
 
         self.initializing()

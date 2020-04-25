@@ -8,8 +8,10 @@ from Toolset import Tools
 class Controller:
 
     def __init__(self):
+
         call_runner = QtCore.Signal(object)
         abort_signal = QtCore.Signal()
+
         self.editor = MainUI.MainWindow()
         self.editor.windowSwitchSignal.connect(self.show_runner)
         self.runner = None
@@ -30,6 +32,7 @@ class Controller:
 
 if __name__ == '__main__':
     Tools.IsFrozen()
+    Tools.relative_path_set(__file__)
     app = QtWidgets.QApplication(sys.argv)
     controller = Controller()
     controller.show_editor()
