@@ -1,6 +1,6 @@
-PySide2~=5.14.2
+PySide2~=5.14.1
 PyAutoGUI~=0.9.50
 keyboard~=0.13.5
 Pillow~=7.1.1
-numpy~=1.18.2
+numpy~=1.18.3
 opencv-python~=4.2.0.34

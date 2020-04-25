@@ -129,9 +129,9 @@
          </widget>
         </item>
         <item row="1" column="0">
-         <widget class="QCheckBox" name="debugCheck">
+         <widget class="QCheckBox" name="logSaveCheck">
           <property name="text">
-           <string>DEBUG</string>
+           <string>Save log to file</string>
           </property>
           <property name="checked">
            <bool>true</bool>

@@ -3,8 +3,6 @@ from PySide2.QtWidgets import QMainWindow, QDialog, QWidget
 import pyautogui
 
 from Toolset import QtTools, Tools
-from Toolset.QtTools import setPix, ABOUT_IMAGE, ICON_LOCATION
-from Toolset.Tools import nameCaller
 from qtUI.Runner import Ui_Form
 from qtUI.aboutDialog import Ui_About
 import MacroMethods
@@ -135,7 +133,7 @@ class RunnerWindow(QWidget, Ui_Form):
         self.endSeq()
 
     def runSeq(self):
-        nameCaller()
+        Tools.nameCaller()
 
         self.sequenceStarted = True
 
@@ -151,7 +149,7 @@ class RunnerWindow(QWidget, Ui_Form):
         worker.run()
 
     def endSeq(self):
-        nameCaller()
+        Tools.nameCaller()
 
         for i in self.source:
             i.reset()
@@ -179,10 +177,15 @@ class AboutWindow(QMainWindow, Ui_About):
     def __init__(self, version, date):
         super(AboutWindow, self).__init__()
         self.setupUi(self)
-        self.label.setPixmap(setPix(Tools.resource_path(ICON_LOCATION + ABOUT_IMAGE)))
+
+        self.label.setPixmap(
+            QtTools.setPix(
+                Tools.resource_path(QtTools.ICON_LOCATION + QtTools.ABOUT_IMAGE)
+            )
+        )
 
         source = self.versionArea.toHtml()
-        source = source.replace('DATE', version)
-        source = source.replace('VERSION', date)
+        source = source.replace("DATE", version)
+        source = source.replace("VERSION", date)
 
         self.versionArea.setHtml(source)

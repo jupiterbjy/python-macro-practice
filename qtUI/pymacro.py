@@ -82,11 +82,11 @@ class Ui_MainWindow(object):
 
         self.gridLayout_2.addWidget(self.methodList, 0, 0, 1, 1)
 
-        self.debugCheck = QCheckBox(self.frame_2)
-        self.debugCheck.setObjectName(u"debugCheck")
-        self.debugCheck.setChecked(True)
+        self.logSaveCheck = QCheckBox(self.frame_2)
+        self.logSaveCheck.setObjectName(u"logSaveCheck")
+        self.logSaveCheck.setChecked(True)
 
-        self.gridLayout_2.addWidget(self.debugCheck, 1, 0, 1, 1)
+        self.gridLayout_2.addWidget(self.logSaveCheck, 1, 0, 1, 1)
 
         self.splitter.addWidget(self.frame_2)
         self.frame_3 = QFrame(self.splitter)
@@ -575,7 +575,7 @@ class Ui_MainWindow(object):
         ___qlistwidgetitem2.setText(QCoreApplication.translate("MainWindow", u"test3", None));
         self.methodList.setSortingEnabled(__sortingEnabled)
 
-        self.debugCheck.setText(QCoreApplication.translate("MainWindow", u"DEBUG", None))
+        self.logSaveCheck.setText(QCoreApplication.translate("MainWindow", u"Save log to file", None))
         self.label_9.setText(QCoreApplication.translate("MainWindow", u"On Success", None))
         self.label_10.setText(QCoreApplication.translate("MainWindow", u"On Fail", None))
         self.runButton.setText(QCoreApplication.translate("MainWindow", u"Run", None))
