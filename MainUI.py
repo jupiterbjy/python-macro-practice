@@ -1,10 +1,9 @@
 from PySide2.QtWidgets import QFileDialog, QListWidgetItem, QMainWindow
 from PySide2 import QtCore, QtGui
 import os
-import sys
 import json
 
-from Toolset import QtTools, ObjectDispatch, Tools, TextTools
+from Toolset import QtTools, ObjectDispatch, Tools
 from qtUI.pymacro import Ui_MainWindow
 from Toolset.Tools import nameCaller
 import MacroMethods
@@ -58,14 +57,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.actionExit.triggered.connect(self.close)
         self.actionAbout.triggered.connect(self.showAbout.emit)
 
-        # self._stdout = QtTools.StdoutRedirect()
-        # self.StdRedirect()
-
         self.initializing()
 
-        self.recentImageDir = os.getcwd()
-        self.recentIoDir = os.getcwd()
-
+        self.recentDir = {"Image": os.getcwd(), "IO": os.getcwd()}
         self.cachedImage = {"search": None, "count": None}
 
     def closeEvent(self, event: QtGui.QCloseEvent):
@@ -108,21 +102,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.sequenceList.setCurrentRow(move_idx)
             self._updateToSelected()
 
-    def StdRedirect(self):
-        """
-        Redirects print event to TextEdit.
-        Check StdoutRedirect class in QtTools for more detail.
-        """
-        if n := sys.stdout is None:  # Console is not available
-            print(n)
-            self._stdout.stop()
-            TextTools.COLORIZE_ENABLE = False
-        else:
-            self._stdout.start()
-            self._stdout.printOccur.connect(
-                lambda x: QtTools.appendText(self.outputTextEdit, x)
-            )
-            TextTools.COLORIZE_ENABLE = True
 
     def removeElement(self, idx=None):
         """
@@ -172,7 +151,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.macroExecute.emit(self.seqStorage[0])
 
         except IndexError:
-            self.StdRedirect()
             print("runSeq: Nothing To play.")
 
         else:
@@ -218,11 +196,10 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         Saves current sequence into json serialized format.
         """
 
-        print(self.recentImageDir, self.recentIoDir)
         nameCaller((225, 8, 0))
 
         name = QFileDialog.getSaveFileName(
-            self, "Save file", self.recentIoDir, filter="*.json"
+            self, "Save file", self.recentDir["IO"], filter="*.json"
         )[0]
         for i in self.seqStorage:
             i.reset()
@@ -233,18 +210,17 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         except FileNotFoundError:
             print("└ Save canceled")
         else:
-            self.recentIoDir = os.path.dirname(name)
+            self.recentDir["IO"] = os.path.dirname(name)
 
     def seqLoad(self):
         """
         Loads json serialized Macro Sequence.
         """
 
-        print(self.recentImageDir, self.recentIoDir)
         nameCaller((225, 8, 0))
 
         name = QFileDialog.getOpenFileName(
-            self, "Load File", self.recentIoDir, filter="*.json"
+            self, "Load File", self.recentDir["IO"], filter="*.json"
         )[0]
 
         try:
@@ -267,7 +243,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         else:
             deserialized = MacroMethods.Deserializer(baked)
-            self.recentIoDir = os.path.dirname(name)
+            self.recentDir["IO"] = os.path.dirname(name)
 
         self.initializing(manual=True)
 
@@ -411,11 +387,10 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         :param cache_name: string key for cached image name.
         :return: return false on TypeError.
         """
-        print(self.recentImageDir, self.recentIoDir)
 
         try:
-            img, file_name, self.recentImageDir = QtTools.loadImage(
-                self, self.recentImageDir
+            img, file_name, self.recentDir["Image"] = QtTools.loadImage(
+                self, self.recentDir["Image"]
             )
 
         except TypeError:
