@@ -1,5 +1,10 @@
 from cx_Freeze import setup, Executable
+from datetime import datetime
 import sys
+
+version = '0.0.5'
+date = datetime.now().strftime('%Y-%m-%d')
+
 
 # Dependencies are automatically detected, but it might need
 # fine tuning.
@@ -13,7 +18,7 @@ executables = [Executable("MainUIController.py", base=base, targetName="pym")]
 
 setup(
     name="Python Image Macro Project",
-    version="0.0.5",
+    version="version",
     description="cx-freeze",
     options={"build_exe": build_options},
     executables=executables,

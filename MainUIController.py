@@ -1,8 +1,12 @@
 from PySide2 import QtCore, QtWidgets
+from datetime import datetime
 import sys
 import MainUI
 import SubWindows
 from Toolset import Tools
+
+VERSION = 'v0.0.5'
+DATE = '2020-04-25'
 
 
 class Controller:
@@ -13,11 +17,11 @@ class Controller:
         call_about = QtCore.Signal()
         abort_signal = QtCore.Signal()
 
-        self.editor = MainUI.MainWindow()
+        self.editor = MainUI.MainWindow(VERSION)
         self.editor.windowSwitchSignal.connect(self.show_runner)
         self.editor.showAbout.connect(self.show_about)
         self.runner = None
-        self.about = SubWindows.AboutWindow()
+        self.about = SubWindows.AboutWindow(VERSION, DATE)
 
     def show_editor(self):
         print('calling Editor')

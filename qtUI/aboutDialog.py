@@ -48,13 +48,22 @@ class Ui_About(object):
         self.label.setScaledContents(True)
         self.textEdit = QTextEdit(self.frame)
         self.textEdit.setObjectName(u"textEdit")
-        self.textEdit.setGeometry(QRect(129, 3, 281, 281))
+        self.textEdit.setGeometry(QRect(129, 3, 281, 201))
         self.textEdit.setLayoutDirection(Qt.LeftToRight)
         self.textEdit.setStyleSheet(u"background-color: rgba(255, 255, 255, 0);")
         self.textEdit.setFrameShape(QFrame.NoFrame)
         self.textEdit.setFrameShadow(QFrame.Plain)
         self.textEdit.setLineWrapColumnOrWidth(2)
         self.textEdit.setTextInteractionFlags(Qt.NoTextInteraction)
+        self.versionArea = QTextEdit(self.frame)
+        self.versionArea.setObjectName(u"versionArea")
+        self.versionArea.setGeometry(QRect(240, 200, 171, 61))
+        self.versionArea.setLayoutDirection(Qt.LeftToRight)
+        self.versionArea.setStyleSheet(u"background-color: rgba(255, 255, 255, 0);")
+        self.versionArea.setFrameShape(QFrame.NoFrame)
+        self.versionArea.setFrameShadow(QFrame.Plain)
+        self.versionArea.setLineWrapColumnOrWidth(2)
+        self.versionArea.setTextInteractionFlags(Qt.NoTextInteraction)
 
         self.gridLayout.addWidget(self.frame, 0, 0, 1, 1)
 
@@ -72,7 +81,14 @@ class Ui_About(object):
 "<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
 "p, li { white-space: pre-wrap; }\n"
 "</style></head><body style=\" font-family:'Gulim'; font-size:9pt; font-weight:400; font-style:normal;\">\n"
-"<p align=\"right\" style=\" margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:'Consolas'; font-size:11pt; color:#664a26;\">Copyright (c) 2019 ~ 2020 jupiterbjy<br /><br />A random hikineet who makes more mistakes than one could accept.<br /><br />Contact me to:<br />nyarukoishi@gmail.com<br /><br />2020-04-25<br />v 0.0.5</span></p></body></html>", None))
+"<p align=\"right\" style=\" margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:'Consolas'; font-size:11pt; color:#664a26;\">Copyright (c) 2019 ~ 2020 jupiterbjy<br /></span></p>\n"
+"<p align=\"right\" style=\" margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:'Consolas'; font-size:11pt; color:#664a26;\">Python Image-matching GUI Macro Sequencer Project.<br /><br />Contact me to:<br />nyarukoishi@gmail.com<br /></span></p></body></html>", None))
         self.textEdit.setPlaceholderText("")
+        self.versionArea.setHtml(QCoreApplication.translate("About", u"<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
+"<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
+"p, li { white-space: pre-wrap; }\n"
+"</style></head><body style=\" font-family:'Gulim'; font-size:9pt; font-weight:400; font-style:normal;\">\n"
+"<p align=\"right\" style=\" margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:'Consolas'; font-size:11pt; color:#664a26;\">DATE<br />VERSION</span></p></body></html>", None))
+        self.versionArea.setPlaceholderText("")
     # retranslateUi
 

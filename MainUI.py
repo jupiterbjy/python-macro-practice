@@ -7,7 +7,6 @@ from Toolset import QtTools, ObjectDispatch, Tools, TextTools
 from Toolset.QtTools import IMG_CONVERT, ICON_LOCATION, ICON_ASSIGN, appendText
 from qtUI.pymacro import Ui_MainWindow
 from Toolset.Tools import nameCaller
-from SubWindows import AboutWindow
 import MacroMethods
 
 # <To-Do>
@@ -17,6 +16,7 @@ import MacroMethods
 # Redirect print event to file
 # Add image showing on double-click to object in history.
 # Remove obsolete debug signals.
+# Close all windows upon closing main
 
 
 class MainWindow(QMainWindow, Ui_MainWindow):
@@ -24,9 +24,11 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     windowSwitchSignal = QtCore.Signal(object)
     showAbout = QtCore.Signal()
 
-    def __init__(self, *args, **kwargs):
-        super(MainWindow, self).__init__(*args, **kwargs)
+    def __init__(self, version):
+        super(MainWindow, self).__init__()
         self.setupUi(self)
+
+        self.setWindowTitle('Python Macro Sequence - ' + version)
 
         self.seqStorage = []
         self.seqBackup = []  # Consumes memory!
