@@ -1,5 +1,5 @@
 from PySide2.QtWidgets import QFileDialog, QListWidgetItem, QMainWindow
-from PySide2 import QtCore
+from PySide2 import QtCore, QtGui
 import os
 import json
 
@@ -12,15 +12,16 @@ import MacroMethods
 # <To-Do>
 # Support variable assign on objects other than Variables.
 # Change to ListView or ScrollArea from ListItem.
-# Add automatic version listing on about window.
 # Redirect print event to file
 # Add image showing on double-click to object in history.
 # Remove obsolete debug signals.
-# Close all windows upon closing main
+# figure out white image causing crash on matching image
+# Cleanup messy import chains
 
 
 class MainWindow(QMainWindow, Ui_MainWindow):
 
+    exitSignal = QtCore.Signal()
     windowSwitchSignal = QtCore.Signal(object)
     showAbout = QtCore.Signal()
 
@@ -66,6 +67,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.recentIoDir = os.getcwd()
 
         self.cachedImage = {"search": None, "count": None}
+
+    def closeEvent(self, event: QtGui.QCloseEvent):
+        self.exitSignal.emit()
 
     def moveOrder(self, up=True):
         """

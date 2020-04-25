@@ -7,7 +7,7 @@ This module will provide any necessary components required by MacroMethod,
 especially Image-related functions.
 """
 
-IMG_PATH = "../testingEnv/"
+IMG_PATH = ""
 
 
 class Pos:
@@ -94,27 +94,28 @@ class Area:
         return Area(*p1, *p2)
 
 
-def saveImg():
+def saveImg(base):
     """
     Save Image with ascending ordered numeric names. Closure demonstration.
     Refer docs of function save().
     :return: returns closure function save().
     """
     order = 0
+    print(base)
+    base += '\\'
 
     def save(img, name=None):
-        nonlocal order
+        nonlocal order, base
+
+        print('Saving Image to:' + base)
 
         if name is None:
             name = ""
 
-        cv2.imwrite(f"{IMG_PATH}{str(order)}_{name}.png", img)
+        cv2.imwrite(f"{base}{str(order)}_{name}.png", img)
         order += 1
 
     return save
-
-
-IMG_SAVE = saveImg()  # can't move this up..
 
 
 def imageSearch(target, area, precision=0.85):

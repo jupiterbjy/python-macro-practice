@@ -8,7 +8,6 @@ from Toolset.Tools import nameCaller
 from qtUI.Runner import Ui_Form
 from qtUI.aboutDialog import Ui_About
 import MacroMethods
-import re
 
 
 # https://www.learnpyqt.com/courses/concurrent-execution/multithreading-pyqt-applications-qthreadpool/
@@ -69,7 +68,7 @@ class RunnerWindow(QWidget, Ui_Form):
     def injectGlobals(self):
         MacroMethods.DUMP = self.dumpImageCheck.isChecked()
 
-        # To be removed
+        # making sure file is reset.
         for i in self.source:
             i.reset()
 

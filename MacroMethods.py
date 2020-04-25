@@ -6,10 +6,10 @@ import io
 import base64
 import copy
 
-from Toolset import MemberLoader, ImageModule
+from Toolset import MemberLoader, ImageModule, Tools
 
 SLEEP_FUNCTION = time.sleep  # Will be override-d by ui_main.
-IMG_SAVER = ImageModule.saveImg()
+IMG_SAVER = False
 ABORT = False
 RAND_OFFSET = False
 OFFSET_MAX = 5
