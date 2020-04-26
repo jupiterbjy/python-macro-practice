@@ -5,10 +5,12 @@ import pyautogui
 import io
 import base64
 import copy
+import logging
 
-from Toolset import MemberLoader, ImageModule, Tools
+from Toolset import MemberLoader, ImageModule
 
 SLEEP_FUNCTION = time.sleep  # Will be override-d by ui_main.
+LOGGER = logging.getLogger()
 IMG_SAVER = False
 ABORT = False
 RAND_OFFSET = False

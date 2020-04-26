@@ -1,6 +1,10 @@
 import sys
 import os
 
+"""
+Stores Mostly one-time use functions separated from used sources.
+"""
+
 
 def IsFrozen(change_dir=True):
     """

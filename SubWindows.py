@@ -5,6 +5,7 @@ import pyautogui
 from Toolset import QtTools, Tools
 from qtUI.Runner import Ui_Form
 from qtUI.aboutDialog import Ui_About
+from qtUI.debugWindow import Ui_DebugWindow
 import MacroMethods
 
 
@@ -52,7 +53,7 @@ class RunnerWindow(QWidget, Ui_Form):
 
     exitSignal = Signal()
 
-    def __init__(self, source):
+    def __init__(self):
         super().__init__()
         self.setupUi(self)
 
@@ -60,6 +61,9 @@ class RunnerWindow(QWidget, Ui_Form):
 
         self.runButton.released.connect(self.runSeq)
         self.stopButton.released.connect(self.stopSeq)
+        self.source = None
+
+    def setSource(self, source):
         self.source = source
         self.updateHistory(self.source)
 
@@ -189,3 +193,52 @@ class AboutWindow(QMainWindow, Ui_About):
         source = source.replace("VERSION", date)
 
         self.versionArea.setHtml(source)
+
+
+class DebugWindow(QWidget, Ui_DebugWindow):
+    def __init__(self, logger, editor, runner):
+        super(DebugWindow, self).__init__()
+        self.setupUi(self)
+
+        self.commandLine.returnPressed.connect(self.commandReceived)
+        self.editor = editor
+        self.runner = runner
+        self.logger = logger
+
+        self.commandList = {
+            'help': self.help,
+            'list': self.listTarget,
+            'clear': self.clear,
+        }
+
+    def help(self, *args):
+        helps = '''
+        help: display this message.
+        clear: clears logging screen
+        list: show list of target. supported are:
+        └ list macro: Show list of element in macro.
+        └ list variable: Show list of variables.
+        '''
+        self.debugOutput.insertHtml(helps.replace('\n', '<br/>'))
+
+    def commandReceived(self):
+        line = self.commandLine.text().split()
+        self.commandLine.clear()
+        self.commandList[line[0]](line[:1])
+
+    def clear(self, *args):
+        self.debugOutput.clear()
+
+    def listTarget(self, arg, *args):
+        if 'var' in arg:
+            self.listVariables()
+        elif 'mac' in arg:
+            self.listMacroElements()
+        else:
+            self.debugOutput.insertHtml('Unrecognized command')
+
+    def listVariables(self):
+        pass
+
+    def listMacroElements(self):
+        pass
