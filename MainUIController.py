@@ -14,16 +14,15 @@ from Toolset import Tools, ImageModule
 # Change to ListView or ScrollArea from ListItem.
 # Redirect print event to file
 # Add image showing on double-click to object in history.
-# Remove obsolete debug signals. <<
 # figure out white image causing crash on matching image
 # Cleanup messy import chains
 # implement undo
 
 DEBUG = True
 VERSION = "v0.0.6"
-DATE = "2020-04-25"
+DATE = "2020-04-27"
 LOG_STREAM = StringIO()
-LOGGER = logging.getLogger('Controller')
+LOGGER = logging.getLogger('Third Eye')
 
 
 class Controller:
@@ -35,26 +34,30 @@ class Controller:
         self.editor.showLogger.connect(self.show_debugger)
         self.editor.exitSignal.connect(self.kill_all)
 
-        self.runner = SubWindows.RunnerWindow()
+        self.runner = SubWindows.RunnerWindow(LOGGER)
         self.about = SubWindows.AboutWindow(VERSION, DATE)
         self.debugger = SubWindows.DebugWindow(LOGGER, self.editor, self.runner)
 
     def show_editor(self):
-        print("calling Editor")
+        LOGGER.info("Calling Editor.")
         self.editor.show()
 
     def show_runner(self, source):
-        print("calling Runner")
+        LOGGER.info("Calling Runner.")
         self.runner.setSource(source)
         self.runner.exitSignal.connect(self.show_editor)
         self.runner.show()
 
     def show_about(self):
-        print("calling About")
+        LOGGER.info("Calling About.")
         self.about.show()
 
     def show_debugger(self):
+        LOGGER.info("Calling Logger/Debugger.")
         self.debugger.show()
+
+    def log_to_gui(self):
+        self.debugger.logOutput.insertHtml(log_rewind(LOG_STREAM))
 
     def kill_all(self):
         for window in (self.about, self.runner, self.debugger):
@@ -66,28 +69,21 @@ class Controller:
                 pass
 
 
-def log_rewind():
-    current = LOG_STREAM.tell() - 4
+def log_rewind(stream):
+    current = stream.tell() - 2
     try:
-        LOG_STREAM.seek(current)
+        stream.seek(current)
     except ValueError:
-        return 'Failed'
+        return None
 
-    while current > 1:
-        t = LOG_STREAM.read(2)
-        print(t)
-        if t != '\n':
-            current -= 1
-            LOG_STREAM.seek(current)
-        else:
-            LOG_STREAM.seek(current)
+    while stream.read(1) != '\n':
+        current -= 1
+        if current < 0:
             break
-    else:
-        LOG_STREAM.read()
-        return 'not found'
 
-    last_line = LOG_STREAM.read()
-    return last_line
+        stream.seek(current)
+    else:
+        return stream.read()
 
 
 def log_initialize():
@@ -97,6 +93,8 @@ def log_initialize():
         LOGGER.removeHandler(handler)
 
     LOGGER.addHandler(logging.StreamHandler(LOG_STREAM))
+    LOGGER.debug(f"{VERSION} built at {DATE}")
+    LOGGER.debug('Logging Started.')
 
 
 if __name__ == "__main__":
