@@ -60,6 +60,12 @@ class ExBase:  # Excluded - Ex
         self.onFail = None
         self.screenArea = None
 
+    def __repr__(self):
+        msg = f'{type(self).__name__} instance {self.name}\n'
+        properties = [f'{k}: {v}' for k, v in self.__dict__.items()]
+
+        return msg + "\n".join(properties)
+
     def setName(self, text):
         self.name = str(text)
 
