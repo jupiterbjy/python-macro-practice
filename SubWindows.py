@@ -3,10 +3,9 @@ from PySide2.QtWidgets import QMainWindow, QDialog, QWidget
 import pyautogui
 
 from Toolset import QtTools, Tools
-from Toolset.QtTools import setPix, ABOUT_IMAGE, ICON_LOCATION
-from Toolset.Tools import nameCaller
 from qtUI.Runner import Ui_Form
 from qtUI.aboutDialog import Ui_About
+from qtUI.debugWindow import Ui_DebugWindow
 import MacroMethods
 
 
@@ -35,7 +34,10 @@ class Worker(QRunnable):
         """
         Initialise the runner function with passed args, kwargs.
         """
-        self.fn(*self.args, **self.kwargs)
+        try:
+            self.fn(*self.args, **self.kwargs)
+        except Exception as exp:
+            raise exp
 
 
 class CaptureCoverage(QDialog):
@@ -54,14 +56,18 @@ class RunnerWindow(QWidget, Ui_Form):
 
     exitSignal = Signal()
 
-    def __init__(self, source):
+    def __init__(self, logger):
         super().__init__()
         self.setupUi(self)
 
+        self.logger = logger
         self.sequenceStarted = False
 
         self.runButton.released.connect(self.runSeq)
         self.stopButton.released.connect(self.stopSeq)
+        self.source = None
+
+    def setSource(self, source):
         self.source = source
         self.updateHistory(self.source)
 
@@ -112,30 +118,31 @@ class RunnerWindow(QWidget, Ui_Form):
                 obj = obj.run()
 
             except pyautogui.FailSafeException:
-                print("└ PyAutoGui FailSafe")
+                self.logger.critical("PyAutoGui FailSafe")
                 self.runLine.setText("Cannot Click (0,0)")
                 break
 
             except ZeroDivisionError:
-                print("└ Division by Zero")
+                self.logger.critical("Division by Zero")
                 self.runLine.setText("Tried to divide by 0")
                 break
 
             except MacroMethods.AbortException:
-                print("└ Abort Signaled")
+                self.logger.warning("Abort Signaled")
                 self.runLine.setText("Aborted")
                 break
 
             else:
                 seq_count += 1
         else:
+            self.logger.info("Macro Finished without error.")
             self.runLine.setText("Macro finished.")
             self.updateHistory()
 
         self.endSeq()
 
     def runSeq(self):
-        nameCaller()
+        Tools.nameCaller()
 
         self.sequenceStarted = True
 
@@ -148,10 +155,14 @@ class RunnerWindow(QWidget, Ui_Form):
         self.runLine.setText("Macro started.")
 
         worker = Worker(self.runSeq_Threaded, self.source)
-        worker.run()
+        try:
+            worker.run()
+        except Exception as err:
+            # Assume no error has line-break.
+            self.logger.critical(str(err))
 
     def endSeq(self):
-        nameCaller()
+        Tools.nameCaller()
 
         for i in self.source:
             i.reset()
@@ -179,10 +190,94 @@ class AboutWindow(QMainWindow, Ui_About):
     def __init__(self, version, date):
         super(AboutWindow, self).__init__()
         self.setupUi(self)
-        self.label.setPixmap(setPix(Tools.resource_path(ICON_LOCATION + ABOUT_IMAGE)))
+
+        self.label.setPixmap(
+            QtTools.setPix(
+                Tools.resource_path(QtTools.ICON_LOCATION + QtTools.ABOUT_IMAGE)
+            )
+        )
 
         source = self.versionArea.toHtml()
-        source = source.replace('DATE', version)
-        source = source.replace('VERSION', date)
+        source = source.replace("DATE", version)
+        source = source.replace("VERSION", date)
 
         self.versionArea.setHtml(source)
+
+
+class DebugWindow(QWidget, Ui_DebugWindow):
+    def __init__(self, logger, editor, runner):
+        super(DebugWindow, self).__init__()
+        self.setupUi(self)
+
+        self.commandLine.returnPressed.connect(self.processCommand)
+        self.editor = editor
+        self.runner = runner
+        self.logger = logger
+
+        self.commandList = {
+            "help": self.help,
+            "list": self.listTarget,
+            "clear": self.clear,
+        }
+
+    def help(self, *args):
+        """
+        help: display this message.
+        """
+        msg = "".join([i.__doc__ for i in self.commandList.values()])
+
+        self.debugOutput.insertHtml(msg.replace("\n", "<br/>"))
+
+    def processCommand(self):
+        line = self.commandLine.text().split()
+        self.commandLine.clear()
+        self.commandList[line[0]](line[:1])
+
+    def clear(self, *args):
+        """
+        clear: clears logging screen
+        """
+        self.debugOutput.clear()
+
+    def listTarget(self, arg, *args):
+        """
+        list: show list of target. supported are:
+        └ list macro: Show list of element in macro.
+        └ list variable: Show list of variables.
+        """
+
+        if "var" in arg:
+            self.listVariables()
+        elif "mac" in arg:
+            self.listMacroElements()
+        else:
+            self.debugOutput.insertHtml("Unrecognized command:", arg)
+
+    def listVariables(self):
+        pass
+
+    def listMacroElements(self):
+        for i in self.runner.source:
+            self.debugOutput.insertHtml(f"{i.__repr__()}")
+        pass
+
+    def inspect(self, arg, *args):
+        def inspect_variables(arg2, *args2):
+            pass
+
+        def inspect_macro(arg2, *args2):
+            # change this into name-based search later, maybe.
+
+            try:
+                target = self.runner.source[arg2]
+            except IndexError:
+                self.debugOutput.insertHtml("Index out of range.")
+            else:
+                self.debugOutput.insertHtml(target.__repr__())
+
+        if "var" in arg:
+            inspect_variables(*args)
+        elif "mac" in arg:
+            inspect_macro(*args)
+        else:
+            self.debugOutput.insertHtml("Unrecognized command:", arg)

@@ -1,5 +1,5 @@
 import pyautogui as pgui
-import numpy as np
+from numpy import array, where
 import cv2
 
 """
@@ -120,12 +120,12 @@ def saveImg(base):
 
 def imageSearch(target, area, precision=0.85):
 
-    array = np.array(pgui.screenshot(region=area))
+    arr = array(pgui.screenshot(region=area))
 
-    img = cv2.cvtColor(array, cv2.COLOR_RGB2BGR)
+    img = cv2.cvtColor(arr, cv2.COLOR_RGB2BGR)
     img_gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 
-    template = cv2.cvtColor(np.array(target), cv2.COLOR_RGB2GRAY)
+    template = cv2.cvtColor(array(target), cv2.COLOR_RGB2GRAY)
     img_wh = template.shape[::-1]
 
     # pgui.locateOnScreen(target, minSearchTime=5, confidence=0.9)
@@ -145,16 +145,16 @@ def imageSearch(target, area, precision=0.85):
 
 def scanOccurrence(target, area, precision=0.85, threshold=0.1):
 
-    array = np.array(pgui.screenshot(region=area))
+    arr = array(pgui.screenshot(region=area))
 
-    img = cv2.cvtColor(array, cv2.COLOR_RGB2BGR)
+    img = cv2.cvtColor(arr, cv2.COLOR_RGB2BGR)
     img_gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 
-    template = cv2.cvtColor(np.array(target), cv2.COLOR_RGB2GRAY)
+    template = cv2.cvtColor(array(target), cv2.COLOR_RGB2GRAY)
     img_wh = Pos(*template.shape[::-1])
 
     res = cv2.matchTemplate(img_gray, template, cv2.TM_CCOEFF_NORMED)
-    loc = np.where(res >= precision)
+    loc = where(res >= precision)
 
     count = 0
     found = []
@@ -172,7 +172,7 @@ def scanOccurrence(target, area, precision=0.85, threshold=0.1):
             pass
 
         found.append(Pos(*pt))
-        count = count + 1
+        count += 1
         cv2.rectangle(img, pt, (Pos(*pt) + img_wh)(), (0, 0, 255), 2)
         # need to explicitly give cv2 tuple, not tuple-type.
 

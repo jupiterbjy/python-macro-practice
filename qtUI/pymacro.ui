@@ -128,16 +128,6 @@
           </item>
          </widget>
         </item>
-        <item row="1" column="0">
-         <widget class="QCheckBox" name="debugCheck">
-          <property name="text">
-           <string>DEBUG</string>
-          </property>
-          <property name="checked">
-           <bool>true</bool>
-          </property>
-         </widget>
-        </item>
        </layout>
       </widget>
       <widget class="QFrame" name="frame_3">
@@ -251,7 +241,7 @@
            </size>
           </property>
           <property name="currentIndex">
-           <number>3</number>
+           <number>2</number>
           </property>
           <property name="usesScrollButtons">
            <bool>true</bool>
@@ -999,7 +989,7 @@ color: rgb(255, 255, 255);</string>
               <x>10</x>
               <y>70</y>
               <width>91</width>
-              <height>51</height>
+              <height>81</height>
              </rect>
             </property>
             <property name="title">
@@ -1030,12 +1020,25 @@ color: rgb(255, 255, 255);</string>
               <number>1</number>
              </property>
             </widget>
+            <widget class="QComboBox" name="loopStartCombo">
+             <property name="geometry">
+              <rect>
+               <x>10</x>
+               <y>50</y>
+               <width>71</width>
+               <height>22</height>
+              </rect>
+             </property>
+             <property name="currentText">
+              <string/>
+             </property>
+            </widget>
            </widget>
            <widget class="QGroupBox" name="clickGroup">
             <property name="geometry">
              <rect>
               <x>10</x>
-              <y>130</y>
+              <y>160</y>
               <width>91</width>
               <height>111</height>
              </rect>
@@ -1126,8 +1129,8 @@ color: rgb(255, 255, 255);</string>
              <rect>
               <x>110</x>
               <y>10</y>
-              <width>127</width>
-              <height>251</height>
+              <width>111</width>
+              <height>241</height>
              </rect>
             </property>
             <property name="title">
@@ -1153,8 +1156,8 @@ color: rgb(255, 255, 255);</string>
              <property name="geometry">
               <rect>
                <x>10</x>
-               <y>160</y>
-               <width>101</width>
+               <y>150</y>
+               <width>91</width>
                <height>22</height>
               </rect>
              </property>
@@ -1166,8 +1169,8 @@ color: rgb(255, 255, 255);</string>
              <property name="geometry">
               <rect>
                <x>10</x>
-               <y>100</y>
-               <width>101</width>
+               <y>90</y>
+               <width>91</width>
                <height>22</height>
               </rect>
              </property>
@@ -1179,7 +1182,7 @@ color: rgb(255, 255, 255);</string>
              <property name="geometry">
               <rect>
                <x>40</x>
-               <y>130</y>
+               <y>120</y>
                <width>41</width>
                <height>22</height>
               </rect>
@@ -1192,8 +1195,8 @@ color: rgb(255, 255, 255);</string>
              <property name="geometry">
               <rect>
                <x>10</x>
-               <y>220</y>
-               <width>101</width>
+               <y>210</y>
+               <width>91</width>
                <height>22</height>
               </rect>
              </property>
@@ -1205,7 +1208,7 @@ color: rgb(255, 255, 255);</string>
              <property name="geometry">
               <rect>
                <x>40</x>
-               <y>190</y>
+               <y>180</y>
                <width>41</width>
                <height>22</height>
               </rect>
@@ -1228,7 +1231,7 @@ color: rgb(255, 255, 255);</string>
              <property name="geometry">
               <rect>
                <x>10</x>
-               <y>80</y>
+               <y>70</y>
                <width>90</width>
                <height>16</height>
               </rect>
@@ -1242,7 +1245,7 @@ color: rgb(255, 255, 255);</string>
               <rect>
                <x>10</x>
                <y>40</y>
-               <width>113</width>
+               <width>91</width>
                <height>20</height>
               </rect>
              </property>
@@ -1257,10 +1260,10 @@ color: rgb(255, 255, 255);</string>
            <widget class="QGroupBox" name="dragGroup">
             <property name="geometry">
              <rect>
-              <x>10</x>
-              <y>250</y>
-              <width>91</width>
-              <height>151</height>
+              <x>110</x>
+              <y>260</y>
+              <width>111</width>
+              <height>141</height>
              </rect>
             </property>
             <property name="title">
@@ -1270,8 +1273,8 @@ color: rgb(255, 255, 255);</string>
              <property name="geometry">
               <rect>
                <x>10</x>
-               <y>120</y>
-               <width>71</width>
+               <y>114</y>
+               <width>91</width>
                <height>21</height>
               </rect>
              </property>
@@ -1297,7 +1300,7 @@ color: rgb(255, 255, 255);</string>
               <rect>
                <x>10</x>
                <y>40</y>
-               <width>31</width>
+               <width>41</width>
                <height>22</height>
               </rect>
              </property>
@@ -1314,9 +1317,9 @@ color: rgb(255, 255, 255);</string>
             <widget class="QSpinBox" name="dragFromY">
              <property name="geometry">
               <rect>
-               <x>50</x>
+               <x>60</x>
                <y>40</y>
-               <width>31</width>
+               <width>41</width>
                <height>22</height>
               </rect>
              </property>
@@ -1334,7 +1337,7 @@ color: rgb(255, 255, 255);</string>
              <property name="geometry">
               <rect>
                <x>10</x>
-               <y>70</y>
+               <y>67</y>
                <width>81</width>
                <height>20</height>
               </rect>
@@ -1346,9 +1349,9 @@ color: rgb(255, 255, 255);</string>
             <widget class="QSpinBox" name="dragToY">
              <property name="geometry">
               <rect>
-               <x>50</x>
-               <y>90</y>
-               <width>31</width>
+               <x>60</x>
+               <y>87</y>
+               <width>41</width>
                <height>22</height>
               </rect>
              </property>
@@ -1366,8 +1369,8 @@ color: rgb(255, 255, 255);</string>
              <property name="geometry">
               <rect>
                <x>10</x>
-               <y>90</y>
-               <width>31</width>
+               <y>87</y>
+               <width>41</width>
                <height>22</height>
               </rect>
              </property>
@@ -1382,61 +1385,6 @@ color: rgb(255, 255, 255);</string>
              </property>
             </widget>
            </widget>
-          </widget>
-          <widget class="QWidget" name="debugTab">
-           <attribute name="title">
-            <string>Log</string>
-           </attribute>
-           <layout class="QGridLayout" name="gridLayout_6">
-            <item row="1" column="0">
-             <widget class="QTextEdit" name="outputTextEdit">
-              <property name="styleSheet">
-               <string notr="true">background-color: rgb(30, 30, 30);
-color: rgb(230, 230, 230);</string>
-              </property>
-              <property name="frameShape">
-               <enum>QFrame::NoFrame</enum>
-              </property>
-              <property name="frameShadow">
-               <enum>QFrame::Sunken</enum>
-              </property>
-              <property name="lineWidth">
-               <number>1</number>
-              </property>
-              <property name="verticalScrollBarPolicy">
-               <enum>Qt::ScrollBarAlwaysOff</enum>
-              </property>
-              <property name="horizontalScrollBarPolicy">
-               <enum>Qt::ScrollBarAlwaysOff</enum>
-              </property>
-              <property name="autoFormatting">
-               <set>QTextEdit::AutoNone</set>
-              </property>
-              <property name="undoRedoEnabled">
-               <bool>false</bool>
-              </property>
-              <property name="lineWrapMode">
-               <enum>QTextEdit::WidgetWidth</enum>
-              </property>
-              <property name="lineWrapColumnOrWidth">
-               <number>0</number>
-              </property>
-              <property name="readOnly">
-               <bool>true</bool>
-              </property>
-              <property name="placeholderText">
-               <string>Standby</string>
-              </property>
-             </widget>
-            </item>
-            <item row="0" column="0">
-             <widget class="QCheckBox" name="lockLogCheck">
-              <property name="text">
-               <string>Lock to Log tab</string>
-              </property>
-             </widget>
-            </item>
-           </layout>
           </widget>
          </widget>
         </item>
@@ -1544,6 +1492,7 @@ color: rgb(230, 230, 230);</string>
     <addaction name="actionSave"/>
     <addaction name="actionLoad"/>
     <addaction name="separator"/>
+    <addaction name="actionLogger"/>
     <addaction name="actionExit"/>
     <addaction name="separator"/>
     <addaction name="actionAbout"/>
@@ -1573,6 +1522,11 @@ color: rgb(230, 230, 230);</string>
   <action name="actionAbout">
    <property name="text">
     <string>About</string>
+   </property>
+  </action>
+  <action name="actionLogger">
+   <property name="text">
+    <string>Show Logger</string>
    </property>
   </action>
  </widget>

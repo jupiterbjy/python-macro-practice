@@ -9,16 +9,22 @@
       <excludeFolder url="file://$MODULE_DIR$/CustomAction" />
       <excludeFolder url="file://$MODULE_DIR$/Dungeon" />
       <excludeFolder url="file://$MODULE_DIR$/Event_BossLoop" />
+      <excludeFolder url="file://$MODULE_DIR$/External" />
       <excludeFolder url="file://$MODULE_DIR$/Legacy" />
       <excludeFolder url="file://$MODULE_DIR$/Preset1" />
       <excludeFolder url="file://$MODULE_DIR$/Preset2" />
       <excludeFolder url="file://$MODULE_DIR$/Preset_backup" />
       <excludeFolder url="file://$MODULE_DIR$/build" />
       <excludeFolder url="file://$MODULE_DIR$/dist" />
+      <excludeFolder url="file://$MODULE_DIR$/history" />
       <excludeFolder url="file://$MODULE_DIR$/testingEnv" />
       <excludeFolder url="file://$MODULE_DIR$/venv" />
     </content>
     <orderEntry type="jdk" jdkName="Python 3.8 (python-macro-practice)" jdkType="Python SDK" />
     <orderEntry type="sourceFolder" forTests="false" />
+  </component>
+  <component name="PackageRequirementsSettings">
+    <option name="versionSpecifier" value="Strong equality (==x.y.z)" />
+    <option name="removeUnused" value="true" />
   </component>
 </module>

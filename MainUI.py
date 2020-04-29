@@ -1,35 +1,27 @@
 from PySide2.QtWidgets import QFileDialog, QListWidgetItem, QMainWindow
-from PySide2 import QtCore, QtGui
+from PySide2.QtCore import Signal
+from PySide2.QtGui import QCloseEvent
 import os
 import json
 
-from Toolset import QtTools, ObjectDispatch, Tools, TextTools
-from Toolset.QtTools import IMG_CONVERT, ICON_LOCATION, ICON_ASSIGN, appendText
+from Toolset import QtTools, ObjectDispatch, Tools
 from qtUI.pymacro import Ui_MainWindow
 from Toolset.Tools import nameCaller
 import MacroMethods
 
-# <To-Do>
-# Support variable assign on objects other than Variables.
-# Change to ListView or ScrollArea from ListItem.
-# Redirect print event to file
-# Add image showing on double-click to object in history.
-# Remove obsolete debug signals.
-# figure out white image causing crash on matching image
-# Cleanup messy import chains
-
 
 class MainWindow(QMainWindow, Ui_MainWindow):
 
-    exitSignal = QtCore.Signal()
-    windowSwitchSignal = QtCore.Signal(object)
-    showAbout = QtCore.Signal()
+    exitSignal = Signal()
+    macroExecute = Signal(object)
+    showAbout = Signal()
+    showLogger = Signal()
 
     def __init__(self, version):
         super(MainWindow, self).__init__()
         self.setupUi(self)
 
-        self.setWindowTitle('Python Macro Sequence - ' + version)
+        self.setWindowTitle("Python Macro Sequence - " + version)
 
         self.seqStorage = []
         self.seqBackup = []  # Consumes memory!
@@ -56,19 +48,14 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.actionLoad.triggered.connect(self.seqLoad)
         self.actionExit.triggered.connect(self.close)
         self.actionAbout.triggered.connect(self.showAbout.emit)
-
-        self._stdout = QtTools.StdoutRedirect()
-        self.StdRedirect()
-        self.debugCheck.stateChanged.connect(self.StdRedirect)
+        self.actionLogger.triggered.connect(self.showLogger.emit)
 
         self.initializing()
 
-        self.recentImageDir = os.getcwd()
-        self.recentIoDir = os.getcwd()
-
+        self.recentDir = {"Image": os.getcwd(), "IO": os.getcwd()}
         self.cachedImage = {"search": None, "count": None}
 
-    def closeEvent(self, event: QtGui.QCloseEvent):
+    def closeEvent(self, event: QCloseEvent):
         self.exitSignal.emit()
 
     def moveOrder(self, up=True):
@@ -107,21 +94,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
             self.sequenceList.setCurrentRow(move_idx)
             self._updateToSelected()
-
-    def StdRedirect(self):
-        """
-        Redirects print event to TextEdit.
-        Check StdoutRedirect class in QtTools for more detail.
-        """
-        if self.debugCheck.isChecked():
-            self._stdout.stop()
-            TextTools.COLORIZE_ENABLE = False
-        else:
-            self._stdout.start()
-            self._stdout.printOccur.connect(
-                lambda x: appendText(self.outputTextEdit, x)
-            )
-            TextTools.COLORIZE_ENABLE = True
 
     def removeElement(self, idx=None):
         """
@@ -168,10 +140,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         MacroMethods.SetNext(self.seqStorage)
 
         try:
-            self.windowSwitchSignal.emit(self.seqStorage[0])
+            self.macroExecute.emit(self.seqStorage[0])
 
         except IndexError:
-            self.StdRedirect()
             print("runSeq: Nothing To play.")
 
         else:
@@ -217,11 +188,10 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         Saves current sequence into json serialized format.
         """
 
-        print(self.recentImageDir, self.recentIoDir)
         nameCaller((225, 8, 0))
 
         name = QFileDialog.getSaveFileName(
-            self, "Save file", self.recentIoDir, filter="*.json"
+            self, "Save file", self.recentDir["IO"], filter="*.json"
         )[0]
         for i in self.seqStorage:
             i.reset()
@@ -232,18 +202,17 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         except FileNotFoundError:
             print("└ Save canceled")
         else:
-            self.recentIoDir = os.path.dirname(name)
+            self.recentDir["IO"] = os.path.dirname(name)
 
     def seqLoad(self):
         """
         Loads json serialized Macro Sequence.
         """
 
-        print(self.recentImageDir, self.recentIoDir)
         nameCaller((225, 8, 0))
 
         name = QFileDialog.getOpenFileName(
-            self, "Load File", self.recentIoDir, filter="*.json"
+            self, "Load File", self.recentDir["IO"], filter="*.json"
         )[0]
 
         try:
@@ -266,7 +235,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         else:
             deserialized = MacroMethods.Deserializer(baked)
-            self.recentIoDir = os.path.dirname(name)
+            self.recentDir["IO"] = os.path.dirname(name)
 
         self.initializing(manual=True)
 
@@ -302,7 +271,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         """
 
         def iconSet(name):
-            temp = ICON_LOCATION + ICON_ASSIGN.setdefault(name, "default")
+            temp = QtTools.ICON_LOCATION + QtTools.ICON_ASSIGN.setdefault(
+                name, "default"
+            )
             return Tools.resource_path(temp)
 
         def setItems(item_list):
@@ -408,11 +379,10 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         :param cache_name: string key for cached image name.
         :return: return false on TypeError.
         """
-        print(self.recentImageDir, self.recentIoDir)
 
         try:
-            img, file_name, self.recentImageDir = QtTools.loadImage(
-                self, self.recentImageDir
+            img, file_name, self.recentDir["Image"] = QtTools.loadImage(
+                self, self.recentDir["Image"]
             )
 
         except TypeError:
@@ -425,7 +395,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             if img is not None:
                 self.cachedImage[cache_name] = img
                 name_label.setText(file_name)
-                img_label.setPixmap(QtTools.setPix(img).scaled(*IMG_CONVERT))
+                img_label.setPixmap(QtTools.setPix(img).scaled(*QtTools.IMG_CONVERT))
                 img_label.setStyleSheet("background-color: rgba(40, 40, 40, 255);")
 
     @staticmethod
@@ -443,7 +413,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             img_label.setStyleSheet("background-color: rgba(240, 240, 240, 255);")
 
         else:
-            img_label.setPixmap(QtTools.setPix(obj.targetImage).scaled(*IMG_CONVERT))
+            img_label.setPixmap(
+                QtTools.setPix(obj.targetImage).scaled(*QtTools.IMG_CONVERT)
+            )
             # name_label.setText(obj.name)
             img_label.setStyleSheet("background-color: rgba(40, 40, 40, 255);")
 
@@ -660,9 +632,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.varGroup,
             self.dragGroup,
         ]
-
-        if self.lockLogCheck.isChecked():
-            return
 
         # release-connect args with row index for currentRowChanged. Counting this in.
         if target is None or isinstance(target, int):
