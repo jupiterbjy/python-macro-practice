@@ -1,0 +1,48 @@
+{
+  "type": [
+    "LoopStart",
+    "Wait",
+    "LoopEnd"
+  ],
+  "data": [
+    {
+      "name": "LoopStart",
+      "next": null,
+      "onSuccess": null,
+      "onFail": null,
+      "screenArea": null
+    },
+    {
+      "name": "Wait",
+      "next": null,
+      "onSuccess": null,
+      "onFail": null,
+      "screenArea": null,
+      "delay": 1.0
+    },
+    {
+      "name": "LoopEnd",
+      "next": null,
+      "onSuccess": null,
+      "onFail": null,
+      "screenArea": null,
+      "loopCount": 1,
+      "loopTime": 0,
+      "idx": null
+    }
+  ],
+  "reference": [
+    [
+      null,
+      null
+    ],
+    [
+      1,
+      null
+    ],
+    [
+      0,
+      null
+    ]
+  ]
+}

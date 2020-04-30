@@ -5,17 +5,14 @@ import time
 import pyautogui
 import io
 import base64
-import copy
 import logging
 
 from Toolset import MemberLoader, ImageModule
 
-SLEEP_FUNCTION = time.sleep  # Will be override-d by ui_main.
+SLEEP_FUNCTION = time.sleep  # Will be override by ui_main.
 LOGGER = logging.getLogger()
 IMG_SAVER = False
 ABORT = False
-RAND_OFFSET = False
-OFFSET_MAX = 5
 DUMP = False
 
 
@@ -195,10 +192,11 @@ class LoopEnd(ExBase):
         self.next = None
         self.loopCount = 3
         self.loopTime = 0
+        self.idx = None  # Convenient variable
 
     def action(self):
         self.loopTime += 1
-        return self.loopTime < self.loopCount
+        return self.loopTime > self.loopCount
 
     def reset(self):
         self.screenArea = None

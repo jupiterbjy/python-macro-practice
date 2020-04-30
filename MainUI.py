@@ -260,8 +260,10 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         self.sequenceList.clear()
         self._comboBoxUpdateNew()
+        self._comboBoxLoopUpdate()
         self.onFailCombo.setCurrentIndex(0)
         self.onSuccessCombo.setCurrentIndex(0)
+        self.loopStartCombo.setCurrentIndex(0)
         self._disableOptions(MacroMethods.Click())
 
     def listAvailableMethods(self):
@@ -314,6 +316,11 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 print("└ Object config Failed.")
                 return
 
+            except IndexError as err:
+                print(err.args[0])
+                print("Object config Failed.")
+                return
+
             else:
                 obj = target
 
@@ -342,6 +349,22 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.onSuccessCombo.setCurrentIndex(success_bk)
         self.onFailCombo.setCurrentIndex(fail_bk)
 
+    @property
+    def listLoopStarts(self):
+        return [i for i in self.seqStorage if isinstance(i, MacroMethods.LoopStart)]
+
+    def _comboBoxLoopUpdate(self):
+        curr = self.loopStartCombo.currentIndex()
+
+        self.loopStartCombo.clear()
+
+        self.loopStartCombo.addItem("Select..")
+
+        for e in self.listLoopStarts:
+            self.loopStartCombo.addItem(e.name)
+
+        self.loopStartCombo.setCurrentIndex(curr)
+
     def _comboBoxUpdateSelected(self, target=None):
         if target:
             obj = target
@@ -361,6 +384,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.onFailCombo.setCurrentIndex(0)
         else:
             self.onFailCombo.setCurrentIndex(index + 1)
+
 
     def _setXYFromImage(self):
         """
@@ -477,17 +501,27 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             obj.precision = self.searchPrecisionSpin.value() / 100
             obj.targetName = self.searchImgNameLabel.text()
 
-        @dispatch.register(MacroMethods.Loop)
+        @dispatch.register(MacroMethods.LoopStart)
         def _(obj):
-
             pass
+
+        @dispatch.register(MacroMethods.LoopEnd)
+        def _(obj):
+            obj.loopCount = self.loopCountSpin.value()
+
+            if self.loopStartCombo.currentIndex() > 0:
+                idx = self.loopStartCombo.currentIndex()
+                obj.onSuccess = self.listLoopStarts[idx - 1]
+
+            else:
+                raise IndexError("LoopEnd: No Target specified.")
 
         @dispatch.register(MacroMethods.SearchOccurrence)
         def _(obj):
             try:
                 obj.targetImage = self.cachedImage["count"]
             except AttributeError:
-                raise AttributeError("No Image specified.")
+                raise AttributeError("SearchOccurrence: No Image specified.")
 
             obj.randomOffset = self.countRandSpin.value()
 
@@ -535,16 +569,16 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 source = target
 
         src = type(source).__name__
-        self.methodList.setCurrentRow(MacroMethods.__all__.index(src))
 
         if self.sequenceList.currentItem() is not None:
+            self.methodList.setCurrentRow(MacroMethods.__all__.index(src))
             self.editButton.setEnabled(True)
+            self.nameLine.setText(source.name)
+            self._disableOptions(source)
+            self._comboBoxUpdateSelected(source)
         else:
             self.editButton.setDisabled(True)
 
-        self.nameLine.setText(source.name)
-        self._disableOptions(source)
-        self._comboBoxUpdateSelected(source)
 
         dispatch = ObjectDispatch.preset()
 
@@ -584,8 +618,14 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
             self.cachedImage["search"] = obj.targetImage
 
-        @dispatch.register(MacroMethods.Loop)
+        @dispatch.register(MacroMethods.LoopStart)
         def _(obj):
+            pass
+
+        @dispatch.register(MacroMethods.LoopEnd)
+        def _(obj):
+            idx = self.listLoopStarts.index(obj.onSuccess)
+            self.loopStartCombo.setCurrentIndex(idx + 1)
             pass
 
         @dispatch.register(MacroMethods.SearchOccurrence)
@@ -607,7 +647,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         @dispatch.register(MacroMethods.Variable)
         def _(obj):
             self.variableLine.setText(str(obj.value))
-            # print("Current Variables: ", MacroMethods.ExBase.variables)
 
         @dispatch.register(MacroMethods.Wait)
         def _(obj):
@@ -646,6 +685,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         for i in range(3):
             self.tabWidget.setTabEnabled(i, False)
 
+        self.loopStartCombo.setDisabled(True)   # Workaround
+        self.onSuccessCombo.setEnabled(True)
+
         dispatch = ObjectDispatch.preset()
 
         # Dispatching =====================================
@@ -667,11 +709,23 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.tabWidget.setCurrentIndex(0)
             self.tabWidget.setTabEnabled(0, True)
 
-        @dispatch.register(MacroMethods.Loop)
+        @dispatch.register(MacroMethods.LoopStart)
         def _(_):
+            self._comboBoxLoopUpdate()
             self.tabWidget.setCurrentIndex(2)
             self.tabWidget.setTabEnabled(2, True)
             self.loopGroup.setEnabled(True)
+            self.loopStartCombo.setDisabled(True)
+            self.onSuccessCombo.setDisabled(True)
+
+        @dispatch.register(MacroMethods.LoopEnd)
+        def _(_):
+            self._comboBoxLoopUpdate()
+            self.tabWidget.setCurrentIndex(2)
+            self.tabWidget.setTabEnabled(2, True)
+            self.loopGroup.setEnabled(True)
+            self.loopStartCombo.setEnabled(True)
+            self.onSuccessCombo.setDisabled(True)
 
         @dispatch.register(MacroMethods.SearchOccurrence)
         def _(_):

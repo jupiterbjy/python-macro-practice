@@ -2,7 +2,7 @@ from PySide2.QtCore import QRunnable, Slot, Signal
 from PySide2.QtWidgets import QMainWindow, QDialog, QWidget
 import pyautogui
 
-from Toolset import QtTools, Tools
+from Toolset import QtTools, Tools, TextTools
 from qtUI.Runner import Ui_Form
 from qtUI.aboutDialog import Ui_About
 from qtUI.debugWindow import Ui_DebugWindow
@@ -93,8 +93,11 @@ class RunnerWindow(QWidget, Ui_Form):
             obj.setArea(*area)
 
     def updateHistory(self, obj=None):
-
-        widget = self.currentSeq.itemWidget(self.currentSeq.item(0))
+        try:
+            widget = self.currentSeq.itemWidget(self.currentSeq.item(0))
+        except RuntimeError:
+            self.logger.warning(f'RuntimeError - Widget already destroyed.')
+            widget = QtTools.GenerateWidget(self.source)
 
         try:
             QtTools.AddToListWidget(widget.source, self.sequenceList, 0)
@@ -220,38 +223,45 @@ class DebugWindow(QWidget, Ui_DebugWindow):
             "clear": self.clear,
         }
 
-    def help(self, *args):
-        """
-        help: display this message.
-        """
-        msg = "".join([i.__doc__ for i in self.commandList.values()])
+        TextTools.COLORIZE_ENABLE = True
 
-        self.debugOutput.insertHtml(msg.replace("\n", "<br/>"))
+    def help(self, *args):
+        """help: display this message."""
+        msg = "<br/>".join([i.__doc__ for i in self.commandList.values()])
+
+        self.debugOutput.insertHtml(msg.replace("\n", "<br/>") + "<br/>" * 2)
 
     def processCommand(self):
-        line = self.commandLine.text().split()
+        raw = self.commandLine.text()
+        line = raw.split()
         self.commandLine.clear()
-        self.commandList[line[0]](line[:1])
+
+        formatted = TextTools.QtColorize(raw + "<br/>", (120, 255, 120))
+        self.debugOutput.insertHtml(formatted)
+
+        try:
+            self.commandList[line[0]](line[:1])
+        except KeyError:
+            formatted = TextTools.QtColorize(
+                f"Unrecognized command: {line[0]}", (255, 120, 120)
+            )
+            self.debugOutput.insertHtml(formatted + "<br/>" + "<br/>")
 
     def clear(self, *args):
-        """
-        clear: clears logging screen
-        """
+        """clear: clears logging screen"""
         self.debugOutput.clear()
 
     def listTarget(self, arg, *args):
-        """
-        list: show list of target. supported are:
+        """list: show list of target. supported are:
         └ list macro: Show list of element in macro.
-        └ list variable: Show list of variables.
-        """
+        └ list variable: Show list of variables."""
 
         if "var" in arg:
             self.listVariables()
         elif "mac" in arg:
             self.listMacroElements()
         else:
-            self.debugOutput.insertHtml("Unrecognized command:", arg)
+            raise KeyError
 
     def listVariables(self):
         pass
@@ -280,4 +290,4 @@ class DebugWindow(QWidget, Ui_DebugWindow):
         elif "mac" in arg:
             inspect_macro(*args)
         else:
-            self.debugOutput.insertHtml("Unrecognized command:", arg)
+            raise KeyError
