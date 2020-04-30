@@ -13,7 +13,6 @@ from PySide2.QtWidgets import (
 
 from PIL import Image, ImageQt
 import sys
-import io
 import pyautogui
 import keyboard
 
@@ -25,6 +24,7 @@ from Toolset.ImageModule import Pos, Area
 
 
 TIMER_RUNNING = []
+ABORT_SIGNALED = False
 
 ABOUT_IMAGE = "About.png"
 IMG_CONVERT = (226, 151, Qt.KeepAspectRatio)
@@ -46,25 +46,6 @@ ICON_ASSIGN = {
 
 class RunnerSignal(QObject):
     signal = Signal()
-
-
-class StdToFile(QObject):
-
-    printOccur = Signal(str, name="print")
-
-    def __init__(self):
-        QObject.__init__(self, None)
-        self.stdFile = io.StringIO()
-        self.print_bak = print
-
-    def start(self):
-        print = lambda *args: self.print_bak(args, file=self.stdFile)
-
-    def stop(self):
-        print = self.print_bak
-
-    def write(self, s):
-        self.printOccur.emit(s)
 
 
 class StdoutRedirect(QObject):
@@ -217,7 +198,7 @@ def AddToListWidget(tgt, item_list_widget, index=None):
 
     if index is not None:
         item_list_widget.insertItem(index, list_item)
-        print('inserting to', index)
+        print("inserting to", index)
 
     else:
         item_list_widget.addItem(list_item)
@@ -229,6 +210,7 @@ def AbortTimers():
     Kills all Timers currently signed in Global list TIMER_RUNNING.
     Assuming Timers are added in tuple(QTimer, QEventLoop) format.
     """
+
     for timer in TIMER_RUNNING:
         timer[0].stop()
         timer[1].quit()
@@ -236,7 +218,7 @@ def AbortTimers():
     TIMER_RUNNING.clear()
 
 
-def QSleep(delay, output=False):
+def QSleep(delay, output=False, append=True):
     # https://stackoverflow.com/questions/21079941
     # https://stackoverflow.com/questions/41309833
 
@@ -250,10 +232,16 @@ def QSleep(delay, output=False):
         timer.setSingleShot(True)
         timer.timeout.connect(loop.quit)
 
-        TIMER_RUNNING.append((timer, loop))
+        if append:
+            TIMER_RUNNING.append((timer, loop))
 
-        timer.start(delay * 1000)
-        loop.exec_()
+            timer.start(delay * 1000)
+            loop.exec_()
+
+            TIMER_RUNNING.pop()
+        else:
+            timer.start(delay * 1000)
+            loop.exec_()
 
     class context:
         def __enter__(self):
@@ -271,6 +259,9 @@ def QSleep(delay, output=False):
 
 
 def getCaptureArea():
+
+    # Fix not aborting issue here.
+
     """
     Get area to work with.
     """
@@ -278,31 +269,25 @@ def getCaptureArea():
     p2 = Pos()
     kill_key = "f2"
 
-    class BreakKeyInput:
-        # Delays until key is up, to prevent next input skipping.
-        def __enter__(self):
-            nameCaller()
-            print(f"└ Waiting for press:{kill_key}")
-
-            while not keyboard.is_pressed(kill_key):
-                QSleep(0.05)
-
-        def __exit__(self, exc_type, exc_val, exc_tb):
-            print(f"└ Waiting for release:{kill_key}")
-
-            while keyboard.is_pressed(kill_key):
-                QSleep(0.05)
-
     def getPos(p):
         nonlocal kill_key
 
-        with BreakKeyInput():
-            p.set(*pyautogui.position())
+        while (not keyboard.is_pressed(kill_key)) and (not ABORT_SIGNALED):
+            # fix loop here
+            QSleep(0.05, append=False)
+
+        p.set(*pyautogui.position())
+
+        while (keyboard.is_pressed(kill_key)) and (not ABORT_SIGNALED):
+            QSleep(0.05, append=False)
 
     getPos(p1)
     getPos(p2)
 
-    return Area.fromPos(p1, p2)
+    if ABORT_SIGNALED:
+        raise TypeError
+    else:
+        return Area.fromPos(p1, p2)
 
 
 def appendText(text_edit, msg, newline=True):

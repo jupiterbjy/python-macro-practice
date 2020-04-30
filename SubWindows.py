@@ -96,7 +96,7 @@ class RunnerWindow(QWidget, Ui_Form):
         try:
             widget = self.currentSeq.itemWidget(self.currentSeq.item(0))
         except RuntimeError:
-            self.logger.warning(f'RuntimeError - Widget already destroyed.')
+            self.logger.warning("RuntimeError - Widget already destroyed.")
             widget = QtTools.GenerateWidget(self.source)
 
         try:
@@ -154,7 +154,14 @@ class RunnerWindow(QWidget, Ui_Form):
         self.updateButtonState()
 
         self.injectGlobals()
-        self.areaInject()
+        try:
+            self.areaInject()
+
+        except TypeError:
+            self.logger.critical("Macro aborted.")
+            self.endSeq()
+            return
+
         self.runLine.setText("Macro started.")
 
         worker = Worker(self.runSeq_Threaded, self.source)
@@ -165,18 +172,19 @@ class RunnerWindow(QWidget, Ui_Form):
             self.logger.critical(str(err))
 
     def endSeq(self):
-        Tools.nameCaller()
-
         for i in self.source:
             i.reset()
 
         self.sequenceStarted = False
         self.updateButtonState()
         MacroMethods.ABORT = False
+        QtTools.ABORT_SIGNALED = False
 
-    @staticmethod
-    def stopSeq():
+    def stopSeq(self):
+        self.runLine.setText("Macro aborted.")
+
         MacroMethods.ABORT = True
+        QtTools.ABORT_SIGNALED = True
         QtTools.AbortTimers()
 
     def updateButtonState(self):
@@ -220,6 +228,7 @@ class DebugWindow(QWidget, Ui_DebugWindow):
         self.commandList = {
             "help": self.help,
             "list": self.listTarget,
+            "inspect": self.inspect,
             "clear": self.clear,
         }
 
@@ -240,25 +249,26 @@ class DebugWindow(QWidget, Ui_DebugWindow):
         self.debugOutput.insertHtml(formatted)
 
         try:
-            self.commandList[line[0]](line[:1])
+            func = self.commandList[line[0]]
+            func(*line[1:])
         except KeyError:
             formatted = TextTools.QtColorize(
                 f"Unrecognized command: {line[0]}", (255, 120, 120)
             )
             self.debugOutput.insertHtml(formatted + "<br/>" + "<br/>")
 
-    def clear(self, *args):
+    def clear(self, *args2):
         """clear: clears logging screen"""
         self.debugOutput.clear()
 
-    def listTarget(self, arg, *args):
+    def listTarget(self, *args2):
         """list: show list of target. supported are:
         └ list macro: Show list of element in macro.
-        └ list variable: Show list of variables."""
+        └ list variable: Show list of variables. <- Dummy"""
 
-        if "var" in arg:
+        if "var" in args2[0]:
             self.listVariables()
-        elif "mac" in arg:
+        elif "mac" in args2[0]:
             self.listMacroElements()
         else:
             raise KeyError
@@ -267,27 +277,29 @@ class DebugWindow(QWidget, Ui_DebugWindow):
         pass
 
     def listMacroElements(self):
-        for i in self.runner.source:
-            self.debugOutput.insertHtml(f"{i.__repr__()}")
+        for i in self.editor.seqStorage:
+            t = f"{i.__repr__()}".replace('\n', '<br/>')
+            self.debugOutput.insertHtml(t)
         pass
 
-    def inspect(self, arg, *args):
-        def inspect_variables(arg2, *args2):
+    def inspect(self, *args):
+        """inspect: Dummy"""
+        def inspect_variables(*args2):
             pass
 
-        def inspect_macro(arg2, *args2):
+        def inspect_macro(*args2):
             # change this into name-based search later, maybe.
 
             try:
-                target = self.runner.source[arg2]
+                target = self.runner.source[args2[0]]
             except IndexError:
                 self.debugOutput.insertHtml("Index out of range.")
             else:
                 self.debugOutput.insertHtml(target.__repr__())
 
-        if "var" in arg:
-            inspect_variables(*args)
-        elif "mac" in arg:
+        if "var" in args[0]:
+            inspect_variables(*args[:])
+        elif "mac" in args[0]:
             inspect_macro(*args)
         else:
             raise KeyError

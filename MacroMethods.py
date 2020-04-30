@@ -64,7 +64,7 @@ class ExBase:  # Excluded - Ex
         msg = f"{type(self).__name__} instance <{self.name}>\n"
         properties = [f"┠─{k}: {v}" for k, v in self.__dict__.items()]
 
-        return msg + "\n".join(properties)
+        return msg + "\n".join(properties) + "\n"
 
     def setName(self, text):
         self.name = str(text)

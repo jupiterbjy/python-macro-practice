@@ -26,7 +26,7 @@
       "onSuccess": null,
       "onFail": null,
       "screenArea": null,
-      "loopCount": 1,
+      "loopCount": 2,
       "loopTime": 0,
       "idx": null
     }
@@ -37,11 +37,11 @@
       null
     ],
     [
-      1,
+      null,
       null
     ],
     [
-      0,
+      null,
       null
     ]
   ]

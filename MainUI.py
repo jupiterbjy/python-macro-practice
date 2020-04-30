@@ -385,7 +385,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         else:
             self.onFailCombo.setCurrentIndex(index + 1)
 
-
     def _setXYFromImage(self):
         """
         Set coordinates from given Image.
@@ -440,7 +439,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             img_label.setPixmap(
                 QtTools.setPix(obj.targetImage).scaled(*QtTools.IMG_CONVERT)
             )
-            # name_label.setText(obj.name)
             img_label.setStyleSheet("background-color: rgba(40, 40, 40, 255);")
 
     def _configObject(self, target, clear_text=True):
@@ -579,7 +577,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         else:
             self.editButton.setDisabled(True)
 
-
         dispatch = ObjectDispatch.preset()
 
         # Dispatching =====================================
@@ -685,7 +682,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         for i in range(3):
             self.tabWidget.setTabEnabled(i, False)
 
-        self.loopStartCombo.setDisabled(True)   # Workaround
         self.onSuccessCombo.setEnabled(True)
 
         dispatch = ObjectDispatch.preset()
@@ -714,9 +710,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self._comboBoxLoopUpdate()
             self.tabWidget.setCurrentIndex(2)
             self.tabWidget.setTabEnabled(2, True)
-            self.loopGroup.setEnabled(True)
-            self.loopStartCombo.setDisabled(True)
-            self.onSuccessCombo.setDisabled(True)
 
         @dispatch.register(MacroMethods.LoopEnd)
         def _(_):
