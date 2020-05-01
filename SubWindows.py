@@ -1,4 +1,4 @@
-from PySide2.QtCore import QRunnable, Slot, Signal
+from PySide2.QtCore import QRunnable, Slot, Signal, QThreadPool
 from PySide2.QtWidgets import QMainWindow, QDialog, QWidget
 import pyautogui
 
@@ -67,6 +67,9 @@ class RunnerWindow(QWidget, Ui_Form):
         self.stopButton.released.connect(self.stopSeq)
         self.source = None
 
+        self.threadPool = QThreadPool()
+        print("maximum %d threads" % self.threadPool.maxThreadCount())
+
     def setSource(self, source):
         self.source = source
         self.updateHistory(self.source)
@@ -109,7 +112,7 @@ class RunnerWindow(QWidget, Ui_Form):
         if obj:
             QtTools.AddToListWidget(obj, self.currentSeq)
 
-    def runSeq_Threaded(self, obj):
+    def _runSeq_Threaded(self, obj):
 
         seq_count = 0
 
@@ -164,9 +167,10 @@ class RunnerWindow(QWidget, Ui_Form):
 
         self.runLine.setText("Macro started.")
 
-        worker = Worker(self.runSeq_Threaded, self.source)
+        worker = Worker(self._runSeq_Threaded, self.source)
         try:
-            worker.run()
+            self.threadPool.start(worker)  # Thread needed..?
+
         except Exception as err:
             # Assume no error has line-break.
             self.logger.critical(str(err))
@@ -202,11 +206,8 @@ class AboutWindow(QMainWindow, Ui_About):
         super(AboutWindow, self).__init__()
         self.setupUi(self)
 
-        self.label.setPixmap(
-            QtTools.setPix(
-                Tools.resource_path(QtTools.ICON_LOCATION + QtTools.ABOUT_IMAGE)
-            )
-        )
+        image_path = QtTools.ICON_LOCATION + QtTools.ABOUT_IMAGE
+        self.label.setPixmap(QtTools.setPix(Tools.PathData.relative(image_path)))
 
         source = self.versionArea.toHtml()
         source = source.replace("DATE", version)
@@ -216,7 +217,7 @@ class AboutWindow(QMainWindow, Ui_About):
 
 
 class DebugWindow(QWidget, Ui_DebugWindow):
-    def __init__(self, logger, editor, runner):
+    def __init__(self, logger, stream, editor, runner):
         super(DebugWindow, self).__init__()
         self.setupUi(self)
 
@@ -224,6 +225,12 @@ class DebugWindow(QWidget, Ui_DebugWindow):
         self.editor = editor
         self.runner = runner
         self.logger = logger
+        self.stream = stream
+
+        log_thread = Worker(self.log_to_gui)
+        self.active = True
+        self.threadPool = QThreadPool()
+        self.threadPool.start(log_thread)
 
         self.commandList = {
             "help": self.help,
@@ -233,6 +240,34 @@ class DebugWindow(QWidget, Ui_DebugWindow):
         }
 
         TextTools.COLORIZE_ENABLE = True
+
+    def log_rewind(self):
+        current = self.stream.tell() - 2
+        try:
+            self.stream.seek(current)
+        except ValueError:
+            return None
+
+        while self.stream.read(1) != '\n':
+            current -= 1
+            if current < 0:
+                break
+
+            self.stream.seek(current)
+        else:
+            return self.stream.read()
+
+    def log_to_gui(self):
+        last = ''
+        while self.active:
+            curr = self.log_rewind()
+            if curr != last:
+                self.logOutput.insertHtml(curr + '<br/>' * 2)
+                last = curr
+
+            QtTools.QSleep(0.5, append=False)
+
+    # ---------------------------------------------------------
 
     def help(self, *args):
         """help: display this message."""
@@ -250,7 +285,7 @@ class DebugWindow(QWidget, Ui_DebugWindow):
 
         try:
             func = self.commandList[line[0]]
-            func(*line[1:])
+            func(*line[1:])  # unexpected arguments? why?
         except KeyError:
             formatted = TextTools.QtColorize(
                 f"Unrecognized command: {line[0]}", (255, 120, 120)
@@ -278,12 +313,12 @@ class DebugWindow(QWidget, Ui_DebugWindow):
 
     def listMacroElements(self):
         for i in self.editor.seqStorage:
-            t = f"{i.__repr__()}".replace('\n', '<br/>')
+            t = f"{i.__repr__()}".replace("\n", "<br/>")
             self.debugOutput.insertHtml(t)
-        pass
 
     def inspect(self, *args):
         """inspect: Dummy"""
+
         def inspect_variables(*args2):
             pass
 

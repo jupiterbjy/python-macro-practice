@@ -63,4 +63,4 @@ def TerminalColorize(txt, color):
     return ANSI_C.table[color] + s + ANSI_C.table["END"]
 
 
-__all__ = MemberLoader.ListFunction(__name__, prefix_mode=True)
+__all__ = MemberLoader.ListFunction(__name__)

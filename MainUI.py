@@ -276,7 +276,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             temp = QtTools.ICON_LOCATION + QtTools.ICON_ASSIGN.setdefault(
                 name, "default"
             )
-            return Tools.resource_path(temp)
+            return Tools.PathData.relative(temp)
 
         def setItems(item_list):
             """
@@ -623,7 +623,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         def _(obj):
             idx = self.listLoopStarts.index(obj.onSuccess)
             self.loopStartCombo.setCurrentIndex(idx + 1)
-            pass
 
         @dispatch.register(MacroMethods.SearchOccurrence)
         def _(obj):

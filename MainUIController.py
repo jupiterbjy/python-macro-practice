@@ -36,7 +36,7 @@ class Controller:
 
         self.runner = SubWindows.RunnerWindow(LOGGER)
         self.about = SubWindows.AboutWindow(VERSION, DATE)
-        self.debugger = SubWindows.DebugWindow(LOGGER, self.editor, self.runner)
+        self.debugger = SubWindows.DebugWindow(LOGGER, LOG_STREAM, self.editor, self.runner)
 
     def show_editor(self):
         LOGGER.info("Calling Editor.")
@@ -56,9 +56,6 @@ class Controller:
         LOGGER.info("Calling Logger/Debugger.")
         self.debugger.show()
 
-    def log_to_gui(self):
-        self.debugger.logOutput.insertHtml(log_rewind(LOG_STREAM))
-
     def kill_all(self):
         for window in (self.about, self.runner, self.debugger):
             try:
@@ -67,23 +64,6 @@ class Controller:
                 pass
             except AttributeError:
                 pass
-
-
-def log_rewind(stream):
-    current = stream.tell() - 2
-    try:
-        stream.seek(current)
-    except ValueError:
-        return None
-
-    while stream.read(1) != '\n':
-        current -= 1
-        if current < 0:
-            break
-
-        stream.seek(current)
-    else:
-        return stream.read()
 
 
 def log_initialize():
@@ -100,14 +80,14 @@ def log_initialize():
 if __name__ == "__main__":
     log_initialize()
 
-    Tools.IsFrozen()
-    Tools.relative_path_set(__file__)
+    Tools.PathData.setRelativePath(__file__)
+    LOGGER.info(f"Freeze State: {Tools.IsFrozen()}")
 
-    if not os.path.exists(Tools.resource_path("history")):
+    if not os.path.exists(Tools.PathData.relative("history")):
         LOGGER.info('Image dumping folder not found, creating new.')
-        os.mkdir(Tools.resource_path("history"))
+        os.mkdir(Tools.PathData.relative("history"))
 
-    MacroMethods.IMG_SAVER = ImageModule.saveImg(Tools.resource_path("history"))
+    MacroMethods.IMG_SAVER = ImageModule.saveImg(Tools.PathData.relative("history"))
 
     app = QtWidgets.QApplication(sys.argv)
     controller = Controller()

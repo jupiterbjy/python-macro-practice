@@ -16,7 +16,7 @@ import sys
 import pyautogui
 import keyboard
 
-from Toolset.Tools import nameCaller, resource_path
+from Toolset.Tools import nameCaller, PathData
 from Toolset.TextTools import QtColorize
 from Toolset.ImageModule import Pos, Area
 
@@ -106,7 +106,7 @@ class SeqItemWidget(QWidget):
     def setup(self, t_up, t_down, img_path):
         self.textUpLabel.setText(t_up)
         self.textDownLabel.setText(t_down)
-        self.iconLabel.setPixmap(setPix(resource_path(img_path)))
+        self.iconLabel.setPixmap(setPix(PathData.relative(img_path)))
         self.iconLabel.setScaledContents(True)
 
     def assign(self, obj):
@@ -286,8 +286,8 @@ def getCaptureArea():
 
     if ABORT_SIGNALED:
         raise TypeError
-    else:
-        return Area.fromPos(p1, p2)
+
+    return Area.fromPos(p1, p2)
 
 
 def appendText(text_edit, msg, newline=True):

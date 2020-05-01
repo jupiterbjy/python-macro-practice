@@ -6,53 +6,38 @@ Stores Mostly one-time use functions separated from used sources.
 """
 
 
-def IsFrozen(change_dir=True):
+def IsFrozen():
     """
     Checks whether Python instance is Frozen(aka onefile) or not.
     :param change_dir: If true, will set working directory where exe is.
     :return: Returns True-False according to frozen state.
     """
     if getattr(sys, "frozen", False):
-        print('Frozen')
-        if change_dir:
-            try:
-                os.chdir(os.path.dirname(sys.executable))
-            except WindowsError as we:
-                print(we)
         return True
 
-    file_dir = os.path.dirname(sys.argv[0])
-    # Fail-safe in terminal path showing relative path.
-    try:
-        os.chdir(file_dir)
-    except OSError:
-        print("In relative path")
     return False
 
 
-MAIN_LOCATION = __file__
-base_path = os.path.dirname(os.path.abspath(MAIN_LOCATION))
+class PathData:
+    MAIN_LOCATION = __file__
+    ABS_PATH = os.path.abspath(MAIN_LOCATION)
+    BASE_PATH = os.path.dirname(ABS_PATH)
 
+    @staticmethod
+    def setRelativePath(script_location):
+        PathData.MAIN_LOCATION = script_location
+        PathData.ABS_PATH = os.path.abspath(script_location)
+        PathData.BASE_PATH = os.path.dirname(PathData.ABS_PATH)
 
-def relative_path_set(main_script_file):
-    global MAIN_LOCATION, base_path
-    MAIN_LOCATION = main_script_file
-    base_path = os.path.dirname(os.path.abspath(MAIN_LOCATION))
+    # https://stackoverflow.com/questions/7674790
+    @staticmethod
+    def pyinstaller_onefile(relative_path):
+        base = getattr(sys, "_MEIPASS", PathData.ABS_PATH)
+        return os.path.join(base, relative_path)
 
-
-# https://stackoverflow.com/questions/7674790
-def resource_path_pyinstaller(relative_path):
-    """ Get absolute path to resource, works for dev and for PyInstaller """
-    base_path = getattr(
-        sys, "_MEIPASS", os.path.dirname(os.path.abspath(MAIN_LOCATION))
-    )
-
-    return os.path.join(base_path, relative_path)
-
-
-def resource_path(relative_path):
-    """ All other than PyInstaller onefile. """
-    return os.path.join(base_path, relative_path)
+    @staticmethod
+    def relative(relative_path):
+        return os.path.join(PathData.BASE_PATH, relative_path)
 
 
 def nameCaller(color=None, raw=False):
