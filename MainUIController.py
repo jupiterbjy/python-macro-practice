@@ -21,7 +21,7 @@ from Toolset import Tools, QtTools
 
 DEBUG = True
 VERSION = "v0.0.6"
-DATE = "2020-04-27"
+DATE = "2020-05-02"
 LOG_STREAM = StringIO()
 LOGGER = logging.getLogger('Third Eye')
 

@@ -191,7 +191,6 @@ def AddToListWidget(tgt, item_list_widget, index=None):
     """
 
     LOGGER.debug(f"Add: {type(tgt).__name__} '{QtColorize(tgt.name, (0, 217, 127))}'")
-    LOGGER.debug(f" To: '{item_list_widget.objectName()}")
 
     item = GenerateWidget(tgt)
 
