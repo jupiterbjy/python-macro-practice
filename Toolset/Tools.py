@@ -9,7 +9,6 @@ Stores Mostly one-time use functions separated from used sources.
 def IsFrozen():
     """
     Checks whether Python instance is Frozen(aka onefile) or not.
-    :param change_dir: If true, will set working directory where exe is.
     :return: Returns True-False according to frozen state.
     """
     if getattr(sys, "frozen", False):

@@ -63,6 +63,7 @@ class Ui_Form(object):
 
         self.fullScreenCheck = QCheckBox(self.frame)
         self.fullScreenCheck.setObjectName(u"fullScreenCheck")
+        self.fullScreenCheck.setMinimumSize(QSize(180, 0))
 
         self.gridLayout.addWidget(self.fullScreenCheck, 0, 1, 1, 1)
 
@@ -147,9 +148,9 @@ class Ui_Form(object):
         Form.setWindowTitle(QCoreApplication.translate("Form", u"Form", None))
         self.stopButton.setText(QCoreApplication.translate("Form", u"Stop", None))
         self.runButton.setText(QCoreApplication.translate("Form", u"Run", None))
-        self.fullScreenCheck.setText(QCoreApplication.translate("Form", u"Full Screen", None))
+        self.fullScreenCheck.setText(QCoreApplication.translate("Form", u"Full Screen - incomplete.", None))
         self.dumpImageCheck.setText(QCoreApplication.translate("Form", u"Dump Image", None))
         self.runLine.setPlaceholderText(QCoreApplication.translate("Form", u"Standby...", None))
-        self.historyButton.setText(QCoreApplication.translate("Form", u"Show / Hide History", None))
+        self.historyButton.setText(QCoreApplication.translate("Form", u"Show / Hide History - Incomplete", None))
     # retranslateUi
 

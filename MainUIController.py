@@ -88,7 +88,7 @@ if __name__ == "__main__":
         LOGGER.info('Image dumping folder not found, creating new.')
         os.mkdir(Tools.PathData.relative("history"))
 
-    MacroMethods.IMG_SAVER = MacroMethods.IMG_SAVER(Tools.PathData.relative("history"))
+    MacroMethods.IMG_SAVER = MacroMethods.setSaver(Tools.PathData.relative("history"))
 
     app = QtWidgets.QApplication(sys.argv)
     controller = Controller()

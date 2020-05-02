@@ -181,13 +181,13 @@ class RunnerWindow(QWidget, Ui_Form):
 
         self.sequenceStarted = False
         self.updateButtonState()
-        MacroMethods.ABORT = False
+        MacroMethods.ExScope.ABORT = False
         QtTools.ABORT_SIGNALED = False
 
     def stopSeq(self):
         self.runLine.setText("Macro aborted.")
 
-        MacroMethods.ABORT = True
+        MacroMethods.ExScope.ABORT = True
         QtTools.ABORT_SIGNALED = True
         QtTools.AbortTimers()
 
@@ -265,7 +265,8 @@ class DebugWindow(QWidget, Ui_DebugWindow):
                 self.logOutput.insertHtml(curr + '<br/>' * 2)
                 last = curr
 
-            QtTools.QSleep(0.5, append=False)
+            QtTools.QSleep(0.2, append=False)
+            # THERE MIGHT BE LOG SKIPPING. CHANGE TO SIGNAL BASED.
 
     # ---------------------------------------------------------
 

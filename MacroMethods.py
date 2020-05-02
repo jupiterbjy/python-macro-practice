@@ -9,19 +9,25 @@ import logging
 
 from Toolset import MemberLoader, ImageModule
 
-SLEEP_FUNCTION = time.sleep  # Will be override by ui_main.
-LOGGER = logging.getLogger()
-IMG_SAVER = ImageModule.saveImg
-ABORT = False
-DUMP = False
-
 
 class AbortException(Exception):
     pass
 
 
+class ExScope:
+    SLEEP_FUNCTION = time.sleep  # Will be override by ui_main.
+    LOGGER = logging.getLogger()
+    IMG_SAVER = ImageModule.saveImg(__file__)
+    ABORT = False
+    DUMP = False
+
+
+def setSaver(path):
+    ExScope.IMG_SAVER = ImageModule.saveImg(path)
+
+
 def checkAbort():  # for now call this every action() to implement abort.
-    if ABORT:  # inefficient to check if every run.
+    if ExScope.ABORT:  # inefficient to check if every run.
         raise AbortException
 
 
@@ -135,7 +141,7 @@ class _ClickBase:
 
         for i in range(self.clickCount):
             checkAbort()
-            SLEEP_FUNCTION(self.clickDelay)
+            ExScope.SLEEP_FUNCTION(self.clickDelay)
             pyautogui.click(self.finalPos(target))
             print(f"Click: {self.finalPos(target)}")
 
@@ -214,7 +220,7 @@ class Wait(ExBase):
         self.delay = 0
 
     def action(self):
-        SLEEP_FUNCTION(self.delay)
+        ExScope.SLEEP_FUNCTION(self.delay)
         return True
 
 
@@ -277,10 +283,10 @@ class _Image(ExBase):
         self.precision = 0.85
 
     def DumpCaptured(self, name=None):
-        IMG_SAVER(self.capturedImage, str(name))
+        ExScope.IMG_SAVER(self.capturedImage, str(name))
 
     def DumpTarget(self):
-        IMG_SAVER(self.targetImage, self.targetName)
+        ExScope.IMG_SAVER(self.targetImage, self.targetName)
 
     def DumpCoordinates(self):  # Do I need this?
         return self.screenArea, self.matchPoint
@@ -369,9 +375,9 @@ class ImageSearch(_Image, _ClickBase):
             if self.matchPoint:
                 break
 
-            SLEEP_FUNCTION(self.loopDelay)
+            ExScope.SLEEP_FUNCTION(self.loopDelay)
 
-        if DUMP:
+        if ExScope.DUMP:
             self.DumpCaptured(bool(self.matchPoint))
 
     @property
@@ -421,7 +427,7 @@ class SearchOccurrence(_Image, _ClickBase):
             self.targetImage, self.screenArea.region, self.precision, self.threshold
         )
 
-        if DUMP:
+        if ExScope.DUMP:
             self.DumpCaptured(bool(self.matchCount))
 
     @property

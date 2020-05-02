@@ -851,7 +851,7 @@ color: rgb(255, 255, 255);</string>
              <rect>
               <x>130</x>
               <y>200</y>
-              <width>111</width>
+              <width>103</width>
               <height>131</height>
              </rect>
             </property>
@@ -867,7 +867,7 @@ color: rgb(255, 255, 255);</string>
             <widget class="QLabel" name="label_17">
              <property name="geometry">
               <rect>
-               <x>20</x>
+               <x>15</x>
                <y>20</y>
                <width>81</width>
                <height>20</height>
@@ -880,7 +880,7 @@ color: rgb(255, 255, 255);</string>
             <widget class="QSpinBox" name="countThreshold">
              <property name="geometry">
               <rect>
-               <x>20</x>
+               <x>15</x>
                <y>40</y>
                <width>71</width>
                <height>21</height>
@@ -1119,7 +1119,7 @@ color: rgb(255, 255, 255);</string>
              </rect>
             </property>
             <property name="title">
-             <string>Variable</string>
+             <string>Variable - Incomp.</string>
             </property>
             <widget class="QRadioButton" name="newValueRadio">
              <property name="geometry">

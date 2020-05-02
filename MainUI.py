@@ -254,7 +254,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         """
         if not manual:
             self.listAvailableMethods()
-            MacroMethods.SLEEP_FUNCTION = QtTools.QSleep
+            MacroMethods.ExScope.SLEEP_FUNCTION = QtTools.QSleep
         else:
             self.seqStorage.clear()
 
