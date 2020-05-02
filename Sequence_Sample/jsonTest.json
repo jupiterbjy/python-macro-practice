@@ -3,6 +3,8 @@
     "Wait",
     "Wait",
     "Wait",
+    "Wait",
+    "Wait",
     "Wait"
   ],
   "data": [
@@ -11,65 +13,69 @@
       "next": null,
       "onSuccess": null,
       "onFail": null,
-      "screenArea": [
-        0,
-        0,
-        0,
-        0
-      ],
-      "delay": 1.0
+      "screenArea": null,
+      "delay": 0.5
     },
     {
       "name": "3",
       "next": null,
       "onSuccess": null,
       "onFail": null,
-      "screenArea": [
-        0,
-        0,
-        0,
-        0
-      ],
-      "delay": 1.0
+      "screenArea": null,
+      "delay": 0.5
     },
     {
       "name": "5",
       "next": null,
       "onSuccess": null,
       "onFail": null,
-      "screenArea": [
-        0,
-        0,
-        0,
-        0
-      ],
-      "delay": 1.0
+      "screenArea": null,
+      "delay": 0.5
     },
     {
       "name": "7",
       "next": null,
       "onSuccess": null,
       "onFail": null,
-      "screenArea": [
-        0,
-        0,
-        0,
-        0
-      ],
-      "delay": 1.0
+      "screenArea": null,
+      "delay": 0.5
+    },
+    {
+      "name": "9",
+      "next": null,
+      "onSuccess": null,
+      "onFail": null,
+      "screenArea": null,
+      "delay": 0.5
+    },
+    {
+      "name": "11",
+      "next": null,
+      "onSuccess": null,
+      "onFail": null,
+      "screenArea": null,
+      "delay": 0.5
     }
   ],
   "reference": [
     [
-      null,
+      4,
       null
     ],
     [
-      null,
+      3,
       null
     ],
     [
-      null,
+      5,
+      null
+    ],
+    [
+      2,
+      null
+    ],
+    [
+      1,
       null
     ],
     [

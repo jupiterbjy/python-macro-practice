@@ -11,57 +11,33 @@
     {
       "name": "1",
       "next": null,
-      "actionState": -2,
       "onSuccess": null,
       "onFail": null,
-      "screenArea": [
-        0,
-        0,
-        0,
-        0
-      ],
+      "screenArea": null,
       "delay": 0.5
     },
     {
       "name": "3",
       "next": null,
-      "actionState": -2,
       "onSuccess": null,
       "onFail": null,
-      "screenArea": [
-        0,
-        0,
-        0,
-        0
-      ],
+      "screenArea": null,
       "delay": 0.5
     },
     {
       "name": "5",
       "next": null,
-      "actionState": -2,
       "onSuccess": null,
       "onFail": null,
-      "screenArea": [
-        0,
-        0,
-        0,
-        0
-      ],
+      "screenArea": null,
       "delay": 0.5
     },
     {
       "name": "7",
       "next": null,
-      "actionState": -2,
       "onSuccess": null,
       "onFail": null,
-      "screenArea": [
-        0,
-        0,
-        0,
-        0
-      ],
+      "screenArea": null,
       "delay": 0.5
     },
     {
@@ -69,12 +45,7 @@
       "next": null,
       "onSuccess": null,
       "onFail": null,
-      "screenArea": [
-        0,
-        0,
-        0,
-        0
-      ],
+      "screenArea": null,
       "delay": 0.5
     },
     {
@@ -82,34 +53,29 @@
       "next": null,
       "onSuccess": null,
       "onFail": null,
-      "screenArea": [
-        0,
-        0,
-        0,
-        0
-      ],
+      "screenArea": null,
       "delay": 0.5
     }
   ],
   "reference": [
     [
-      null,
+      4,
       null
     ],
     [
-      null,
+      3,
       null
     ],
     [
-      null,
+      5,
       null
     ],
     [
-      null,
+      2,
       null
     ],
     [
-      null,
+      1,
       null
     ],
     [

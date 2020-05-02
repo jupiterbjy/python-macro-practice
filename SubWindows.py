@@ -67,8 +67,8 @@ class RunnerWindow(QWidget, Ui_Form):
         self.stopButton.released.connect(self.stopSeq)
         self.source = None
 
-        self.threadPool = QThreadPool()
-        print("maximum %d threads" % self.threadPool.maxThreadCount())
+        # self.threadPool = QThreadPool()
+        # print("maximum %d threads" % self.threadPool.maxThreadCount())
 
     def setSource(self, source):
         self.source = source
@@ -112,7 +112,7 @@ class RunnerWindow(QWidget, Ui_Form):
         if obj:
             QtTools.AddToListWidget(obj, self.currentSeq)
 
-    def _runSeq_Threaded(self, obj):
+    def _sequenceProcess(self, obj):
 
         seq_count = 0
 
@@ -167,9 +167,9 @@ class RunnerWindow(QWidget, Ui_Form):
 
         self.runLine.setText("Macro started.")
 
-        worker = Worker(self._runSeq_Threaded, self.source)
+        worker = Worker(self._sequenceProcess, self.source)
         try:
-            self.threadPool.start(worker)  # Thread needed..?
+            worker.run()
 
         except Exception as err:
             # Assume no error has line-break.

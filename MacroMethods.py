@@ -11,7 +11,7 @@ from Toolset import MemberLoader, ImageModule
 
 SLEEP_FUNCTION = time.sleep  # Will be override by ui_main.
 LOGGER = logging.getLogger()
-IMG_SAVER = False
+IMG_SAVER = ImageModule.saveImg
 ABORT = False
 DUMP = False
 
@@ -530,10 +530,12 @@ def Serializer(obj_list):
         else:
             reference_list[idx].append(index)
 
-        element.onFail = None
-        element.onSuccess = None
+        bak = (element.onFail, element.onSuccess)
+        element.onFail, element.onSuccess = None, None
 
         out.append(deepcopy(element.serialize()))
+
+        element.onFail, element.onSuccess = bak
 
     return {"type": obj_type, "data": out, "reference": reference_list}
 

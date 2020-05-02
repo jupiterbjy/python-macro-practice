@@ -3,7 +3,8 @@ import sys
 
 version = "0.0.6"
 
-build_options = {"packages": [], "excludes": [], "build_exe": "X:\\builds\\"}
+build_options = {"packages": [], "excludes": [], "build_exe": "X:\\builds\\",
+                 "include_files": ['Sequence_Sample/', 'icons/']}
 
 
 base = "Win32GUI" if sys.platform == "win32" else None

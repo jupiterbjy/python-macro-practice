@@ -330,6 +330,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         QtTools.AddToListWidget(obj, self.sequenceList)
         self.seqStorage.append(obj)
         self.sequenceList.setCurrentRow(self.seqStorage.index(obj))
+        self._comboBoxUpdateNew()
         self._updateToSelected(obj)
 
     def _comboBoxUpdateNew(self):
@@ -407,13 +408,11 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             img, file_name, self.recentDir["Image"] = QtTools.loadImage(
                 self, self.recentDir["Image"]
             )
-
         except TypeError:
             return
 
         except ValueError:
             return
-
         else:
             if img is not None:
                 self.cachedImage[cache_name] = img

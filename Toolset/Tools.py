@@ -15,6 +15,12 @@ def IsFrozen():
     if getattr(sys, "frozen", False):
         return True
 
+    file_dir = os.path.dirname(sys.argv[0])
+    # Fail-safe in terminal path showing relative path.
+    try:
+        os.chdir(file_dir)
+    except OSError:
+        pass
     return False
 
 

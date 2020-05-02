@@ -6,17 +6,18 @@ import os
 from MainUI import MainWindow
 import SubWindows
 import MacroMethods
-from Toolset import Tools, ImageModule
+from Toolset import Tools
 
 
 # <To-Do>
 # Support variable assign on objects other than Variables.
 # Change to ListView or ScrollArea from ListItem.
-# Redirect print event to file
 # Add image showing on double-click to object in history.
 # figure out white image causing crash on matching image
 # Cleanup messy import chains
 # implement undo
+# Change while-loop based log check into signal based.
+#   This might cause some serious function call overheads..idk
 
 DEBUG = True
 VERSION = "v0.0.6"
@@ -87,7 +88,7 @@ if __name__ == "__main__":
         LOGGER.info('Image dumping folder not found, creating new.')
         os.mkdir(Tools.PathData.relative("history"))
 
-    MacroMethods.IMG_SAVER = ImageModule.saveImg(Tools.PathData.relative("history"))
+    MacroMethods.IMG_SAVER = MacroMethods.IMG_SAVER(Tools.PathData.relative("history"))
 
     app = QtWidgets.QApplication(sys.argv)
     controller = Controller()
