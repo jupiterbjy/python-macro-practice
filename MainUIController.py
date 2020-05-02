@@ -6,7 +6,7 @@ import os
 from MainUI import MainWindow
 import SubWindows
 import MacroMethods
-from Toolset import Tools
+from Toolset import Tools, QtTools
 
 
 # <To-Do>
@@ -29,7 +29,7 @@ LOGGER = logging.getLogger('Third Eye')
 class Controller:
     def __init__(self):
 
-        self.editor = MainWindow(VERSION)
+        self.editor = MainWindow(VERSION, LOGGER)
         self.editor.macroExecute.connect(self.show_runner)
         self.editor.showAbout.connect(self.show_about)
         self.editor.showLogger.connect(self.show_debugger)
@@ -74,8 +74,12 @@ def log_initialize():
         LOGGER.removeHandler(handler)
 
     LOGGER.addHandler(logging.StreamHandler(LOG_STREAM))
+    if DEBUG:
+        LOGGER.addHandler(logging.StreamHandler())
     LOGGER.debug(f"{VERSION} built at {DATE}")
     LOGGER.debug('Logging Started.')
+
+    QtTools.LOGGER = LOGGER
 
 
 if __name__ == "__main__":

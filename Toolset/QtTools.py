@@ -13,6 +13,7 @@ from PySide2.QtWidgets import (
 
 from PIL import Image, ImageQt
 import sys
+import logging
 import pyautogui
 import keyboard
 
@@ -22,6 +23,7 @@ from Toolset.ImageModule import Pos, Area
 
 # Module to store all necessary Qt-Related tools for UI.
 
+LOGGER = logging.getLogger()
 
 TIMER_RUNNING = []
 ABORT_SIGNALED = False
@@ -150,18 +152,18 @@ def loadImage(self, recent):
     file_name = os.path.basename(file_dir)
 
     if not file_dir:
-        print("└ Canceled")
+        LOGGER.debug("└ Canceled")
         return False
 
     try:
         img = Image.open(file_dir)
 
     except NameError:
-        print(f"└ {file_name} not found.")
+        LOGGER.debug(f"└ {file_name} not found.")
         return False
 
     except Image.UnidentifiedImageError:
-        print(f"└ {file_name} is not an image.")
+        LOGGER.debug(f"└ {file_name} is not an image.")
         return False
 
     else:
@@ -188,8 +190,8 @@ def AddToListWidget(tgt, item_list_widget, index=None):
     :param item_list_widget: QItemListWidget
     """
 
-    print(f"Add: {type(tgt).__name__} '{QtColorize(tgt.name, (0, 217, 127))}'")
-    print(f" To: '{item_list_widget.objectName()}'\n")
+    LOGGER.debug(f"Add: {type(tgt).__name__} '{QtColorize(tgt.name, (0, 217, 127))}'")
+    LOGGER.debug(f" To: '{item_list_widget.objectName()}")
 
     item = GenerateWidget(tgt)
 
@@ -198,7 +200,7 @@ def AddToListWidget(tgt, item_list_widget, index=None):
 
     if index is not None:
         item_list_widget.insertItem(index, list_item)
-        print("inserting to", index)
+        LOGGER.debug("inserting to", index)
 
     else:
         item_list_widget.addItem(list_item)
@@ -246,10 +248,10 @@ def QSleep(delay, output=False, append=True):
     class context:
         def __enter__(self):
             nameCaller()
-            print(f"└ Wait {delay} start")
+            LOGGER.debug(f"└ Wait {delay} start")
 
         def __exit__(self, exc_type, exc_val, exc_tb):
-            print(f"└ Finish")
+            LOGGER.debug(f"└ Finish")
 
     if output:
         with context():
@@ -288,26 +290,3 @@ def getCaptureArea():
         raise TypeError
 
     return Area.fromPos(p1, p2)
-
-
-def appendText(text_edit, msg, newline=True):
-    text_edit.moveCursor(QTextCursor.End)
-    text_edit.insertHtml(msg + "<br>" if newline else msg)
-    QApplication.processEvents(QEventLoop.ExcludeUserInputEvents)
-
-
-def returnRow(q_list):
-    """
-    Simple Wrapper for QListWidget.currentRow().
-    Qt consider -1 as false, but List count it as last element. So this exist.
-    :param q_list: QListWidgetItem
-    """
-    try:
-        row = q_list.currentRow()
-    except AttributeError:
-        raise AttributeError(f"Expected QListWidget, got {type(q_list)}.")
-
-    if row == -1:
-        raise IndexError("Nothing Selected.")
-
-    return row
