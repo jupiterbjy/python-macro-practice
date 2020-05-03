@@ -7,8 +7,6 @@ This module will provide any necessary components required by MacroMethod,
 especially Image-related functions.
 """
 
-IMG_PATH = ""
-
 
 class Pos:
     # referenced vector2d_v0.py from 'Fluent Python' by Luciano.

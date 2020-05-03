@@ -28,21 +28,21 @@ class PathData:
     ABS_PATH = os.path.abspath(MAIN_LOCATION)
     BASE_PATH = os.path.dirname(ABS_PATH)
 
-    @staticmethod
-    def setRelativePath(script_location):
-        PathData.MAIN_LOCATION = script_location
-        PathData.ABS_PATH = os.path.abspath(script_location)
-        PathData.BASE_PATH = os.path.dirname(PathData.ABS_PATH)
+    @classmethod
+    def setRelativePath(cls, script_location):
+        cls.MAIN_LOCATION = script_location
+        cls.ABS_PATH = os.path.abspath(script_location)
+        cls.BASE_PATH = os.path.dirname(cls.ABS_PATH)
 
     # https://stackoverflow.com/questions/7674790
-    @staticmethod
-    def pyinstaller_onefile(relative_path):
-        base = getattr(sys, "_MEIPASS", PathData.ABS_PATH)
+    @classmethod
+    def pyinstaller_onefile(cls, relative_path):
+        base = getattr(sys, "_MEIPASS", cls.ABS_PATH)
         return os.path.join(base, relative_path)
 
-    @staticmethod
-    def relative(relative_path):
-        return os.path.join(PathData.BASE_PATH, relative_path)
+    @classmethod
+    def relative(cls, relative_path):
+        return os.path.join(cls.BASE_PATH, relative_path)
 
 
 def nameCaller(color=None, raw=False):

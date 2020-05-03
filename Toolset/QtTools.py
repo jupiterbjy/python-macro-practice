@@ -9,22 +9,21 @@ from PySide2.QtWidgets import (
     QLabel,
     QGridLayout,
 )
-
 from PIL import Image, ImageQt
+import os
 import sys
 import logging
 import pyautogui
 import keyboard
 
-from Toolset.Tools import nameCaller, PathData
-from Toolset.TextTools import QtColorize
+from Toolset.Tools import PathData
 from Toolset.ImageModule import Pos, Area
 
 # Module to store all necessary Qt-Related tools for UI.
-
-LOGGER = logging.getLogger()
+# Module dependency is getting out of control.
 
 TIMER_RUNNING = []
+LOOP_RUNNING = []
 ABORT_SIGNALED = False
 
 ABOUT_IMAGE = "About.png"
@@ -79,17 +78,17 @@ class LoggingEmitter:
 
     signal = Signal(str)
     logger = logging.getLogger()
-    level = ['debug', 'info', 'warning', 'critical']
+    level = ["debug", "info", "warning", "critical"]
 
-    @staticmethod
-    def log(log_level=0, *texts):
+    @classmethod
+    def log(cls, log_level=0, *texts):
         """Level 0 ~ 3 respectively DEBUG, INFO, WARNING, CRITICAL."""
 
         text = " ".join(map(str, texts))
-        log_target = getattr(LoggingEmitter.logger, LoggingEmitter.level[log_level])
+        log_target = getattr(cls.logger, cls.level[log_level])
 
         log_target(text)
-        Signal.emit(text)
+        cls.signal.emit(text)
 
 
 # https://stackoverflow.com/questions/25187444/pyqt-qlistwidget-custom-items
@@ -161,26 +160,23 @@ def setPix(image):
 
 
 def loadImage(self, recent):
-    import os
-
-    nameCaller()
 
     file_dir = QFileDialog.getOpenFileName(self, "Select Image", recent)[0]
     file_name = os.path.basename(file_dir)
 
     if not file_dir:
-        LOGGER.debug("└ Canceled")
+        LoggingEmitter.log(1, "loadImage: Load Canceled")
         return False
 
     try:
         img = Image.open(file_dir)
 
     except NameError:
-        LOGGER.debug(f"└ {file_name} not found.")
+        LOGGER.debug(f"loadImage: {file_name} not found.")
         return False
 
     except Image.UnidentifiedImageError:
-        LOGGER.debug(f"└ {file_name} is not an image.")
+        LOGGER.debug(f"loadImage: {file_name} is not an image.")
         return False
 
     else:
@@ -207,7 +203,7 @@ def AddToListWidget(tgt, item_list_widget, index=None):
     :param item_list_widget: QItemListWidget
     """
 
-    LOGGER.debug(f"Add: {type(tgt).__name__} '{QtColorize(tgt.name, (0, 217, 127))}'")
+    LOGGER.debug(f"Add: {type(tgt).__name__} '{tgt.name}'")
 
     item = GenerateWidget(tgt)
 
@@ -250,23 +246,24 @@ def QSleep(delay, output=False, append=True):
         timer.timeout.connect(loop.quit)
 
         if append:
-            TIMER_RUNNING.append((timer, loop))
+            TIMER_RUNNING.append(timer)
+            LOOP_RUNNING.append(loop)
 
             timer.start(delay * 1000)
             loop.exec_()
 
-            TIMER_RUNNING.pop()
+            TIMER_RUNNING.remove(timer)
+            LOOP_RUNNING.remove(loop)
         else:
             timer.start(delay * 1000)
             loop.exec_()
 
     class context:
         def __enter__(self):
-            nameCaller()
-            LOGGER.debug(f"└ Wait {delay} start")
+            LOGGER.debug(f"Wait {delay} start")
 
         def __exit__(self, exc_type, exc_val, exc_tb):
-            LOGGER.debug(f"└ Finish")
+            LOGGER.debug(f"Finish")
 
     if output:
         with context():
