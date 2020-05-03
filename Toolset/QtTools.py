@@ -1,9 +1,8 @@
-from PySide2.QtGui import QPixmap, QTextCursor
+from PySide2.QtGui import QPixmap
 from PySide2.QtCore import Qt, QObject, Signal, QSize, QTimer, QEventLoop
 from PySide2.QtWidgets import (
     QFileDialog,
     QListWidgetItem,
-    QApplication,
     QWidget,
     QVBoxLayout,
     QHBoxLayout,
@@ -73,6 +72,24 @@ class StdoutRedirect(QObject):
     def write(self, s):
         sys.stdout.flush()
         self.printOccur.emit(s)
+
+
+class LoggingEmitter:
+    """Supported class to wrap logging call to emit signals."""
+
+    signal = Signal(str)
+    logger = logging.getLogger()
+    level = ['debug', 'info', 'warning', 'critical']
+
+    @staticmethod
+    def log(log_level=0, *texts):
+        """Level 0 ~ 3 respectively DEBUG, INFO, WARNING, CRITICAL."""
+
+        text = " ".join(map(str, texts))
+        log_target = getattr(LoggingEmitter.logger, LoggingEmitter.level[log_level])
+
+        log_target(text)
+        Signal.emit(text)
 
 
 # https://stackoverflow.com/questions/25187444/pyqt-qlistwidget-custom-items
@@ -199,7 +216,6 @@ def AddToListWidget(tgt, item_list_widget, index=None):
 
     if index is not None:
         item_list_widget.insertItem(index, list_item)
-        LOGGER.debug("inserting to", index)
 
     else:
         item_list_widget.addItem(list_item)
