@@ -217,20 +217,18 @@ class AboutWindow(QMainWindow, Ui_About):
 
 
 class DebugWindow(QWidget, Ui_DebugWindow):
-    def __init__(self, logger, stream, editor, runner):
+
+    logEmit = Signal(str)
+
+    def __init__(self, stream, editor, runner):
         super(DebugWindow, self).__init__()
         self.setupUi(self)
 
         self.commandLine.returnPressed.connect(self.processCommand)
         self.editor = editor
         self.runner = runner
-        self.logger = logger
         self.stream = stream
-
-        log_thread = Worker(self.log_to_gui)
-        self.active = True
-        self.threadPool = QThreadPool()
-        self.threadPool.start(log_thread)
+        self.logEmit.connect(self.logOutput.append)
 
         self.commandList = {
             "help": self.help,
@@ -240,33 +238,6 @@ class DebugWindow(QWidget, Ui_DebugWindow):
         }
 
         TextTools.COLORIZE_ENABLE = True
-
-    def log_rewind(self):
-        current = self.stream.tell() - 2
-        try:
-            self.stream.seek(current)
-        except ValueError:
-            return None
-
-        while self.stream.read(1) != '\n':
-            current -= 1
-            if current < 0:
-                break
-
-            self.stream.seek(current)
-        else:
-            return self.stream.read()
-
-    def log_to_gui(self):
-        last = ''
-        while self.active:
-            curr = self.log_rewind()
-            if curr != last:
-                self.logOutput.insertHtml(curr + '<br/>' * 2)
-                last = curr
-
-            QtTools.QSleep(0.2, append=False)
-            # THERE MIGHT BE LOG SKIPPING. CHANGE TO SIGNAL BASED.
 
     # ---------------------------------------------------------
 

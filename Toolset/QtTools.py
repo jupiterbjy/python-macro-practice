@@ -78,14 +78,14 @@ class LoggingEmitter:
 
     signal = Signal(str)
     logger = logging.getLogger()
-    level = ["debug", "info", "warning", "critical"]
+    levels = ["debug", "info", "warning", "critical"]
 
     @classmethod
-    def log(cls, log_level=0, *texts):
+    def log(cls, *texts, level=0):
         """Level 0 ~ 3 respectively DEBUG, INFO, WARNING, CRITICAL."""
 
         text = " ".join(map(str, texts))
-        log_target = getattr(cls.logger, cls.level[log_level])
+        log_target = getattr(cls.logger, cls.levels[level])
 
         log_target(text)
         cls.signal.emit(text)
@@ -165,18 +165,18 @@ def loadImage(self, recent):
     file_name = os.path.basename(file_dir)
 
     if not file_dir:
-        LoggingEmitter.log(1, "loadImage: Load Canceled")
+        LoggingEmitter.log("loadImage: Load Canceled", level=1)
         return False
 
     try:
         img = Image.open(file_dir)
 
     except NameError:
-        LOGGER.debug(f"loadImage: {file_name} not found.")
+        LoggingEmitter.log(f"loadImage: {file_name} not found.", level=2)
         return False
 
     except Image.UnidentifiedImageError:
-        LOGGER.debug(f"loadImage: {file_name} is not an image.")
+        LoggingEmitter.log(f"loadImage: {file_name} is not an image.", level=2)
         return False
 
     else:
@@ -203,7 +203,7 @@ def AddToListWidget(tgt, item_list_widget, index=None):
     :param item_list_widget: QItemListWidget
     """
 
-    LOGGER.debug(f"Add: {type(tgt).__name__} '{tgt.name}'")
+    LoggingEmitter.log(f"Add: {type(tgt).__name__} '{tgt.name}'")
 
     item = GenerateWidget(tgt)
 
@@ -260,10 +260,10 @@ def QSleep(delay, output=False, append=True):
 
     class context:
         def __enter__(self):
-            LOGGER.debug(f"Wait {delay} start")
+            LoggingEmitter.log(f"Wait {delay} start")
 
         def __exit__(self, exc_type, exc_val, exc_tb):
-            LOGGER.debug(f"Finish")
+            LoggingEmitter.log(f"Finish")
 
     if output:
         with context():
