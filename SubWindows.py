@@ -71,7 +71,8 @@ class RunnerWindow(QWidget, Ui_Form):
         self.updateHistory(self.source)
 
     def injectGlobals(self):
-        MacroMethods.DUMP = self.dumpImageCheck.isChecked()
+        MacroMethods.ExScope.DUMP = self.dumpImageCheck.isChecked()
+        QtTools.LOGGER_INSTANCE.info(MacroMethods.ExScope.DUMP)
 
         # making sure file is reset.
         for i in self.source:
