@@ -6,7 +6,6 @@ import json
 
 from Toolset import QtTools, ObjectDispatch, Tools
 from qtUI.pymacro import Ui_MainWindow
-from Toolset.Tools import nameCaller
 import MacroMethods
 
 
@@ -188,8 +187,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         Saves current sequence into json serialized format.
         """
 
-        nameCaller((225, 8, 0))
-
         name = QFileDialog.getSaveFileName(
             self, "Save file", self.recentDir["IO"], filter="*.json"
         )[0]
@@ -208,8 +205,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         """
         Loads json serialized Macro Sequence.
         """
-
-        nameCaller((225, 8, 0))
 
         name = QFileDialog.getOpenFileName(
             self, "Load File", self.recentDir["IO"], filter="*.json"
@@ -485,7 +480,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             try:
                 obj.targetImage = self.cachedImage["search"]
             except AttributeError:
-                raise AttributeError("No Image specified.")
+                raise AttributeError("configObject: No Image specified.")
 
             obj.trials = self.trialsCountSpin.value()
             obj.loopDelay = self.trialsIntervalSpin.value()
@@ -553,8 +548,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 source = self.selectedElement()
 
             except IndexError:
-                nameCaller()
-                QtTools.LOGGER_INSTANCE.debug("└ Sequence is Empty.")
+                QtTools.LOGGER_INSTANCE.debug("updateSel: Sequence is Empty.")
                 return
 
         else:

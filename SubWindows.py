@@ -56,19 +56,15 @@ class RunnerWindow(QWidget, Ui_Form):
 
     exitSignal = Signal()
 
-    def __init__(self, logger):
+    def __init__(self):
         super().__init__()
         self.setupUi(self)
 
-        self.logger = logger
         self.sequenceStarted = False
 
         self.runButton.released.connect(self.runSeq)
         self.stopButton.released.connect(self.stopSeq)
         self.source = None
-
-        # self.threadPool = QThreadPool()
-        # print("maximum %d threads" % self.threadPool.maxThreadCount())
 
     def setSource(self, source):
         self.source = source
@@ -99,15 +95,19 @@ class RunnerWindow(QWidget, Ui_Form):
         try:
             widget = self.currentSeq.itemWidget(self.currentSeq.item(0))
         except RuntimeError:
-            self.logger.warning("RuntimeError - Widget already destroyed.")
+            QtTools.LOGGER_INSTANCE.warning("RuntimeError - Widget already destroyed.")
             widget = QtTools.GenerateWidget(self.source)
 
         try:
             QtTools.AddToListWidget(widget.source, self.sequenceList, 0)
         except AttributeError:
             pass
+
         finally:
-            self.currentSeq.clear()
+            try:
+                self.currentSeq.clear()
+            except RuntimeError:
+                pass
 
         if obj:
             QtTools.AddToListWidget(obj, self.currentSeq)
@@ -124,24 +124,24 @@ class RunnerWindow(QWidget, Ui_Form):
                 obj = obj.run()
 
             except pyautogui.FailSafeException:
-                self.logger.critical("PyAutoGui FailSafe")
+                QtTools.LOGGER_INSTANCE.critical("PyAutoGui FailSafe")
                 self.runLine.setText("Cannot Click (0,0)")
                 break
 
             except ZeroDivisionError:
-                self.logger.critical("Division by Zero")
+                QtTools.LOGGER_INSTANCE.critical("Division by Zero")
                 self.runLine.setText("Tried to divide by 0")
                 break
 
             except MacroMethods.AbortException:
-                self.logger.warning("Abort Signaled")
+                QtTools.LOGGER_INSTANCE.warning("Abort Signaled")
                 self.runLine.setText("Aborted")
                 break
 
             else:
                 seq_count += 1
         else:
-            self.logger.info("Macro Finished without error.")
+            QtTools.LOGGER_INSTANCE.info("Macro Finished without error.")
             self.runLine.setText("Macro finished.")
             self.updateHistory()
 
@@ -161,7 +161,7 @@ class RunnerWindow(QWidget, Ui_Form):
             self.areaInject()
 
         except TypeError:
-            self.logger.critical("Macro aborted.")
+            QtTools.LOGGER_INSTANCE.critical("Macro aborted.")
             self.endSeq()
             return
 
@@ -173,7 +173,7 @@ class RunnerWindow(QWidget, Ui_Form):
 
         except Exception as err:
             # Assume no error has line-break.
-            self.logger.critical(str(err))
+            QtTools.LOGGER_INSTANCE.critical(str(err))
 
     def endSeq(self):
         for i in self.source:
@@ -240,12 +240,12 @@ class DebugWindow(QWidget, Ui_DebugWindow):
     # ---------------------------------------------------------
 
     def pushDelayedLog(self):
-        html = self.stream.getvalue()
+        html = self.stream.getvalue() + '\n'
         self.log(html)
 
     @Slot(str)
     def log(self, text):
-        html = text.replace('\n', '<br/>' * 2)
+        html = text.replace('\n', '<br/>')
         self.logOutput.insertHtml(html)
 
     def help(self, *args):

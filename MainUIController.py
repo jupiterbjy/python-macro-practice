@@ -36,7 +36,7 @@ class Controller:
         self.editor.showLogger.connect(self.show_debugger)
         self.editor.exitSignal.connect(self.kill_all)
 
-        self.runner = SubWindows.RunnerWindow(LOGGER)
+        self.runner = SubWindows.RunnerWindow()
         self.about = SubWindows.AboutWindow(VERSION, DATE)
 
         self.debugger = SubWindows.DebugWindow(LOG_STREAM, self.editor, self.runner)
@@ -84,7 +84,9 @@ def log_initialize():
     QtTools.LoggingEmitter.logger = LOGGER
 
     LOGGER.debug(f"{VERSION} built at {DATE}")
-    LOGGER.debug('Logging Started.')
+    date = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    LOGGER.debug(date)
+    LOGGER.debug('_____ Logging Started _____')
 
 
 if __name__ == "__main__":
