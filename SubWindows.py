@@ -1,4 +1,4 @@
-from PySide2.QtCore import QRunnable, Slot, Signal, QThreadPool
+from PySide2.QtCore import QRunnable, Slot, Signal
 from PySide2.QtWidgets import QMainWindow, QDialog, QWidget
 import pyautogui
 
@@ -218,8 +218,6 @@ class AboutWindow(QMainWindow, Ui_About):
 
 class DebugWindow(QWidget, Ui_DebugWindow):
 
-    logEmit = Signal(str)
-
     def __init__(self, stream, editor, runner):
         super(DebugWindow, self).__init__()
         self.setupUi(self)
@@ -228,7 +226,7 @@ class DebugWindow(QWidget, Ui_DebugWindow):
         self.editor = editor
         self.runner = runner
         self.stream = stream
-        self.logEmit.connect(self.logOutput.append)
+        self.pushDelayedLog()
 
         self.commandList = {
             "help": self.help,
@@ -240,6 +238,15 @@ class DebugWindow(QWidget, Ui_DebugWindow):
         TextTools.COLORIZE_ENABLE = True
 
     # ---------------------------------------------------------
+
+    def pushDelayedLog(self):
+        html = self.stream.getvalue()
+        self.log(html)
+
+    @Slot(str)
+    def log(self, text):
+        html = text.replace('\n', '<br/>' * 2)
+        self.logOutput.insertHtml(html)
 
     def help(self, *args):
         """help: display this message."""

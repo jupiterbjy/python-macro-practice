@@ -1,5 +1,6 @@
 from PySide2 import QtWidgets
 from io import StringIO
+from datetime import datetime
 import logging
 import sys
 import os
@@ -39,24 +40,25 @@ class Controller:
         self.about = SubWindows.AboutWindow(VERSION, DATE)
 
         self.debugger = SubWindows.DebugWindow(LOG_STREAM, self.editor, self.runner)
-        QtTools.LoggingEmitter.signal.connect(self.debugger.logEmit)
+        self.logInstance = QtTools.LOGGER_INSTANCE
+        self.logInstance.signal.connect(self.debugger.log)
 
     def show_editor(self):
-        LOGGER.info("Calling Editor.")
+        self.logInstance.info("Calling Editor.")
         self.editor.show()
 
     def show_runner(self, source):
-        LOGGER.info("Calling Runner.")
+        self.logInstance.info("Calling Runner.")
         self.runner.setSource(source)
         self.runner.exitSignal.connect(self.show_editor)
         self.runner.show()
 
     def show_about(self):
-        LOGGER.info("Calling About.")
+        self.logInstance.info("Calling About.")
         self.about.show()
 
     def show_debugger(self):
-        LOGGER.info("Calling Logger/Debugger.")
+        self.logInstance.info("Calling Logger/Debugger.")
         self.debugger.show()
 
     def kill_all(self):

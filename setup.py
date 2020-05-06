@@ -1,25 +1,21 @@
-import sys
 from cx_Freeze import setup, Executable
+import sys
 
-# Dependencies are automatically detected, but it might need fine tuning.
-# build_exe_options = {"packages": ["os"], "excludes": ["tkinter"]}
+version = "0.0.6"
 
-# GUI applications require a different base on Windows (the default is for a
-# console application).
-base = None
+build_options = {"packages": [], "excludes": [], "build_exe": "X:\\builds\\",
+                 "include_files": ['Sequence_Sample/', 'icons/']}
 
-options = {
-    "build_exe": r"X:\build",
-    # 'include-files':
-}
 
-if sys.platform == "win32":
-    base = "Win32GUI"
+base = "Win32GUI" if sys.platform == "win32" else None
+# base = None
+
+executables = [Executable("MainUIController.py", base=base, targetName="pym")]
 
 setup(
-    name="Python Macro Sequencer",
-    version="0.0.4",
-    description="Image-based macro sequencer providing GUI",
-    options={"build_exe": options},
-    executables=[Executable(r"Z:\github\python-macro-practice\ui_main.py", base=base)],
+    name="Python Image Macro Project",
+    version=version,
+    description="Image Based macro project.",
+    options={"build_exe": build_options},
+    executables=executables,
 )

@@ -44,10 +44,6 @@ ICON_ASSIGN = {
 }
 
 
-class RunnerSignal(QObject):
-    signal = Signal()
-
-
 class StdoutRedirect(QObject):
     # Based off from below.
     # https://4uwingnet.tistory.com/9
@@ -73,22 +69,36 @@ class StdoutRedirect(QObject):
         self.printOccur.emit(s)
 
 
-class LoggingEmitter:
+class LoggingEmitter(QObject):
     """Supported class to wrap logging call to emit signals."""
 
     signal = Signal(str)
     logger = logging.getLogger()
     levels = ["debug", "info", "warning", "critical"]
 
-    @classmethod
-    def log(cls, *texts, level=0):
+    def log(self, *texts, level=0):
         """Level 0 ~ 3 respectively DEBUG, INFO, WARNING, CRITICAL."""
 
         text = " ".join(map(str, texts))
-        log_target = getattr(cls.logger, cls.levels[level])
+        log_target = getattr(self.logger, self.levels[level])
 
         log_target(text)
-        cls.signal.emit(text)
+        self.signal.emit(text + '\n')
+
+    def debug(self, *texts):
+        self.log(*texts)
+
+    def info(self, *texts):
+        self.log(*texts, level=1)
+
+    def warning(self, *texts):
+        self.log(*texts, level=2)
+
+    def critical(self, *texts):
+        self.log(*texts, level=3)
+
+
+LOGGER_INSTANCE = LoggingEmitter()
 
 
 # https://stackoverflow.com/questions/25187444/pyqt-qlistwidget-custom-items
@@ -165,18 +175,18 @@ def loadImage(self, recent):
     file_name = os.path.basename(file_dir)
 
     if not file_dir:
-        LoggingEmitter.log("loadImage: Load Canceled", level=1)
+        LOGGER_INSTANCE.info("loadImage: Load Canceled")
         return False
 
     try:
         img = Image.open(file_dir)
 
     except NameError:
-        LoggingEmitter.log(f"loadImage: {file_name} not found.", level=2)
+        LOGGER_INSTANCE.warning(f"loadImage: {file_name} not found.")
         return False
 
     except Image.UnidentifiedImageError:
-        LoggingEmitter.log(f"loadImage: {file_name} is not an image.", level=2)
+        LOGGER_INSTANCE.warning(f"loadImage: {file_name} is not an image.")
         return False
 
     else:
@@ -203,7 +213,7 @@ def AddToListWidget(tgt, item_list_widget, index=None):
     :param item_list_widget: QItemListWidget
     """
 
-    LoggingEmitter.log(f"Add: {type(tgt).__name__} '{tgt.name}'")
+    LOGGER_INSTANCE.debug(f"Add: {type(tgt).__name__} '{tgt.name}'")
 
     item = GenerateWidget(tgt)
 
@@ -260,10 +270,10 @@ def QSleep(delay, output=False, append=True):
 
     class context:
         def __enter__(self):
-            LoggingEmitter.log(f"Wait {delay} start")
+            LOGGER_INSTANCE.debug(f"Wait {delay} start")
 
         def __exit__(self, exc_type, exc_val, exc_tb):
-            LoggingEmitter.log(f"Finish")
+            LOGGER_INSTANCE.debug(f"Finish")
 
     if output:
         with context():
