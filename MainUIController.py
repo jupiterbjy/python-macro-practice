@@ -87,6 +87,7 @@ def log_initialize():
     QtTools.LoggingEmitter.logger = LOGGER
 
     LOGGER.debug(f"{VERSION} built at {DATE}")
+    LOGGER.info('Real-Time log feeds may have different time-frame.')
     LOGGER.debug('_____ Logging Started _____')
 
 

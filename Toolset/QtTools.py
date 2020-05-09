@@ -10,6 +10,7 @@ from PySide2.QtWidgets import (
     QGridLayout,
 )
 from PIL import Image, ImageQt
+from datetime import datetime
 import os
 import sys
 import logging
@@ -82,8 +83,10 @@ class LoggingEmitter(QObject):
         text = " ".join(map(str, texts))
         log_target = getattr(self.logger, self.levels[level])
 
+        date = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         log_target(text)
-        self.signal.emit(text + "\n\n")
+        self.signal.emit(date + text + "\n\n")
+
 
     def debug(self, *texts):
         self.log(*texts)
