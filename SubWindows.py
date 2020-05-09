@@ -79,8 +79,10 @@ class RunnerWindow(QWidget, Ui_Form):
             i.reset()
 
     def closeEvent(self, *args, **kwargs):
+        self.sequenceList.clear()
+        self.currentSeq.clear()
+
         self.exitSignal.emit()
-        self.deleteLater()
 
     def areaInject(self):
 
@@ -96,7 +98,7 @@ class RunnerWindow(QWidget, Ui_Form):
         try:
             widget = self.currentSeq.itemWidget(self.currentSeq.item(0))
         except RuntimeError:
-            QtTools.LOGGER_INSTANCE.warning("RuntimeError - Widget already destroyed.")
+            QtTools.LOGGER_INSTANCE.warning("RuntimeError: Widget already destroyed.")
             widget = QtTools.GenerateWidget(self.source)
 
         try:
@@ -110,7 +112,6 @@ class RunnerWindow(QWidget, Ui_Form):
             except RuntimeError as err:
                 QtTools.LOGGER_INSTANCE.warning(f"Runtime Error: {err}")
                 pass
-
         if obj:
             QtTools.AddToListWidget(obj, self.currentSeq)
 

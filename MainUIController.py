@@ -1,6 +1,5 @@
 from PySide2 import QtWidgets
 from io import StringIO
-from datetime import datetime
 import logging
 import sys
 import os
@@ -69,20 +68,25 @@ class Controller:
 
 
 def log_initialize():
+    # ref: https://hamait.tistory.com/880
     LOGGER.setLevel(level=logging.DEBUG if DEBUG else logging.WARN)
 
     for handler in LOGGER.handlers:
         LOGGER.removeHandler(handler)
 
-    LOGGER.addHandler(logging.StreamHandler(LOG_STREAM))
+    Formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s',
+                                  "%Y-%m-%d %H:%M:%S")
+
+    handler = logging.StreamHandler(LOG_STREAM)
+    handler.setFormatter(Formatter)
+    LOGGER.addHandler(handler)
+
     if DEBUG:
         LOGGER.addHandler(logging.StreamHandler())
 
     QtTools.LoggingEmitter.logger = LOGGER
 
     LOGGER.debug(f"{VERSION} built at {DATE}")
-    date = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    LOGGER.debug(date)
     LOGGER.debug('_____ Logging Started _____')
 
 
