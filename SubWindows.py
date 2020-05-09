@@ -72,7 +72,7 @@ class RunnerWindow(QWidget, Ui_Form):
 
     def injectGlobals(self):
         MacroMethods.ExScope.DUMP = self.dumpImageCheck.isChecked()
-        QtTools.LOGGER_INSTANCE.info(MacroMethods.ExScope.DUMP)
+        QtTools.LOGGER_INSTANCE.info(f"Image Dump: {MacroMethods.ExScope.DUMP}")
 
         # making sure file is reset.
         for i in self.source:
@@ -107,7 +107,8 @@ class RunnerWindow(QWidget, Ui_Form):
         finally:
             try:
                 self.currentSeq.clear()
-            except RuntimeError:
+            except RuntimeError as err:
+                QtTools.LOGGER_INSTANCE.warning(f"Runtime Error: {err}")
                 pass
 
         if obj:
@@ -218,7 +219,6 @@ class AboutWindow(QMainWindow, Ui_About):
 
 
 class DebugWindow(QWidget, Ui_DebugWindow):
-
     def __init__(self, stream, editor, runner):
         super(DebugWindow, self).__init__()
         self.setupUi(self)
@@ -241,12 +241,12 @@ class DebugWindow(QWidget, Ui_DebugWindow):
     # ---------------------------------------------------------
 
     def pushDelayedLog(self):
-        html = self.stream.getvalue() + '\n'
+        html = self.stream.getvalue() + "\n"
         self.log(html)
 
     @Slot(str)
     def log(self, text):
-        html = text.replace('\n', '<br/>')
+        html = text.replace("\n", "<br/>")
         self.logOutput.insertHtml(html)
 
     def help(self, *args):

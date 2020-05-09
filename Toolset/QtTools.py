@@ -83,7 +83,7 @@ class LoggingEmitter(QObject):
         log_target = getattr(self.logger, self.levels[level])
 
         log_target(text)
-        self.signal.emit(text + '\n\n')
+        self.signal.emit(text + "\n\n")
 
     def debug(self, *texts):
         self.log(*texts)
