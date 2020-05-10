@@ -247,8 +247,7 @@ class DebugWindow(QWidget, Ui_DebugWindow):
 
     @Slot(str)
     def log(self, text):
-        html = text.replace("\n", "<br/>")
-        self.logOutput.insertHtml(html)
+        self.logOutput.append(text)
 
     def help(self, *args):
         """help: display this message."""

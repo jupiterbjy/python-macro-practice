@@ -84,9 +84,9 @@ class LoggingEmitter(QObject):
         log_target = getattr(self.logger, self.levels[level])
 
         date = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        str_lvl = self.levels[level].upper()
         log_target(text)
-        self.signal.emit(date + text + "\n\n")
-
+        self.signal.emit(f"{date} - {str_lvl} - {text}\n\n")
 
     def debug(self, *texts):
         self.log(*texts)

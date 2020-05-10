@@ -20,7 +20,7 @@ DEBUG = True
 VERSION = "v0.0.6"
 DATE = "2020-05-06"
 LOG_STREAM = StringIO()
-LOGGER = logging.getLogger('Third Eye')
+LOGGER = logging.getLogger("Third Eye")
 
 
 class Controller:
@@ -74,7 +74,12 @@ def log_initialize():
     for handler in LOGGER.handlers:
         LOGGER.removeHandler(handler)
 
-    Formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s',
+    # Formatter = logging.Formatter(
+    #     "[%(asctime)s] [%(levelname)8s] --- %(message)s (%(filename)s:%(lineno)s)",
+    #     "%Y-%m-%d %H:%M:%S",
+    # )
+
+    Formatter = logging.Formatter('%(asctime)s - %(levelname)-10s - %(message)s',
                                   "%Y-%m-%d %H:%M:%S")
 
     handler = logging.StreamHandler(LOG_STREAM)
@@ -82,13 +87,17 @@ def log_initialize():
     LOGGER.addHandler(handler)
 
     if DEBUG:
-        LOGGER.addHandler(logging.StreamHandler())
+        console_handler = logging.StreamHandler()
+        console_handler.setFormatter(Formatter)
+        LOGGER.addHandler(console_handler)
 
     QtTools.LoggingEmitter.logger = LOGGER
 
     LOGGER.debug(f"{VERSION} built at {DATE}")
-    LOGGER.info('Real-Time log feeds may have different time-frame.')
-    LOGGER.debug('_____ Logging Started _____')
+    LOGGER.info("Real-Time log feeds may have different time-frame.")
+    LOGGER.debug("_____ Logging Started _____")
+    LOGGER.critical("_____ Logging Started _____")
+    LOGGER.warning("_____ Logging Started _____")
 
 
 if __name__ == "__main__":
@@ -98,7 +107,7 @@ if __name__ == "__main__":
     LOGGER.info(f"Freeze State: {Tools.IsFrozen()}")
 
     if not os.path.exists(Tools.PathData.relative("history")):
-        LOGGER.info('Image dumping folder not found, creating new.')
+        LOGGER.info("Image dumping folder not found, creating new.")
         os.mkdir(Tools.PathData.relative("history"))
 
     MacroMethods.IMG_SAVER = MacroMethods.setSaver(Tools.PathData.relative("history"))
