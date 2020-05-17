@@ -71,8 +71,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             element_move = self.seqStorage[move_idx]
 
         except IndexError:
-            QtTools.LOGGER_INSTANCE.debug("Move " + ("up" if up else "down") + ":")
-            QtTools.LOGGER_INSTANCE.debug("Cannot move selected object.")
+            QtTools.LoggingEmitter.debug("Move " + ("up" if up else "down") + ":")
+            QtTools.LoggingEmitter.debug("Cannot move selected object.")
 
         else:
             element_current = self.seqStorage[sel_idx]
@@ -108,7 +108,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             out = self.seqStorage.pop(idx)
 
         except IndexError:
-            QtTools.LOGGER_INSTANCE.debug("remove: Index out of range")
+            QtTools.LoggingEmitter.debug("remove: Index out of range")
 
         else:
             self.sequenceList.takeItem(idx)
@@ -124,7 +124,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.seqBackup.pop(0)
 
         self.seqBackup.append(self.seqStorage)
-        QtTools.LOGGER_INSTANCE.debug(f"- Backup: {len(self.seqBackup)}")
+        QtTools.LoggingEmitter.debug(f"- Backup: {len(self.seqBackup)}")
 
     def undoSeq(self):
         """
@@ -142,7 +142,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.macroExecute.emit(self.seqStorage[0])
 
         except IndexError:
-            QtTools.LOGGER_INSTANCE.debug("runSeq: Nothing To play.")
+            QtTools.LoggingEmitter.debug("runSeq: Nothing To play.")
 
         else:
             self.hide()
@@ -175,7 +175,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self._LoadImage(self.countImgLabel, self.countImgNameLabel, "count")
 
     def editSelected(self):
-        QtTools.LOGGER_INSTANCE.debug(f"Edit: {self.selectedElement().name}")
+        QtTools.LoggingEmitter.debug(f"Edit: {self.selectedElement().name}")
         self._configObject(self.selectedElement(), clear_text=False)
         self._comboBoxUpdateNew()
         item = QtTools.GenerateWidget(self.selectedElement())
@@ -197,7 +197,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         try:
             json.dump(baked, open(name, "w"), indent=2, default=lambda x: x.__dict__)
         except FileNotFoundError:
-            QtTools.LOGGER_INSTANCE.debug("└ Save canceled")
+            QtTools.LoggingEmitter.debug("└ Save canceled")
         else:
             self.recentDir["IO"] = os.path.dirname(name)
 
@@ -214,18 +214,18 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             baked = json.load(open(name))
 
         except json.JSONDecodeError:
-            QtTools.LOGGER_INSTANCE.debug("└ JSONDecodeError")
+            QtTools.LoggingEmitter.debug("└ JSONDecodeError")
             return
 
         except UnicodeDecodeError:
             if name is None:
                 raise FileNotFoundError
 
-            QtTools.LOGGER_INSTANCE.debug("└ UnicodeDecodeError")
+            QtTools.LoggingEmitter.debug("└ UnicodeDecodeError")
             return
 
         except FileNotFoundError:
-            QtTools.LOGGER_INSTANCE.debug("└ Load canceled")
+            QtTools.LoggingEmitter.debug("└ Load canceled")
             return
 
         else:
@@ -306,13 +306,13 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 self._configObject(target)
 
             except AttributeError as err:
-                QtTools.LOGGER_INSTANCE.info("AddToSequence: " + err.args[0])
-                QtTools.LOGGER_INSTANCE.info("AddToSequence: Object config Failed.")
+                QtTools.LoggingEmitter.info("AddToSequence: " + err.args[0])
+                QtTools.LoggingEmitter.info("AddToSequence: Object config Failed.")
                 return
 
             except IndexError as err:
-                QtTools.LOGGER_INSTANCE.info(err.args[0])
-                QtTools.LOGGER_INSTANCE.info("Object config Failed.")
+                QtTools.LoggingEmitter.info(err.args[0])
+                QtTools.LoggingEmitter.info("Object config Failed.")
                 return
 
             else:
@@ -548,7 +548,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 source = self.selectedElement()
 
             except IndexError:
-                QtTools.LOGGER_INSTANCE.debug("updateSel: Sequence is Empty.")
+                QtTools.LoggingEmitter.debug("updateSel: Sequence is Empty.")
                 return
 
         else:
@@ -579,7 +579,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 self.clickX.setValue(obj.target.x)
                 self.clickY.setValue(obj.target.y)
             except AttributeError:
-                QtTools.LOGGER_INSTANCE.debug(AttributeError, obj.target)
+                QtTools.LoggingEmitter.debug(AttributeError, obj.target)
                 self.clickX.setValue(obj.target[0])
                 self.clickY.setValue(obj.target[1])
 

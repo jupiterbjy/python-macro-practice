@@ -70,38 +70,54 @@ class StdoutRedirect(QObject):
         self.printOccur.emit(s)
 
 
-class LoggingEmitter(QObject):
-    """Supported class to wrap logging call to emit signals."""
-
+class LoggingEmitSignal(QObject):
     signal = Signal(str)
+
+
+class LoggingEmitter:
+    """Supportive class to wrap logging call to emit signals."""
+
+    signal = LoggingEmitSignal()
     logger = logging.getLogger()
     levels = ["debug", "info", "warning", "critical"]
 
-    def log(self, *texts, level=0):
+    @classmethod
+    def log(cls, *texts, level=0):
         """Level 0 ~ 3 respectively DEBUG, INFO, WARNING, CRITICAL."""
 
         text = " ".join(map(str, texts))
-        log_target = getattr(self.logger, self.levels[level])
+        log_target = getattr(cls.logger, cls.levels[level])
 
         date = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        str_lvl = self.levels[level].upper()
+        str_lvl = cls.levels[level].upper()
         log_target(text)
-        self.signal.emit(f"{date} - {str_lvl} - {text}\n\n")
+        cls.signal.signal.emit(f"{date} - {str_lvl} - {text}\n")
 
-    def debug(self, *texts):
-        self.log(*texts)
+    @classmethod
+    def debug(cls, *texts):
+        cls.log(*texts)
 
-    def info(self, *texts):
-        self.log(*texts, level=1)
+    @classmethod
+    def info(cls, *texts):
+        cls.log(*texts, level=1)
 
-    def warning(self, *texts):
-        self.log(*texts, level=2)
+    @classmethod
+    def warning(cls, *texts):
+        cls.log(*texts, level=2)
 
-    def critical(self, *texts):
-        self.log(*texts, level=3)
+    @classmethod
+    def critical(cls, *texts):
+        cls.log(*texts, level=3)
 
-
-LOGGER_INSTANCE = LoggingEmitter()
+    @classmethod
+    def setLogger(cls, new_logger):
+        try:
+            new_logger.debug("Logger passed to LoggingEmitter.")
+        except AttributeError:
+            cls.logger.critical(f"Received object is NOT a Logger.")
+            raise AttributeError(f"Received object is NOT a Logger, but {type(new_logger)}.")
+        else:
+            cls.logger = new_logger
 
 
 # https://stackoverflow.com/questions/25187444/pyqt-qlistwidget-custom-items
@@ -121,16 +137,8 @@ class SeqItemWidget(QWidget):
         self.allHBoxLayOut.addLayout(self.textLayOut, 1)
         self.setLayout(self.allHBoxLayOut)
 
-        self.textUpLabel.setStyleSheet(
-            """
-                    color: rgb(0, 0, 255);
-                """
-        )
-        self.textDownLabel.setStyleSheet(
-            """
-                    color: rgb(255, 0, 0);
-                """
-        )
+        self.textUpLabel.setStyleSheet("""color: rgb(0, 0, 255);""")
+        self.textDownLabel.setStyleSheet("""color: rgb(255, 0, 0);""")
 
         self.source = None
 
@@ -178,18 +186,18 @@ def loadImage(self, recent):
     file_name = os.path.basename(file_dir)
 
     if not file_dir:
-        LOGGER_INSTANCE.info("loadImage: Load Canceled")
+        LoggingEmitter.info("loadImage: Load Canceled")
         return False
 
     try:
         img = Image.open(file_dir)
 
     except NameError:
-        LOGGER_INSTANCE.warning(f"loadImage: {file_name} not found.")
+        LoggingEmitter.warning(f"loadImage: {file_name} not found.")
         return False
 
     except Image.UnidentifiedImageError:
-        LOGGER_INSTANCE.warning(f"loadImage: {file_name} is not an image.")
+        LoggingEmitter.warning(f"loadImage: {file_name} is not an image.")
         return False
 
     else:
@@ -216,7 +224,7 @@ def AddToListWidget(tgt, item_list_widget, index=None):
     :param item_list_widget: QItemListWidget
     """
 
-    LOGGER_INSTANCE.debug(f"Add: {type(tgt).__name__} '{tgt.name}'")
+    LoggingEmitter.debug(f"Add: {type(tgt).__name__} '{tgt.name}'")
 
     item = GenerateWidget(tgt)
 
@@ -273,10 +281,10 @@ def QSleep(delay, output=False, append=True):
 
     class context:
         def __enter__(self):
-            LOGGER_INSTANCE.debug(f"Wait {delay} start")
+            LoggingEmitter.debug(f"Wait {delay} start")
 
         def __exit__(self, exc_type, exc_val, exc_tb):
-            LOGGER_INSTANCE.debug(f"Finish")
+            LoggingEmitter.debug(f"Finish")
 
     if output:
         with context():

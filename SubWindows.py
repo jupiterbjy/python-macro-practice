@@ -72,7 +72,7 @@ class RunnerWindow(QWidget, Ui_Form):
 
     def injectGlobals(self):
         MacroMethods.ExScope.DUMP = self.dumpImageCheck.isChecked()
-        QtTools.LOGGER_INSTANCE.info(f"Image Dump: {MacroMethods.ExScope.DUMP}")
+        QtTools.LoggingEmitter.info(f"Image Dump: {MacroMethods.ExScope.DUMP}")
 
         # making sure file is reset.
         for i in self.source:
@@ -98,7 +98,7 @@ class RunnerWindow(QWidget, Ui_Form):
         try:
             widget = self.currentSeq.itemWidget(self.currentSeq.item(0))
         except RuntimeError:
-            QtTools.LOGGER_INSTANCE.warning("RuntimeError: Widget already destroyed.")
+            QtTools.LoggingEmitter.warning("RuntimeError: Widget already destroyed.")
             widget = QtTools.GenerateWidget(self.source)
 
         try:
@@ -110,7 +110,7 @@ class RunnerWindow(QWidget, Ui_Form):
             try:
                 self.currentSeq.clear()
             except RuntimeError as err:
-                QtTools.LOGGER_INSTANCE.warning(f"Runtime Error: {err}")
+                QtTools.LoggingEmitter.warning(f"RuntimeError: {err}")
                 pass
         if obj:
             QtTools.AddToListWidget(obj, self.currentSeq)
@@ -127,24 +127,24 @@ class RunnerWindow(QWidget, Ui_Form):
                 obj = obj.run()
 
             except pyautogui.FailSafeException:
-                QtTools.LOGGER_INSTANCE.critical("PyAutoGui FailSafe")
+                QtTools.LoggingEmitter.critical("PyAutoGui FailSafe")
                 self.runLine.setText("Cannot Click (0,0)")
                 break
 
             except ZeroDivisionError:
-                QtTools.LOGGER_INSTANCE.critical("Division by Zero")
+                QtTools.LoggingEmitter.critical("Division by Zero")
                 self.runLine.setText("Tried to divide by 0")
                 break
 
             except MacroMethods.AbortException:
-                QtTools.LOGGER_INSTANCE.warning("Abort Signaled")
+                QtTools.LoggingEmitter.warning("Abort Signaled")
                 self.runLine.setText("Aborted")
                 break
 
             else:
                 seq_count += 1
         else:
-            QtTools.LOGGER_INSTANCE.info("Macro Finished without error.")
+            QtTools.LoggingEmitter.info("Macro Finished without error.")
             self.runLine.setText("Macro finished.")
             self.updateHistory()
 
@@ -164,7 +164,7 @@ class RunnerWindow(QWidget, Ui_Form):
             self.areaInject()
 
         except TypeError:
-            QtTools.LOGGER_INSTANCE.critical("Macro aborted.")
+            QtTools.LoggingEmitter.critical("Macro aborted.")
             self.endSeq()
             return
 
@@ -176,7 +176,7 @@ class RunnerWindow(QWidget, Ui_Form):
 
         except Exception as err:
             # Assume no error has line-break.
-            QtTools.LOGGER_INSTANCE.critical(str(err))
+            QtTools.LoggingEmitter.critical(err)
 
     def endSeq(self):
         for i in self.source:
@@ -233,7 +233,6 @@ class DebugWindow(QWidget, Ui_DebugWindow):
         self.commandList = {
             "help": self.help,
             "list": self.listTarget,
-            "inspect": self.inspect,
             "clear": self.clear,
         }
 
@@ -249,11 +248,16 @@ class DebugWindow(QWidget, Ui_DebugWindow):
     def log(self, text):
         self.logOutput.append(text)
 
-    def help(self, *args):
-        """help: display this message."""
-        msg = "<br/>".join([i.__doc__ for i in self.commandList.values()])
+    def print_debug(self, text):
+        self.debugOutput.insertHtml(text.replace("\n", "<br/>"))
 
-        self.debugOutput.insertHtml(msg.replace("\n", "<br/>") + "<br/>" * 2)
+    def help(self, *args):
+        """help: display this message.
+        """
+
+        msg = "<br/>".join([i.__doc__ for i in self.commandList.values()])
+        self.print_debug(msg)
+        # self.debugOutput.insertHtml(msg.replace("\n", "<br/>") + "<br/>" * 2)
 
     def processCommand(self):
         raw = self.commandLine.text()
@@ -261,60 +265,43 @@ class DebugWindow(QWidget, Ui_DebugWindow):
         self.commandLine.clear()
 
         formatted = TextTools.QtColorize(raw + "<br/>", (120, 255, 120))
-        self.debugOutput.insertHtml(formatted)
+        self.print_debug(formatted)
 
         try:
             func = self.commandList[line[0]]
             func(*line[1:])  # unexpected arguments? why?
+
         except KeyError:
             formatted = TextTools.QtColorize(
-                f"Unrecognized command: {line[0]}", (255, 120, 120)
+                f"Unrecognized command: {line[0]}\n\n", (255, 120, 120)
             )
-            self.debugOutput.insertHtml(formatted + "<br/>" + "<br/>")
+            self.print_debug(formatted)
 
     def clear(self, *args2):
-        """clear: clears logging screen"""
+        """clear: clears logging screen
+        """
         self.debugOutput.clear()
 
     def listTarget(self, *args2):
         """list: show list of target. supported are:
         └ list macro: Show list of element in macro.
-        └ list variable: Show list of variables. <- Dummy"""
-
-        if "var" in args2[0]:
-            self.listVariables()
-        elif "mac" in args2[0]:
-            self.listMacroElements()
+        └ list variable: Show list of variables. <- Dummy
+        """
+        try:
+            argument = args2[0]
+        except IndexError:
+            self.print_debug(self.listTarget.__doc__)
         else:
-            raise KeyError
+            if "var" in argument:
+                self.listVariables()
+            elif "mac" in argument:
+                self.listMacroElements()
+            else:
+                raise KeyError
 
     def listVariables(self):
         pass
 
     def listMacroElements(self):
         for i in self.editor.seqStorage:
-            t = f"{i.__repr__()}".replace("\n", "<br/>")
-            self.debugOutput.insertHtml(t)
-
-    def inspect(self, *args):
-        """inspect: Dummy"""
-
-        def inspect_variables(*args2):
-            pass
-
-        def inspect_macro(*args2):
-            # change this into name-based search later, maybe.
-
-            try:
-                target = self.runner.source[args2[0]]
-            except IndexError:
-                self.debugOutput.insertHtml("Index out of range.")
-            else:
-                self.debugOutput.insertHtml(target.__repr__())
-
-        if "var" in args[0]:
-            inspect_variables(*args[:])
-        elif "mac" in args[0]:
-            inspect_macro(*args)
-        else:
-            raise KeyError
+            self.print_debug(i.__repr__() + '\n')

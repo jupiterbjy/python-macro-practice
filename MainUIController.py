@@ -16,9 +16,10 @@ from Toolset import Tools, QtTools
 # Cleanup messy import chains
 # implement undo
 
+# Set Debug to False on build.
 DEBUG = True
 VERSION = "v0.0.6"
-DATE = "2020-05-06"
+DATE = "2020-05-17"
 LOG_STREAM = StringIO()
 LOGGER = logging.getLogger("Third Eye")
 
@@ -36,8 +37,8 @@ class Controller:
         self.about = SubWindows.AboutWindow(VERSION, DATE)
 
         self.debugger = SubWindows.DebugWindow(LOG_STREAM, self.editor, self.runner)
-        self.logInstance = QtTools.LOGGER_INSTANCE
-        self.logInstance.signal.connect(self.debugger.log)
+        self.logInstance = QtTools.LoggingEmitter
+        self.logInstance.signal.signal.connect(self.debugger.log)
 
     def show_editor(self):
         self.logInstance.info("Calling Editor.")
@@ -91,7 +92,7 @@ def log_initialize():
         console_handler.setFormatter(Formatter)
         LOGGER.addHandler(console_handler)
 
-    QtTools.LoggingEmitter.logger = LOGGER
+    QtTools.LoggingEmitter.setLogger(LOGGER)
 
     LOGGER.debug(f"{VERSION} built at {DATE}")
     LOGGER.info("Real-Time log feeds may have different time-frame.")

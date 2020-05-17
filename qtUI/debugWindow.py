@@ -20,7 +20,7 @@ class Ui_DebugWindow(object):
     def setupUi(self, DebugWindow):
         if not DebugWindow.objectName():
             DebugWindow.setObjectName(u"DebugWindow")
-        DebugWindow.resize(442, 459)
+        DebugWindow.resize(683, 457)
         self.verticalLayout = QVBoxLayout(DebugWindow)
         self.verticalLayout.setObjectName(u"verticalLayout")
         self.logSaveCheck = QCheckBox(DebugWindow)
