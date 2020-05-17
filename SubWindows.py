@@ -1,6 +1,8 @@
 from PySide2.QtCore import QRunnable, Slot, Signal
 from PySide2.QtWidgets import QMainWindow, QDialog, QWidget
+from PySide2.QtGui import QTextCursor
 import pyautogui
+import re
 
 from Toolset import QtTools, Tools, TextTools
 from qtUI.Runner import Ui_Form
@@ -246,16 +248,18 @@ class DebugWindow(QWidget, Ui_DebugWindow):
 
     @Slot(str)
     def log(self, text):
+        self.logOutput.moveCursor(QTextCursor.End)
         self.logOutput.append(text)
 
     def print_debug(self, text):
+        self.debugOutput.moveCursor(QTextCursor.End)
         self.debugOutput.insertHtml(text.replace("\n", "<br/>"))
 
     def help(self, *args):
-        """help: display this message.
+        """help: display this message.\n
         """
 
-        msg = "<br/>".join([i.__doc__ for i in self.commandList.values()])
+        msg = "".join([i.__doc__ for i in self.commandList.values()])
         self.print_debug(msg)
         # self.debugOutput.insertHtml(msg.replace("\n", "<br/>") + "<br/>" * 2)
 
@@ -278,15 +282,17 @@ class DebugWindow(QWidget, Ui_DebugWindow):
             self.print_debug(formatted)
 
     def clear(self, *args2):
-        """clear: clears logging screen
+        """clear: clears logging screen\n
         """
         self.debugOutput.clear()
 
     def listTarget(self, *args2):
         """list: show list of target. supported are:
         └ list macro: Show list of element in macro.
-        └ list variable: Show list of variables. <- Dummy
+        └ list variable: Show list of variables. <- Dummy\n
         """
+        # this is going messy with html.. counter intuitive
+
         try:
             argument = args2[0]
         except IndexError:
@@ -303,5 +309,15 @@ class DebugWindow(QWidget, Ui_DebugWindow):
         pass
 
     def listMacroElements(self):
+        reg = re.compile(r'(?<=┠─).+?(?=:)', re.MULTILINE)
+
         for i in self.editor.seqStorage:
-            self.print_debug(i.__repr__() + '\n')
+            src = i.__repr__() + '\n\n'
+            name = re.findall(reg, src)
+
+            # Nested for, what the..
+            for n in name:
+                colored = TextTools.QtColorize(n, (0, 165, 255))
+                src = src.replace(n, colored)
+
+            self.print_debug(src)
