@@ -97,8 +97,6 @@ def log_initialize():
     LOGGER.debug(f"{VERSION} built at {DATE}")
     LOGGER.info("Real-Time log feeds may have different time-frame.")
     LOGGER.debug("_____ Logging Started _____")
-    LOGGER.critical("_____ Logging Started _____")
-    LOGGER.warning("_____ Logging Started _____")
 
 
 if __name__ == "__main__":

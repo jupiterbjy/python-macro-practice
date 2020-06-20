@@ -1,2 +1,2 @@
 cd ..
-python -m setup_gen.py build
+python -m setup.py build

@@ -15,6 +15,7 @@ class AbortException(Exception):
 
 
 class ExScope:
+    # TODO: change sleep function designation by future.
     SLEEP_FUNCTION = time.sleep  # Will be override by ui_main.
     LOGGER = logging.getLogger()
     IMG_SAVER = ImageModule.saveImg(__file__)
@@ -47,13 +48,15 @@ class ExMethodIterator:
             return current
 
 
+class VariableMixin:
+    variables = {}
+
+
 class ExBase:  # Excluded - Ex
     """
     Defines minimum interfaces that subclasses need to function.
     Override action, reset, serialize and deserialize when necessary.
     """
-
-    variables = dict()
 
     # https://stackoverflow.com/questions/30849383/
     # meaning-of-the-super-keyword-in-the-parent-class-python
@@ -112,14 +115,13 @@ class ExBase:  # Excluded - Ex
 # --------------------------------------------------------
 
 
-class _ClickBase:
+class ClickMixin:
     """
     Super class for click operation.
     Separated from click object to prevent diamond inherit.
     """
 
     def __init__(self):
-        super(_ClickBase, self).__init__()
         self.target = ImageModule.Pos()
         self.clickCount = 1
         self.clickDelay = 0.01
@@ -137,7 +139,7 @@ class _ClickBase:
 
         return out()
 
-    def _click(self, target=None):
+    def clickBase(self, target=None):
 
         for i in range(self.clickCount):
             checkAbort()
@@ -146,7 +148,7 @@ class _ClickBase:
             print(f"Click: {self.finalPos(target)}")
 
 
-class Click(ExBase, _ClickBase):
+class Click(ExBase, ClickMixin):
     """
     Interface of Simple Click method.
     """
@@ -159,7 +161,7 @@ class Click(ExBase, _ClickBase):
         return self.screenArea.p1 + self.target
 
     def action(self):
-        self._click(self.absPos)
+        self.clickBase(self.absPos)
         return True
 
     def serialize(self):
@@ -224,7 +226,7 @@ class Wait(ExBase):
         return True
 
 
-class Variable(ExBase):
+class Variable(ExBase, VariableMixin):
     """
     Class that trying to mimic what makes fRep different from plain macros.
     Creating Same-name Variable will overwrite existing variable.
@@ -240,7 +242,7 @@ class Variable(ExBase):
         self.value = 0
 
     def __del__(self):
-        ExBase.variables.pop(self.name, None)
+        VariableMixin.variables.pop(self.name, None)
 
     def setValue(self, text):
 
@@ -261,14 +263,14 @@ class Variable(ExBase):
             self.value = value
 
     def action(self):
-        if self.name in ExBase.variables.keys():
+        if self.name in VariableMixin.variables.keys():
             self.name += str(self._created_instances)
 
-        ExBase.variables[self.name] = self.value
+        VariableMixin.variables[self.name] = self.value
         return True
 
 
-class _Image(ExBase):
+class ImageMixin:
     """
     superclass of all Macro classes dealing with image.
     """
@@ -352,7 +354,7 @@ class _Image(ExBase):
         self.matchPoint = None
 
 
-class ImageSearch(_Image, _ClickBase):
+class ImageSearch(ExBase, ClickMixin, ImageMixin):
     """
     Find Image on given screen area.
     Can decide whether to click or not, or how much trials before fail.
@@ -394,7 +396,7 @@ class ImageSearch(_Image, _ClickBase):
 
         if self.matchPoint:
             self.target.set(*self.ImageCenter)
-            self._click(self.absPos)
+            self.clickBase(self.absPos)
 
         return bool(self.matchPoint)
 
@@ -404,7 +406,7 @@ class ImageSearch(_Image, _ClickBase):
         self.capturedImage = None
 
 
-class SearchOccurrence(_Image, _ClickBase):
+class SearchOccurrence(ExBase, ClickMixin, ImageMixin):
     """
     Counts occurrences of target image.
     Not solid about what then I should do.
@@ -445,7 +447,7 @@ class SearchOccurrence(_Image, _ClickBase):
             for p in self.matchPoints:
                 self.matchPoint = p
                 self.target.set(*self.ImageCenter)
-                self._click(self.absPos)
+                self.clickBase(self.absPos)
 
         return state
 
@@ -582,6 +584,6 @@ def Deserializer(baked):
     return out
 
 
-blacklist = {"_", "Ex", "Abort", "deque"}
+blacklist = {"_", "Ex", "Abort", "deque", "Mixin"}
 __all__ = MemberLoader.ListClass(__name__, blacklist=blacklist)
 class_dict = MemberLoader.ListClass(__name__, blacklist=blacklist, return_dict=True)
