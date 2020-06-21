@@ -9,6 +9,7 @@ from qtUI.Runner import Ui_Form
 from qtUI.aboutDialog import Ui_About
 from qtUI.debugWindow import Ui_DebugWindow
 from Macro import Elements
+import Macro
 
 
 # https://www.learnpyqt.com/courses/concurrent-execution/multithreading-pyqt-applications-qthreadpool/
@@ -138,7 +139,7 @@ class RunnerWindow(QWidget, Ui_Form):
                 self.runLine.setText("Tried to divide by 0")
                 break
 
-            except Elements.AbortException:
+            except Macro.AbortException:
                 QtTools.LoggingEmitter.warning("Abort Signaled")
                 self.runLine.setText("Aborted")
                 break
