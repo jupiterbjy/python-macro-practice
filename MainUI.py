@@ -6,7 +6,7 @@ import json
 
 from Toolset import QtTools, ObjectDispatch, Tools
 from qtUI.pymacro import Ui_MainWindow
-import MacroMethods
+from Macro import Elements
 
 
 class MainWindow(QMainWindow, Ui_MainWindow):
@@ -136,7 +136,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         """
         Prepares and Calls subWindow to run macro.
         """
-        MacroMethods.SetNext(self.seqStorage)
+        Elements.SetNext(self.seqStorage)
 
         try:
             self.macroExecute.emit(self.seqStorage[0])
@@ -148,8 +148,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.hide()
 
     def selectedMethod(self):
-        out = MacroMethods.class_dict[
-            MacroMethods.__all__[self.methodList.currentRow()]
+        out = Elements.class_dict[
+            Elements.__all__[self.methodList.currentRow()]
         ]
         return out()
 
@@ -193,7 +193,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         for i in self.seqStorage:
             i.reset()
 
-        baked = MacroMethods.Serializer(self.seqStorage)
+        baked = Elements.Serializer(self.seqStorage)
         try:
             json.dump(baked, open(name, "w"), indent=2, default=lambda x: x.__dict__)
         except FileNotFoundError:
@@ -229,7 +229,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             return
 
         else:
-            deserialized = MacroMethods.Deserializer(baked)
+            deserialized = Elements.Deserializer(baked)
             self.recentDir["IO"] = os.path.dirname(name)
 
         self.initializing(manual=True)
@@ -238,7 +238,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.AddToSequence(i)
 
         last = type(self.seqStorage[-1]).__name__
-        self.methodList.setCurrentRow(MacroMethods.__all__.index(last))
+        self.methodList.setCurrentRow(Elements.__all__.index(last))
         self.sequenceList.setCurrentRow(len(self.seqStorage) - 1)
         self._updateToSelected()
 
@@ -249,7 +249,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         """
         if not manual:
             self.listAvailableMethods()
-            MacroMethods.ExScope.SLEEP_FUNCTION = QtTools.QSleep
+            Elements.ExScope.SLEEP_FUNCTION = QtTools.QSleep
         else:
             self.seqStorage.clear()
 
@@ -259,7 +259,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.onFailCombo.setCurrentIndex(0)
         self.onSuccessCombo.setCurrentIndex(0)
         self.loopStartCombo.setCurrentIndex(0)
-        self._disableOptions(MacroMethods.Click())
+        self._disableOptions(Elements.Click())
 
     def listAvailableMethods(self):
         """
@@ -283,7 +283,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         self.methodList.clear()
 
-        for i in setItems(MacroMethods.__all__):
+        for i in setItems(Elements.__all__):
 
             list_item = QListWidgetItem(self.methodList)
             list_item.setSizeHint(i.sizeHint())
@@ -346,7 +346,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
     @property
     def listLoopStarts(self):
-        return [i for i in self.seqStorage if isinstance(i, MacroMethods.LoopStart)]
+        return [i for i in self.seqStorage if isinstance(i, Elements.LoopStart)]
 
     def _comboBoxLoopUpdate(self):
         curr = self.loopStartCombo.currentIndex()
@@ -465,17 +465,17 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         # Dispatching =====================================
 
-        @dispatch.register(MacroMethods.Click)
+        @dispatch.register(Elements.Click)
         def _(obj):
             obj.target.set(self.clickX.value(), self.clickY.value())
 
-        @dispatch.register(MacroMethods.Drag)
+        @dispatch.register(Elements.Drag)
         def _(obj):
             x1, y1 = self.dragFromX.value(), self.dragFromY.value()
             x2, y2 = self.dragToX.value(), self.dragToY.value()
             obj.set(x1, y1, x2, y2)
 
-        @dispatch.register(MacroMethods.ImageSearch)
+        @dispatch.register(Elements.ImageSearch)
         def _(obj):
             try:
                 obj.targetImage = self.cachedImage["search"]
@@ -492,11 +492,11 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             obj.precision = self.searchPrecisionSpin.value() / 100
             obj.targetName = self.searchImgNameLabel.text()
 
-        @dispatch.register(MacroMethods.LoopStart)
+        @dispatch.register(Elements.LoopStart)
         def _(obj):
             pass
 
-        @dispatch.register(MacroMethods.LoopEnd)
+        @dispatch.register(Elements.LoopEnd)
         def _(obj):
             obj.loopCount = self.loopCountSpin.value()
 
@@ -507,7 +507,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             else:
                 raise IndexError("LoopEnd: No Target specified.")
 
-        @dispatch.register(MacroMethods.SearchOccurrence)
+        @dispatch.register(Elements.SearchOccurrence)
         def _(obj):
             try:
                 obj.targetImage = self.cachedImage["count"]
@@ -524,11 +524,11 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             obj.precision = self.countPrecisionSpin.value() / 100
             obj.targetName = self.countImgNameLabel.text()
 
-        @dispatch.register(MacroMethods.Variable)
+        @dispatch.register(Elements.Variable)
         def _(obj):
             obj.setValue(self.variableLine.text())
 
-        @dispatch.register(MacroMethods.Wait)
+        @dispatch.register(Elements.Wait)
         def _(obj):
             obj.delay = self.waitSpin.value()
 
@@ -561,7 +561,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         src = type(source).__name__
 
         if self.sequenceList.currentItem() is not None:
-            self.methodList.setCurrentRow(MacroMethods.__all__.index(src))
+            self.methodList.setCurrentRow(Elements.__all__.index(src))
             self.editButton.setEnabled(True)
             self.nameLine.setText(source.name)
             self._disableOptions(source)
@@ -573,7 +573,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         # Dispatching =====================================
 
-        @dispatch.register(MacroMethods.Click)
+        @dispatch.register(Elements.Click)
         def _(obj):
             try:
                 self.clickX.setValue(obj.target.x)
@@ -583,14 +583,14 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 self.clickX.setValue(obj.target[0])
                 self.clickY.setValue(obj.target[1])
 
-        @dispatch.register(MacroMethods.Drag)
+        @dispatch.register(Elements.Drag)
         def _(obj):
             self.dragFromX.setValue(obj.p1.x)
             self.dragFromY.setValue(obj.p1.y)
             self.dragToX.setValue(obj.p2.x)
             self.dragToY.setValue(obj.p2.y)
 
-        @dispatch.register(MacroMethods.ImageSearch)
+        @dispatch.register(Elements.ImageSearch)
         def _(obj):
             self.searchClickCount.setValue(obj.clickCount)
             self.searchClickInterval.setValue(obj.clickDelay)
@@ -607,16 +607,16 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
             self.cachedImage["search"] = obj.targetImage
 
-        @dispatch.register(MacroMethods.LoopStart)
+        @dispatch.register(Elements.LoopStart)
         def _(obj):
             pass
 
-        @dispatch.register(MacroMethods.LoopEnd)
+        @dispatch.register(Elements.LoopEnd)
         def _(obj):
             idx = self.listLoopStarts.index(obj.onSuccess)
             self.loopStartCombo.setCurrentIndex(idx + 1)
 
-        @dispatch.register(MacroMethods.SearchOccurrence)
+        @dispatch.register(Elements.SearchOccurrence)
         def _(obj):
             self.countClickCount.setValue(obj.clickCount)
             self.countClickInterval.setValue(obj.clickDelay)
@@ -632,11 +632,11 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
             self.cachedImage["count"] = obj.targetImage
 
-        @dispatch.register(MacroMethods.Variable)
+        @dispatch.register(Elements.Variable)
         def _(obj):
             self.variableLine.setText(str(obj.value))
 
-        @dispatch.register(MacroMethods.Wait)
+        @dispatch.register(Elements.Wait)
         def _(obj):
             self.waitSpin.setValue(obj.delay)
 
@@ -679,30 +679,30 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         # Dispatching =====================================
 
-        @dispatch.register(MacroMethods.Click)
+        @dispatch.register(Elements.Click)
         def _(_):
             self.tabWidget.setCurrentIndex(2)
             self.tabWidget.setTabEnabled(2, True)
             self.clickGroup.setEnabled(True)
 
-        @dispatch.register(MacroMethods.Drag)
+        @dispatch.register(Elements.Drag)
         def _(_):
             self.tabWidget.setCurrentIndex(2)
             self.tabWidget.setTabEnabled(2, True)
             self.dragGroup.setEnabled(True)
 
-        @dispatch.register(MacroMethods.ImageSearch)
+        @dispatch.register(Elements.ImageSearch)
         def _(_):
             self.tabWidget.setCurrentIndex(0)
             self.tabWidget.setTabEnabled(0, True)
 
-        @dispatch.register(MacroMethods.LoopStart)
+        @dispatch.register(Elements.LoopStart)
         def _(_):
             self._comboBoxLoopUpdate()
             self.tabWidget.setCurrentIndex(2)
             self.tabWidget.setTabEnabled(2, True)
 
-        @dispatch.register(MacroMethods.LoopEnd)
+        @dispatch.register(Elements.LoopEnd)
         def _(_):
             self._comboBoxLoopUpdate()
             self.tabWidget.setCurrentIndex(2)
@@ -711,18 +711,18 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.loopStartCombo.setEnabled(True)
             self.onSuccessCombo.setDisabled(True)
 
-        @dispatch.register(MacroMethods.SearchOccurrence)
+        @dispatch.register(Elements.SearchOccurrence)
         def _(_):
             self.tabWidget.setCurrentIndex(1)
             self.tabWidget.setTabEnabled(1, True)
 
-        @dispatch.register(MacroMethods.Variable)
+        @dispatch.register(Elements.Variable)
         def _(_):
             self.tabWidget.setCurrentIndex(2)
             self.tabWidget.setTabEnabled(2, True)
             self.varGroup.setEnabled(True)
 
-        @dispatch.register(MacroMethods.Wait)
+        @dispatch.register(Elements.Wait)
         def _(_):
             self.tabWidget.setCurrentIndex(2)
             self.tabWidget.setTabEnabled(2, True)

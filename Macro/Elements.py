@@ -1,51 +1,12 @@
 from collections import deque
 from PIL import Image
 from copy import deepcopy
-import time
 import pyautogui
 import io
 import base64
-import logging
 
+from Macro.tools import MethodIterator, SLEEP_FUNCTION, DUMP, IMG_SAVER, checkAbort
 from Toolset import MemberLoader, ImageModule
-
-
-class AbortException(Exception):
-    pass
-
-
-class ExScope:
-    # TODO: change sleep function designation by future.
-    SLEEP_FUNCTION = time.sleep  # Will be override by ui_main.
-    LOGGER = logging.getLogger()
-    IMG_SAVER = ImageModule.saveImg(__file__)
-    ABORT = False
-    DUMP = False
-
-
-def setSaver(path):
-    ExScope.IMG_SAVER = ImageModule.saveImg(path)
-
-
-def checkAbort():  # for now call this every action() to implement abort.
-    if ExScope.ABORT:  # inefficient to check if every run.
-        raise AbortException
-
-
-class ExMethodIterator:
-    def __init__(self, head):
-        self.method = head
-
-    def __iter__(self):
-        return self
-
-    def __next__(self):
-        if self.method is None:
-            raise StopIteration
-        else:
-            current = self.method
-            self.method = self.method.next
-            return current
 
 
 class VariableMixin:
@@ -109,7 +70,7 @@ class ExBase:  # Excluded - Ex
         self.screenArea = None
 
     def __iter__(self):
-        return ExMethodIterator(self)
+        return MethodIterator(self)
 
 
 # --------------------------------------------------------
@@ -127,6 +88,7 @@ class ClickMixin:
         self.clickDelay = 0.01
         self.randomOffset = 0
 
+    @property
     def finalPos(self, target=None):
         if target is None:
             target = self.target
@@ -143,7 +105,7 @@ class ClickMixin:
 
         for i in range(self.clickCount):
             checkAbort()
-            ExScope.SLEEP_FUNCTION(self.clickDelay)
+            SLEEP_FUNCTION(self.clickDelay)
             pyautogui.click(self.finalPos(target))
             print(f"Click: {self.finalPos(target)}")
 
@@ -222,7 +184,7 @@ class Wait(ExBase):
         self.delay = 0
 
     def action(self):
-        ExScope.SLEEP_FUNCTION(self.delay)
+        SLEEP_FUNCTION(self.delay)
         return True
 
 
@@ -272,7 +234,7 @@ class Variable(ExBase, VariableMixin):
 
 class ImageMixin:
     """
-    superclass of all Macro classes dealing with image.
+    mixin class of all Macro classes dealing with image.
     """
 
     def __init__(self):
@@ -285,15 +247,15 @@ class ImageMixin:
         self.precision = 0.85
 
     def DumpCaptured(self, name=None):
-        ExScope.IMG_SAVER(self.capturedImage, str(name))
+        IMG_SAVER(self.capturedImage, str(name))
 
     def DumpTarget(self):
-        ExScope.IMG_SAVER(self.targetImage, self.targetName)
+        IMG_SAVER(self.targetImage, self.targetName)
 
     def DumpCoordinates(self):  # Do I need this?
         return self.screenArea, self.matchPoint
 
-    @property  # not sure if this use-case is for class method.
+    @property
     def targetImage(self):
         return self._targetImage
 
@@ -377,9 +339,9 @@ class ImageSearch(ExBase, ClickMixin, ImageMixin):
             if self.matchPoint:
                 break
 
-            ExScope.SLEEP_FUNCTION(self.loopDelay)
+            SLEEP_FUNCTION(self.loopDelay)
 
-        if ExScope.DUMP:
+        if DUMP:
             self.DumpCaptured(bool(self.matchPoint))
 
     @property
@@ -429,7 +391,7 @@ class SearchOccurrence(ExBase, ClickMixin, ImageMixin):
             self.targetImage, self.screenArea.region, self.precision, self.threshold
         )
 
-        if ExScope.DUMP:
+        if DUMP:
             self.DumpCaptured(bool(self.matchCount))
 
     @property

@@ -8,7 +8,7 @@ from Toolset import QtTools, Tools, TextTools
 from qtUI.Runner import Ui_Form
 from qtUI.aboutDialog import Ui_About
 from qtUI.debugWindow import Ui_DebugWindow
-import MacroMethods
+from Macro import Elements
 
 
 # https://www.learnpyqt.com/courses/concurrent-execution/multithreading-pyqt-applications-qthreadpool/
@@ -73,8 +73,8 @@ class RunnerWindow(QWidget, Ui_Form):
         self.updateHistory(self.source)
 
     def injectGlobals(self):
-        MacroMethods.ExScope.DUMP = self.dumpImageCheck.isChecked()
-        QtTools.LoggingEmitter.info(f"Image Dump: {MacroMethods.ExScope.DUMP}")
+        Elements.ExScope.DUMP = self.dumpImageCheck.isChecked()
+        QtTools.LoggingEmitter.info(f"Image Dump: {Elements.ExScope.DUMP}")
 
         # making sure file is reset.
         for i in self.source:
@@ -138,7 +138,7 @@ class RunnerWindow(QWidget, Ui_Form):
                 self.runLine.setText("Tried to divide by 0")
                 break
 
-            except MacroMethods.AbortException:
+            except Elements.AbortException:
                 QtTools.LoggingEmitter.warning("Abort Signaled")
                 self.runLine.setText("Aborted")
                 break
@@ -186,13 +186,13 @@ class RunnerWindow(QWidget, Ui_Form):
 
         self.sequenceStarted = False
         self.updateButtonState()
-        MacroMethods.ExScope.ABORT = False
+        Elements.ExScope.ABORT = False
         QtTools.ABORT_SIGNALED = False
 
     def stopSeq(self):
         self.runLine.setText("Macro aborted.")
 
-        MacroMethods.ExScope.ABORT = True
+        Elements.ExScope.ABORT = True
         QtTools.ABORT_SIGNALED = True
         QtTools.AbortTimers()
 

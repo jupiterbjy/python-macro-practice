@@ -1,13 +1,13 @@
-import MacroMethods
+from Macro import Elements
 import unittest
 
 
 def TestCaseGenerate():
     out = []
-    for method in MacroMethods.class_dict.values():
+    for method in Elements.class_dict.values():
         out.append(method())
 
-    MacroMethods.SetNext(out)
+    Elements.SetNext(out)
     return out
 
 
