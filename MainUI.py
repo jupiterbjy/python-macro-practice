@@ -249,7 +249,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         """
         if not manual:
             self.listAvailableMethods()
-            Elements.ExScope.SLEEP_FUNCTION = QtTools.QSleep
         else:
             self.seqStorage.clear()
 
@@ -441,7 +440,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         """
 
         text = self.nameLine.text()
-        target.setName(type(target).__name__ if not text else text)
+        target.Name(type(target).__name__ if not text else text)
 
         if clear_text:
             self.nameLine.clear()

@@ -1,6 +1,7 @@
 from PySide2.QtCore import QRunnable, Slot, Signal
 from PySide2.QtWidgets import QMainWindow, QDialog, QWidget
 from PySide2.QtGui import QTextCursor
+from threading import Thread, Event
 import pyautogui
 import re
 

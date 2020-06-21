@@ -64,13 +64,11 @@ class MainWindow(QWidget):
 
 
 def stoppable_scoot(event: threading.Event, n):
-    while not event.is_set():
-        for i in range(n):
-            print(i)
-            event.wait(0.5)
-            if event.is_set():
-                break
-        else:
+    for i in range(n):
+        print(i)
+        event.wait(2)
+        if event.is_set():
+            print('Boinc!')
             break
 
     print('Gravity? Who cares about Gravity!')

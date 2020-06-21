@@ -1,21 +1,21 @@
-import time
 import logging
+from threading import Event
 from Macro import Imaging
 
-SLEEP_FUNCTION = time.sleep  # Will be override by ui_main.
+
 LOGGER = logging.getLogger()
 IMG_SAVER = Imaging.saveImg(__file__)
-ABORT = False
 DUMP = False
+EVENT = Event()
+
+
+def check_event():
+    if EVENT.is_set():
+        raise AbortException
 
 
 class AbortException(Exception):
     pass
-
-
-def checkAbort():  # for now call this every action() to implement abort.
-    if ABORT:  # inefficient to check if every run.
-        raise AbortException
 
 
 def setSaver(path):
@@ -37,3 +37,9 @@ class MethodIterator:
             current = self.method
             self.method = self.method.next
             return current
+
+
+def stoppable_sleep(time: float, event=EVENT):
+    if event.wait(time):  # return True immediately when set().
+        event.clear()
+        raise AbortException  # Eject!

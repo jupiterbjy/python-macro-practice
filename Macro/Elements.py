@@ -1,15 +1,12 @@
 from collections import deque
-from PIL import Image
 from copy import deepcopy
 import pyautogui
-import io
-import base64
 
 from Toolset import MemberLoader
-from Macro import Imaging
+from Macro import Imaging, Bases, stoppable_sleep, DUMP
 
 
-class Click(ExBase, ClickMixin):
+class Click(Bases.Base, Bases.ClickMixin):
     """
     Interface of Simple Click method.
     """
@@ -33,7 +30,7 @@ class Click(ExBase, ClickMixin):
         self.target = Imaging.Pos(*self.target)
 
 
-class LoopStart(ExBase):
+class LoopStart(Bases.Base):
     """
     Placeholder for Loop. No special functionality is needed for loop start.
     """
@@ -48,7 +45,7 @@ class LoopStart(ExBase):
         return True
 
 
-class LoopEnd(ExBase):
+class LoopEnd(Bases.Base):
     """
     Implements Loop via setting next/onSuccess to LoopStart Object.
     Not for standalone usage.
@@ -72,7 +69,7 @@ class LoopEnd(ExBase):
         self.loopTime = 0
 
 
-class Wait(ExBase):
+class Wait(Bases.Base):
     """
     Using Asynchronous sleep for Qt.
     but will default to normal time.sleep in case this is used on CLI.
@@ -83,11 +80,11 @@ class Wait(ExBase):
         self.delay = 0
 
     def action(self):
-        SLEEP_FUNCTION(self.delay)
+        stoppable_sleep(self.delay)
         return True
 
 
-class Variable(ExBase, VariableMixin):
+class Variable(Bases.Base, Bases.VariableMixin):
     """
     Class that trying to mimic what makes fRep different from plain macros.
     Creating Same-name Variable will overwrite existing variable.
@@ -103,7 +100,7 @@ class Variable(ExBase, VariableMixin):
         self.value = 0
 
     def __del__(self):
-        VariableMixin.variables.pop(self.name, None)
+        Bases.VariableMixin.variables.pop(self.name, None)
 
     def setValue(self, text):
 
@@ -124,98 +121,14 @@ class Variable(ExBase, VariableMixin):
             self.value = value
 
     def action(self):
-        if self.name in VariableMixin.variables.keys():
+        if self.name in Bases.VariableMixin.variables.keys():
             self.name += str(self._created_instances)
 
-        VariableMixin.variables[self.name] = self.value
+        Bases.VariableMixin.variables[self.name] = self.value
         return True
 
 
-class ImageMixin:
-    """
-    mixin class of all Macro classes dealing with image.
-    """
-
-    def __init__(self):
-        super().__init__()
-
-        self._targetImage = None
-        self.targetName = None
-        self.capturedImage = None
-        self.matchPoint = None  # expects pos object
-        self.precision = 0.85
-
-    def DumpCaptured(self, name=None):
-        IMG_SAVER(self.capturedImage, str(name))
-
-    def DumpTarget(self):
-        IMG_SAVER(self.targetImage, self.targetName)
-
-    def DumpCoordinates(self):  # Do I need this?
-        return self.screenArea, self.matchPoint
-
-    @property
-    def targetImage(self):
-        return self._targetImage
-
-    @targetImage.setter
-    def targetImage(self, img):
-        try:
-            img.convert("RGB")
-
-        except AttributeError:
-            raise AttributeError("Onl PIL-type images are supported.")
-
-        else:
-            if img.format != "PNG":  # Non-png images has trouble with cv2 conversion
-
-                byte_io = io.BytesIO()
-                img.save(byte_io, "PNG")
-                self._targetImage = Image.open(byte_io)
-
-            else:
-                self._targetImage = img
-
-    def serialize(self):
-        try:
-            self.target = self.target()
-        except AttributeError:
-            pass
-
-        buffer = io.BytesIO()
-        self._targetImage.save(buffer, format="PNG")
-        string = base64.b64encode(buffer.getvalue())
-        self._targetImage = string.decode("utf-8")
-        buffer.close()
-
-        return self.__dict__
-
-    def deserialize(self):
-        try:
-            self.target = Imaging.Pos(*self.target)
-        except AttributeError:
-            pass
-        except TypeError:
-            print("Old value found, save file again for update.")
-            if isinstance(self.target, dict):
-                self.target = Imaging.Pos(self.target["x"], self.target["y"])
-            else:
-                raise Exception("File is damaged.")
-
-        buffer = io.BytesIO()
-        string = self._targetImage
-
-        buffer.write(base64.b64decode(string))
-        self._targetImage = Image.open(buffer).copy()
-        buffer.close()
-
-    def reset(self):
-        self.screenArea = None
-        self.capturedImage = None
-        self.matchPoint = None
-
-
-class ImageSearch(ExBase, ClickMixin, ImageMixin):
+class ImageSearch(Bases.Base, Bases.ClickMixin, Bases.ImageMixin):
     """
     Find Image on given screen area.
     Can decide whether to click or not, or how much trials before fail.
@@ -238,7 +151,7 @@ class ImageSearch(ExBase, ClickMixin, ImageMixin):
             if self.matchPoint:
                 break
 
-            SLEEP_FUNCTION(self.loopDelay)
+            stoppable_sleep(self.loopDelay)
 
         if DUMP:
             self.DumpCaptured(bool(self.matchPoint))
@@ -267,7 +180,7 @@ class ImageSearch(ExBase, ClickMixin, ImageMixin):
         self.capturedImage = None
 
 
-class SearchOccurrence(ExBase, ClickMixin, ImageMixin):
+class SearchOccurrence(Bases.Base, Bases.ClickMixin, Bases.ImageMixin):
     """
     Counts occurrences of target image.
     Not solid about what then I should do.
@@ -319,7 +232,7 @@ class SearchOccurrence(ExBase, ClickMixin, ImageMixin):
         self.capturedImage = None
 
 
-class Drag(ExBase):
+class Drag(Bases.Base):
     """
     Drag from p1 to p2.
     """
