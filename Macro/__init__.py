@@ -33,10 +33,10 @@ class MethodIterator:
     def __next__(self):
         if self.method is None:
             raise StopIteration
-        else:
-            current = self.method
-            self.method = self.method.next
-            return current
+
+        current = self.method
+        self.method = self.method.next
+        return current
 
 
 def stoppable_sleep(time: float, event=EVENT):

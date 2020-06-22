@@ -25,7 +25,7 @@ class Pos:
         return True if all((self.x, self.y)) else False
 
     def __str__(self):
-        return str(tuple(self))
+        return f"Pos({self.x}, {self.y})"
 
     def __mul__(self, other):
         return Pos(int(self.x * other), (self.y * other))
@@ -72,7 +72,15 @@ class Area:
         return iter((*self.p1, *self.p2))
 
     def __str__(self):
-        return str(tuple(self))
+        return f"Area( {str(self.p1)}, {str(self.p2)} )"
+
+    @classmethod
+    def from_pos(cls, p1: Pos, p2: Pos):  # do I need isinstance checking? idk.
+        try:
+            return cls(*p1, *p2)
+        except TypeError:
+            raise TypeError(f"from_pos only accept Pos, got {type(p1), type(p2)}.")
+
 
     @property
     def region(self):

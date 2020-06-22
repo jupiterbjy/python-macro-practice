@@ -4,7 +4,8 @@ from PySide2.QtGui import QCloseEvent
 import os
 import json
 
-from Toolset import QtTools, ObjectDispatch, Tools
+import Toolset
+from Toolset import QtTools, ObjectDispatch
 from qtUI.pymacro import Ui_MainWindow
 from Macro import Elements
 
@@ -270,7 +271,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             temp = QtTools.ICON_LOCATION + QtTools.ICON_ASSIGN.setdefault(
                 name, "default"
             )
-            return Tools.PathData.relative(temp)
+            return Toolset.PathData.relative(temp)
 
         def setItems(item_list):
             """

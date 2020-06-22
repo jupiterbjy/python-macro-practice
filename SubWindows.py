@@ -5,7 +5,8 @@ from threading import Thread, Event
 import pyautogui
 import re
 
-from Toolset import QtTools, Tools, TextTools
+import Toolset
+from Toolset import QtTools, TextTools
 from qtUI.Runner import Ui_Form
 from qtUI.aboutDialog import Ui_About
 from qtUI.debugWindow import Ui_DebugWindow
@@ -155,7 +156,6 @@ class RunnerWindow(QWidget, Ui_Form):
         self.endSeq()
 
     def runSeq(self):
-        Tools.nameCaller()
 
         self.sequenceStarted = True
 
@@ -214,7 +214,7 @@ class AboutWindow(QMainWindow, Ui_About):
         self.setupUi(self)
 
         image_path = QtTools.ICON_LOCATION + QtTools.ABOUT_IMAGE
-        self.label.setPixmap(QtTools.setPix(Tools.PathData.relative(image_path)))
+        self.label.setPixmap(QtTools.setPix(Toolset.PathData.relative(image_path)))
 
         source = self.versionArea.toHtml()
         source = source.replace("DATE", version)

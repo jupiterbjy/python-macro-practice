@@ -3,10 +3,12 @@ from io import StringIO
 import logging
 import sys
 import os
+
+import Toolset
 from MainUI import MainWindow
 import SubWindows
 from Macro import Elements
-from Toolset import Tools, QtTools
+from Toolset import QtTools
 
 
 # <To-Do>
@@ -102,14 +104,14 @@ def log_initialize():
 if __name__ == "__main__":
     log_initialize()
 
-    Tools.PathData.setRelativePath(__file__)
-    LOGGER.info(f"Freeze State: {Tools.IsFrozen()}")
+    Toolset.PathData.setRelativePath(__file__)
+    LOGGER.info(f"Freeze State: {Toolset.IsFrozen()}")
 
-    if not os.path.exists(Tools.PathData.relative("history")):
+    if not os.path.exists(Toolset.PathData.relative("history")):
         LOGGER.info("Image dumping folder not found, creating new.")
-        os.mkdir(Tools.PathData.relative("history"))
+        os.mkdir(Toolset.PathData.relative("history"))
 
-    Elements.IMG_SAVER = Elements.setSaver(Tools.PathData.relative("history"))
+    Elements.IMG_SAVER = Elements.setSaver(Toolset.PathData.relative("history"))
 
     app = QtWidgets.QApplication(sys.argv)
     controller = Controller()

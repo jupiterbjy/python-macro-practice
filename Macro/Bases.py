@@ -32,14 +32,6 @@ class Base:
 
         return msg + "\n".join(properties) + "\n"
 
-    @property
-    def Name(self):
-        return self.name
-
-    @Name.setter
-    def Name(self, text):
-        self.name = str(text)
-
     def run(self):
         # not sure if checking EVENT frequently is good design choice.
         check_event()
@@ -59,8 +51,8 @@ class Base:
     def action(self):
         return True
 
-    def setArea(self, x1, y1, x2, y2):
-        self.screenArea = Imaging.Area(x1, y1, x2, y2)
+    def setArea(self, p1, p2):
+        self.screenArea = Imaging.Area.fromPos(p1, p2)
 
     def serialize(self):
         return self.__dict__

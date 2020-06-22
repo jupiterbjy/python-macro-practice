@@ -17,7 +17,7 @@ import logging
 import pyautogui
 import keyboard
 
-from Toolset.Tools import PathData
+from Toolset import PathData
 from Macro.Imaging import Pos, Area
 
 # Module to store all necessary Qt-Related tools for UI.
