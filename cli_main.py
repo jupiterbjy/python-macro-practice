@@ -1,7 +1,7 @@
 from threading import Thread, Event
 from copy import deepcopy
 import json
-from Macro import EVENT, Elements, AbortException, Imaging
+from Macro import EVENT, AbortException, Imaging, SetNext, Elements
 
 # Run only in cli mode, not for gui.
 
@@ -18,9 +18,7 @@ def loadJson(location: str):
 
 class MacroCLI:
     def __init__(self):
-        self.location = ''
         self.loaded = []
-        self.running = []
         self.event = Event()
 
         self.started = False
@@ -30,18 +28,19 @@ class MacroCLI:
     def area(self):
         return self._area
 
-    @area.getter
-    def area(self, p1, p2):
-        self._area = Imaging.Area.fromPos(p1, p2)
-
+    @area.setter
+    def area(self, *args):
+        self._area = Imaging.Area.fromPos(*args)
 
     def clear_macro(self):
         self.loaded.clear()
 
-    def load_macro(self):
-        self.location = input()
+    def load_macro(self, location=None):
+        if location is None:
+            location = input()
+
         try:
-            loaded = loadJson(self.location)
+            loaded = loadJson(location)
         except FileNotFoundError:
             print("└ No such file.")
         except UnicodeDecodeError:
@@ -52,20 +51,26 @@ class MacroCLI:
             deserialized = Elements.Deserializer(loaded)
             self.loaded = deserialized
 
-    def list_macro(self):
-        for i in self.loaded:
-            print(i)
+    def list_macro(self, verbose=False):
+        if verbose:
+            for i in self.loaded:
+                print(i)
+        else:
+            for i in self.loaded:
+                print(i.name)
 
     def stop_macro(self):
         self.event.set()
 
     def run_macro(self):
         self.event = Event()
-        self.running = deepcopy(self.loaded)
-        thread = Thread(target=self._runThread)
+        running = deepcopy(self.loaded)
+        SetNext(running)
+        thread = Thread(target=self._runThread, args=[running])
         thread.start()
 
-    def _runThread(self):
-        head = self.running[0]
-        for element in self.running:  # really tempting to use abc..
+    @staticmethod
+    def _runThread(seq):
+        head = seq[0]
+        for element in seq:  # really tempting to use abc..
             element.run()

@@ -42,7 +42,7 @@ class Worker(QRunnable):
         try:
             self.fn(*self.args, **self.kwargs)
         except Exception as exp:
-            raise exp
+            raise from exp
 
 
 class CaptureCoverage(QDialog):

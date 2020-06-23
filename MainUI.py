@@ -218,9 +218,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             QtTools.LoggingEmitter.debug("└ JSONDecodeError")
             return
 
-        except UnicodeDecodeError:
+        except UnicodeDecodeError as err:
             if name is None:
-                raise FileNotFoundError
+                raise FileNotFoundError from err
 
             QtTools.LoggingEmitter.debug("└ UnicodeDecodeError")
             return
@@ -479,8 +479,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         def _(obj):
             try:
                 obj.targetImage = self.cachedImage["search"]
-            except AttributeError:
-                raise AttributeError("configObject: No Image specified.")
+            except AttributeError as err:
+                msg = 'configObject: No Image specified.'
+                raise AttributeError(msg) from err
 
             obj.trials = self.trialsCountSpin.value()
             obj.loopDelay = self.trialsIntervalSpin.value()
@@ -511,8 +512,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         def _(obj):
             try:
                 obj.targetImage = self.cachedImage["count"]
-            except AttributeError:
-                raise AttributeError("SearchOccurrence: No Image specified.")
+            except AttributeError as err:
+                msg = 'SearchOccurrence: No Image specified.'
+                raise AttributeError(msg) from err
 
             obj.randomOffset = self.countRandSpin.value()
 
