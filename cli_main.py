@@ -1,9 +1,11 @@
 from threading import Thread, Event
 from copy import deepcopy
 import json
+import queue
 from Macro import EVENT, AbortException, Imaging, SetNext, Elements
 
 # Run only in cli mode, not for gui.
+# Will refactor UI to CLI once complete.
 
 
 def loadJson(location: str):
@@ -23,6 +25,7 @@ class MacroCLI:
 
         self.started = False
         self._area = None
+        self.thread_quene = queue.SimpleQueue()
 
     @property
     def area(self):

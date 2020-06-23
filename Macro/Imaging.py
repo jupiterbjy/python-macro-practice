@@ -1,6 +1,7 @@
 import pyautogui as pgui
 from numpy import array, where
 import cv2
+from ast import literal_eval
 
 """
 This module will provide any necessary components required by MacroMethod,
@@ -58,6 +59,11 @@ class Pos:
     def set(self, x, y=None):
         self.x, self.y = x, y
 
+    @classmethod
+    def from_string(cls, string):
+        val = literal_eval(string)
+        return cls(*val)
+
 
 class Area:
     def __init__(self, x1=0, y1=0, x2=0, y2=0):
@@ -80,6 +86,11 @@ class Area:
             return cls(*p1, *p2)
         except TypeError:
             raise TypeError(f"from_pos only accept Pos, got {type(p1), type(p2)}.")
+
+    @classmethod
+    def from_string(cls, string):
+        val = literal_eval(string)
+        return cls(*val)
 
 
     @property
