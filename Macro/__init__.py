@@ -43,3 +43,18 @@ def stoppable_sleep(time: float, event=EVENT):
     if event.wait(time):  # return True immediately when set().
         event.clear()
         raise AbortException  # Eject!
+
+
+def SetNext(sequence):
+    """
+    Set next for respective object in sequence.
+    Will need special case for loop class.
+    :param sequence: List containing macro objects.
+    """
+    if sequence:
+        for idx, i in enumerate(sequence):
+            try:
+                i.next = sequence[idx + 1]
+            except IndexError:
+                break
+

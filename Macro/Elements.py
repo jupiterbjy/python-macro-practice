@@ -1,6 +1,6 @@
-from collections import deque
-from copy import deepcopy
 import pyautogui
+from copy import deepcopy
+from collections import deque
 
 from Toolset import MemberLoader
 from Macro import Imaging, Bases, stoppable_sleep, DUMP
@@ -268,20 +268,6 @@ class Drag(Bases.Base):
     def deserialize(self):
         self.p1 = Imaging.Pos(*self.p1)
         self.p2 = Imaging.Pos(*self.p2)
-
-
-def SetNext(sequence):
-    """
-    Set next for respective object in sequence.
-    Will need special case for loop class.
-    :param sequence: List containing macro objects.
-    """
-    if sequence:
-        for idx, i in enumerate(sequence):
-            try:
-                i.next = sequence[idx + 1]
-            except IndexError:
-                break
 
 
 def Serializer(obj_list):

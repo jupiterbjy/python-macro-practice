@@ -2,7 +2,7 @@ import pyautogui
 from io import BytesIO
 from base64 import b64decode, b64encode
 from PIL import Image
-from Macro import stoppable_sleep, IMG_SAVER, Imaging, MethodIterator, check_event
+from Macro import IMG_SAVER, Imaging, MethodIterator, check_event, stoppable_sleep
 
 
 class VariableMixin:
