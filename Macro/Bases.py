@@ -2,14 +2,28 @@ import pyautogui
 from io import BytesIO
 from base64 import b64decode, b64encode
 from PIL import Image
-from Macro import IMG_SAVER, Imaging, MethodIterator, check_event, stoppable_sleep
+from Macro import IMG_SAVER, MethodIterator, check_event, stoppable_sleep
+from Macro.Imaging import Pos, Area, RandomOffset
 
 
 class VariableMixin:
     variables = {}
 
 
-class Base:
+class Protocol:
+    def serialize(self):
+        pass
+        # raise NotImplementedError
+
+    def deserialize(self):
+        pass
+        # raise NotImplementedError
+
+    def reset(self):
+        pass
+
+
+class Base(Protocol):
     """
     Defines minimum interfaces that subclasses need to function.
     Override action, reset, serialize and deserialize when necessary.
@@ -19,7 +33,7 @@ class Base:
     # meaning-of-the-super-keyword-in-the-parent-class-python
 
     def __init__(self):
-        super(Base, self).__init__()  # Refer above link for this call
+        super().__init__()  # Refer above link for this call
         self.name = ""
         self.next = None  # Assign next object here when running.
         self.onSuccess = None
@@ -33,7 +47,7 @@ class Base:
         return msg + "\n".join(properties) + "\n"
 
     def run(self):
-        # not sure if checking EVENT frequently is good design choice.
+        # not sure if checking EVENT frequently is good design choice or not.
         check_event()
 
         if self.action():
@@ -51,11 +65,11 @@ class Base:
     def action(self):
         return True
 
-    def setArea(self, p1, p2):
-        self.screenArea = Imaging.Area.fromPos(p1, p2)
+    def setArea(self, p1: Pos, p2: Pos):
+        self.screenArea = Area.from_pos(p1, p2)
 
     def serialize(self):
-        return self.__dict__
+        pass
 
     def deserialize(self):
         pass
@@ -67,40 +81,54 @@ class Base:
         return MethodIterator(self)
 
 
-class ClickMixin:
+class ClickMixin(Protocol):
     """
     Super class for click operation.
     Separated from click object to prevent diamond inherit.
     """
 
+    # TODO: decide if self.target need to be discarded or not.
+
     def __init__(self):
-        self.target = Imaging.Pos()
+        self.target = Pos()
         self.clickCount = 1
         self.clickDelay = 0.01
         self.randomOffset = 0
 
     @property
-    def finalPos(self, target=None):
+    def final_pos(self, target=None):
         if target is None:
             target = self.target
 
         if self.randomOffset:
-            out = Imaging.RandomOffset(target, self.randomOffset)
-
+            out = RandomOffset(target, self.randomOffset)
         else:
             out = target
 
         return out()
 
     def clickBase(self, target=None):
+        if target is None:
+            target = self.target
 
         for i in range(self.clickCount):
-            stoppable_sleep(self.clickDelay)
-            pyautogui.click(self.finalPos(target))
-            print(f"Click: {self.finalPos(target)}")
+            pyautogui.click(self.final_pos(target))
+            print(f"Click: {self.final_pos(target)}")
+
+            if i != self.clickCount - 1:
+                stoppable_sleep(self.clickDelay)
+
+    def serialize(self):
+        self.target = repr(self.target)
+
+    def deserialize(self):
+        self.target = Pos.from_string(self.target)
+
+    def reset(self):
+        self.target = Pos()
 
 
-class ImageMixin:
+class ImageMixin(Protocol):
     """
     mixin class of all Macro classes dealing with image.
     """
@@ -120,12 +148,7 @@ class ImageMixin:
     def DumpTarget(self):
         IMG_SAVER(self.targetImage, self.targetName)
 
-    @property
-    def targetImage(self):
-        return self._targetImage
-
-    @targetImage.setter
-    def targetImage(self, img):
+    def set_target_image(self, img):
         try:
             img.convert("RGB")
 
@@ -142,11 +165,16 @@ class ImageMixin:
             else:
                 self._targetImage = img
 
+    @property
+    def targetImage(self):
+        return self._targetImage
+
+    @targetImage.setter
+    def targetImage(self, img):
+        # Depreciated
+        self.set_target_image(img)
+
     def serialize(self):
-        try:
-            self.target = self.target()
-        except AttributeError:
-            pass
 
         buffer = BytesIO()
         self._targetImage.save(buffer, format="PNG")
@@ -154,19 +182,7 @@ class ImageMixin:
         self._targetImage = string.decode("utf-8")
         buffer.close()
 
-        return self.__dict__
-
     def deserialize(self):
-        try:
-            self.target = Imaging.Pos(*self.target)
-        except AttributeError:
-            pass
-        except TypeError:
-            print("Old value found, save file again for update.")
-            if isinstance(self.target, dict):
-                self.target = Imaging.Pos(self.target["x"], self.target["y"])
-            else:
-                raise Exception("File is damaged.")
 
         buffer = BytesIO()
         string = self._targetImage

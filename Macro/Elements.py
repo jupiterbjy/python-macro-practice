@@ -22,13 +22,6 @@ class Click(Bases.Base, Bases.ClickMixin):
         self.clickBase(self.absPos)
         return True
 
-    def serialize(self):
-        self.target = self.target()
-        return self.__dict__
-
-    def deserialize(self):
-        self.target = Imaging.Pos(*self.target)
-
 
 class LoopStart(Bases.Base):
     """

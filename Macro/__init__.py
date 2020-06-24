@@ -4,23 +4,18 @@ from Macro import Imaging
 
 
 LOGGER = logging.getLogger()
-IMG_SAVER = Imaging.saveImg(__file__)
+IMG_SAVER = Imaging.asc_save(__file__)
 DUMP = False
 EVENT = Event()
-
-
-def check_event():
-    if EVENT.is_set():
-        raise AbortException
 
 
 class AbortException(Exception):
     pass
 
 
-def setSaver(path):
-    global IMG_SAVER
-    IMG_SAVER = Imaging.saveImg(path)
+def check_event():
+    if EVENT.is_set():
+        raise AbortException
 
 
 class MethodIterator:

@@ -11,6 +11,7 @@ especially Image-related functions.
 
 class Pos:
     # referenced vector2d_v0.py from 'Fluent Python' by Luciano.
+    # I know operator override spamming is not a good practice.
 
     def __init__(self, x=0, y=0):
         self.x = int(x)
@@ -23,10 +24,13 @@ class Pos:
         return hash((self.x, self.y))
 
     def __bool__(self):
-        return True if all((self.x, self.y)) else False
+        return all((self.x, self.y))
 
     def __str__(self):
         return f"Pos({self.x}, {self.y})"
+
+    def __repr__(self):
+        return repr((self.x, self.y))
 
     def __mul__(self, other):
         return Pos(int(self.x * other), (self.y * other))
@@ -34,12 +38,9 @@ class Pos:
     def __eq__(self, other):
         return tuple(self) == tuple(other)
 
-    def __add__(self, other):
-        try:
-            return Pos(self.x + other.x, self.y + other.y)
-        except AttributeError:
-            tmp = Pos(*other)
-            return Pos(self.x + tmp.x, self.y + tmp.y)
+    def __add__(self, other):  # assuming other is following sequence protocol.
+        x, y = other
+        return Pos(self.x + x, self.y + y)
 
     def __sub__(self, other):
         return Pos(self.x - other.x, self.y - other.y)
@@ -47,51 +48,48 @@ class Pos:
     def __abs__(self):
         return Pos(abs(self.x), abs(self.y))
 
-    def __call__(self):
-        return self.x, self.y
-
     def __ge__(self, other):
         return (self.x >= other.x) & (self.y >= other.y)
 
     def __le__(self, other):
         return (self.x <= other.x) & (self.y <= other.y)
 
-    def set(self, x, y=None):
+    def set(self, x=0, y=0):
         self.x, self.y = x, y
 
     @classmethod
-    def from_string(cls, string):
+    def from_string(cls, string):  # support method to JSON deserialization.
         val = literal_eval(string)
         return cls(*val)
 
 
 class Area:
+    """
+    Sort given 2 coordinates to upper-left, down-right coordinates.
+    """
+
     def __init__(self, x1=0, y1=0, x2=0, y2=0):
         self.p1 = Pos(x1, y1)
         self.p2 = Pos(x2, y2)
         self.sort()
 
-    def __call__(self, *args, **kwargs):
-        return *self.p1(), *self.p2()
-
     def __iter__(self):
         return iter((*self.p1, *self.p2))
 
     def __str__(self):
-        return f"Area( {str(self.p1)}, {str(self.p2)} )"
+        return f"Area[{str(self.p1)}, {str(self.p2)}]"
 
     @classmethod
-    def from_pos(cls, p1: Pos, p2: Pos):  # do I need isinstance checking? idk.
+    def from_pos(cls, p1: Pos, p2: Pos):
         try:
             return cls(*p1, *p2)
         except TypeError:
-            raise TypeError(f"from_pos only accept Pos, got {type(p1), type(p2)}.")
+            raise TypeError(f"'from_pos' only accept 'Pos', got {type(p1), type(p2)}.")
 
-    @classmethod
+    @classmethod  # support method to JSON deserialization.
     def from_string(cls, string):
         val = literal_eval(string)
         return cls(*val)
-
 
     @property
     def region(self):
@@ -103,17 +101,13 @@ class Area:
             self.p1.set(x[0], y[0])
             self.p2.set(x[1], y[1])
 
-    def set(self, x1, y1, x2, y2):
+    def set(self, x1=0, y1=0, x2=0, y2=0):
         self.__init__(x1, y1, x2, y2)
 
-    @staticmethod
-    def fromPos(p1, p2):
-        return Area(*p1, *p2)
 
-
-def saveImg(base):
+def asc_save(base):
     """
-    Save Image with ascending ordered numeric names. Closure demonstration.
+    Save Image with ascending numeric names. Closure demonstration.
     Refer docs of function save().
     :return: returns closure function save().
     """
