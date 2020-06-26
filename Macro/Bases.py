@@ -38,7 +38,6 @@ class Base(Protocol):
         self.next = None  # Assign next object here when running.
         self.onSuccess = None
         self.onFail = None
-        self.screenArea = None
 
     def __repr__(self):
         msg = f"{type(self).__name__} instance <{self.name}>\n"
@@ -65,9 +64,6 @@ class Base(Protocol):
     def action(self):
         return True
 
-    def setArea(self, p1: Pos, p2: Pos):
-        self.screenArea = Area.from_pos(p1, p2)
-
     def serialize(self):
         pass
 
@@ -75,10 +71,34 @@ class Base(Protocol):
         pass
 
     def reset(self):
-        self.screenArea = None
+        pass
 
     def __iter__(self):
         return MethodIterator(self)
+
+
+class ScreenAreaMixin(Protocol):
+    """
+    Only adds screen info, for relative coordination.
+    """
+    screen_area = Area()
+
+    @property
+    def screenArea(self):
+        return self.screen_area
+
+    def reset(self):
+        self.screenArea.set()
+
+    # no need to serialize as class variable is not in __dict__
+
+    @classmethod
+    def set_pos_area(cls, p1: Pos, p2: Pos):
+        cls.screen_area.from_pos(p1, p2)
+
+    @classmethod
+    def set_tuple_area(cls, x1, y1, x2, y2):
+        cls.screen_area.set(x1, y1, x2, y2)
 
 
 class ClickMixin(Protocol):
@@ -95,9 +115,8 @@ class ClickMixin(Protocol):
         self.randomOffset = 0
 
     @property
-    def final_pos(self, target=None):
-        if target is None:
-            target = self.hard_target
+    def final_pos(self):
+        target = self.hard_target if self.hard_target else self.target
 
         if self.randomOffset:
             out = RandomOffset(target, self.randomOffset)
@@ -106,13 +125,11 @@ class ClickMixin(Protocol):
 
         return out.val
 
-    def clickBase(self, target=None):
-        if target is None:
-            target = self.hard_target
+    def clickBase(self):
 
         for i in range(self.clickCount):
-            pyautogui.click(self.final_pos(target))
-            print(f"Click: {self.final_pos(target)}")
+            pyautogui.click(self.final_pos)
+            print(f"Click: {self.final_pos}")
 
             if i != self.clickCount - 1:
                 stoppable_sleep(self.clickDelay)
@@ -138,7 +155,6 @@ class ImageMixin(Protocol):
         self._targetImage = None
         self.targetName = None
         self.capturedImage = None
-        self.matchPoint = None  # expects pos object
         self.precision = 0.85
 
     def DumpCaptured(self, name=None):
@@ -192,4 +208,3 @@ class ImageMixin(Protocol):
 
     def reset(self):
         self.capturedImage = None
-        self.matchPoint = None

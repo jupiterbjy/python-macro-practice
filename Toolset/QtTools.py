@@ -37,7 +37,7 @@ ICON_ASSIGN = {
     "Loop": "loop.png",
     "LoopEnd": "loopEnd.png",
     "LoopStart": "loopStart.png",
-    "ImageSearch": "imageSearch.png",
+    "SearchImage": "imageSearch.png",
     "Variable": "variable.png",
     "Wait": "wait.png",
     "default": "template.png",

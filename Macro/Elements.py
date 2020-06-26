@@ -3,10 +3,11 @@ from copy import deepcopy
 from collections import deque
 
 from Toolset import MemberLoader
-from Macro import Imaging, Bases, stoppable_sleep, DUMP
+from Macro import Imaging, stoppable_sleep, DUMP
+from Macro.Bases import Base, ClickMixin, ScreenAreaMixin, ImageMixin, VariableMixin
 
 
-class Click(Bases.Base, Bases.ClickMixin):
+class Click(Base, ClickMixin, ScreenAreaMixin):
     """
     Interface of Simple Click method.
     """
@@ -25,11 +26,12 @@ class Click(Bases.Base, Bases.ClickMixin):
         return self.screenArea.p1 + self.target
 
     def action(self):
-        self.clickBase(self.absPos)
+        self.target = self.absPos
+        self.clickBase()
         return True
 
 
-class LoopStart(Bases.Base):
+class LoopStart(Base):
     """
     Placeholder for Loop. No special functionality is needed for loop start.
     """
@@ -44,7 +46,7 @@ class LoopStart(Bases.Base):
         return True
 
 
-class LoopEnd(Bases.Base):
+class LoopEnd(Base):
     """
     Implements Loop via setting next/onSuccess to LoopStart Object.
     Not for standalone usage.
@@ -64,11 +66,10 @@ class LoopEnd(Bases.Base):
         return self.loopTime > self.loopCount
 
     def reset(self):
-        self.screenArea = None
         self.loopTime = 0
 
 
-class Wait(Bases.Base):
+class Wait(Base):
     """
     Using Asynchronous sleep for Qt.
     but will default to normal time.sleep in case this is used on CLI.
@@ -83,7 +84,7 @@ class Wait(Bases.Base):
         return True
 
 
-class Variable(Bases.Base, Bases.VariableMixin):
+class Variable(Base, VariableMixin):
     """
     Class that trying to mimic what makes fRep different from plain macros.
     Creating Same-name Variable will overwrite existing variable.
@@ -99,7 +100,7 @@ class Variable(Bases.Base, Bases.VariableMixin):
         self.value = 0
 
     def __del__(self):
-        Bases.VariableMixin.variables.pop(self.name, None)
+        VariableMixin.variables.pop(self.name, None)
 
     def setValue(self, text):
 
@@ -120,14 +121,14 @@ class Variable(Bases.Base, Bases.VariableMixin):
             self.value = value
 
     def action(self):
-        if self.name in Bases.VariableMixin.variables.keys():
+        if self.name in VariableMixin.variables.keys():
             self.name += str(self._created_instances)
 
-        Bases.VariableMixin.variables[self.name] = self.value
+        VariableMixin.variables[self.name] = self.value
         return True
 
 
-class ImageSearch(Bases.Base, Bases.ClickMixin, Bases.ImageMixin):
+class ImageSearch(Base, ClickMixin, ImageMixin, ScreenAreaMixin):
     """
     Find Image on given screen area.
     Can decide whether to click or not, or how much trials before fail.
@@ -139,47 +140,50 @@ class ImageSearch(Bases.Base, Bases.ClickMixin, Bases.ImageMixin):
         self.loopDelay = 0.2
         self.trials = 5
 
-    def ImageSearch(self):
-        self.matchPoint, self.capturedImage = Imaging.imageSearch(
+    def SearchImage(self):
+        match_point, self.capturedImage = Imaging.imageSearch(
             self.targetImage, self.screenArea.region, self.precision
         )
+        return match_point
 
     def ImageSearchMultiple(self):
+        match_point = None
+
         for i in range(self.trials):
-            self.ImageSearch()
-            if self.matchPoint:
+            if match_point := self.SearchImage():
                 break
 
             stoppable_sleep(self.loopDelay)
 
         if DUMP:
-            self.DumpCaptured(bool(self.matchPoint))
+            self.DumpCaptured(bool(match_point))
+
+        return match_point
 
     @property
     def ImageCenter(self):
         w, h = self.targetImage.size
-        return self.matchPoint + Imaging.Pos(w // 2, h // 2)
+        return Imaging.Pos(w // 2, h // 2)
 
-    @property
-    def absPos(self):
-        return self.screenArea.p1 + self.target
+    def absPos(self, target):
+        return self.screenArea.p1 + target
 
     def action(self):
-        self.ImageSearchMultiple()
+        matched = self.ImageSearchMultiple()
 
-        if self.matchPoint:
-            self.target.set(*self.ImageCenter)
-            self.clickBase(self.absPos)
+        if matched:
+            coord = self.ImageCenter + self.absPos(matched)
+            self.target.set(*coord)  # just to make sure instance ID stays same..
+            self.clickBase()
 
-        return bool(self.matchPoint)
+        return bool(matched)
 
     def reset(self):
-        self.screenArea = None
         self.target = Imaging.Pos()
         self.capturedImage = None
 
 
-class SearchOccurrence(Bases.Base, Bases.ClickMixin, Bases.ImageMixin):
+class SearchOccurrence(Base, ClickMixin, ImageMixin, ScreenAreaMixin):
     """
     Counts occurrences of target image.
     Not solid about what then I should do.
@@ -208,30 +212,29 @@ class SearchOccurrence(Bases.Base, Bases.ClickMixin, Bases.ImageMixin):
     @property
     def ImageCenter(self):
         w, h = self.targetImage.size
-        return self.matchPoint + Imaging.Pos(w // 2, h // 2)
+        return Imaging.Pos(w // 2, h // 2)
 
-    @property
-    def absPos(self):
-        return self.screenArea.p1 + self.target
+    def absPos(self, target):
+        return self.screenArea.p1 + target
 
     def action(self):
         self.ScanOccurrence()
         if state := self.matchCount > 0:
             for p in self.matchPoints:
-                self.matchPoint = p
-                self.target.set(*self.ImageCenter)
-                self.clickBase(self.absPos)
+
+                coord = self.ImageCenter + self.absPos(p)
+                self.target.set(*coord)  # just to make sure instance ID stays same..
+                self.clickBase()
 
         return state
 
     def reset(self):
-        self.screenArea = None
         self.matchCount = 0
         self.matchPoints = []
         self.capturedImage = None
 
 
-class Drag(Bases.Base):
+class Drag(Base, ScreenAreaMixin):
     """
     Drag from p1 to p2.
     """

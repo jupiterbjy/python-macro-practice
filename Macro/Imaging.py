@@ -17,29 +17,29 @@ class Pos:
         self.x = int(x)
         self.y = int(y)  # limiting what x could be, catching error here.
 
-    def __iter__(self):
+    def __iter__(self) -> iter:
         return iter((self.x, self.y))
 
-    def __hash__(self):
+    def __hash__(self) -> hash:
         return hash((self.x, self.y))
 
-    def __bool__(self):
-        return all((self.x, self.y))
+    def __bool__(self) -> bool:
+        return any((self.x, self.y))
 
-    def __str__(self):
+    def __str__(self) -> str:
         return f"Pos({self.x}, {self.y})"
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return repr((self.x, self.y))
 
-    def __mul__(self, other):
+    def __mul__(self, other: (int, float)):
         return Pos(int(self.x * other), (self.y * other))
 
-    def __eq__(self, other):
+    def __eq__(self, other) -> bool:
         return tuple(self) == tuple(other)
 
-    def __add__(self, other):  # assuming other is following sequence protocol.
-        x, y = other
+    def __add__(self, other):
+        x, y = other  # assuming other is following sequence protocol.
         return Pos(self.x + x, self.y + y)
 
     def __sub__(self, other):
@@ -55,14 +55,14 @@ class Pos:
         return (self.x <= other.x) & (self.y <= other.y)
 
     def set(self, x=0, y=0):
-        self.x, self.y = x, y
+        self.x, self.y = int(x), int(y)
 
     @property
-    def val(self):
+    def val(self) -> tuple:
         return self.x, self.y
 
     @classmethod
-    def from_string(cls, string):  # support method to JSON deserialization.
+    def from_string(cls, string: str):  # support method to JSON deserialization.
         val = literal_eval(string)
         return cls(*val)
 
@@ -91,12 +91,12 @@ class Area:
             raise TypeError(f"'from_pos' only accept 'Pos', got {type(p1), type(p2)}.")
 
     @classmethod  # support method to JSON deserialization.
-    def from_string(cls, string):
+    def from_string(cls, string: str):
         val = literal_eval(string)
         return cls(*val)
 
     @property
-    def region(self):
+    def region(self) -> tuple:
         return *self.p1, *abs(self.p1 - self.p2)
 
     def sort(self):
