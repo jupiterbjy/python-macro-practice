@@ -57,6 +57,10 @@ class Pos:
     def set(self, x=0, y=0):
         self.x, self.y = x, y
 
+    @property
+    def val(self):
+        return self.x, self.y
+
     @classmethod
     def from_string(cls, string):  # support method to JSON deserialization.
         val = literal_eval(string)

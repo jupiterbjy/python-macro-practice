@@ -104,7 +104,7 @@ class ClickMixin(Protocol):
         else:
             out = target
 
-        return out()
+        return out.val
 
     def clickBase(self, target=None):
         if target is None:
