@@ -14,6 +14,12 @@ class Click(Bases.Base, Bases.ClickMixin):
     def __init__(self):
         super().__init__()
 
+    def set(self, x, y, count, delay, offset):
+        self.hard_target.set(x, y)
+        self.clickCount = count
+        self.clickDelay = delay
+        self.randomOffset = offset
+
     @property
     def absPos(self):
         return self.screenArea.p1 + self.target

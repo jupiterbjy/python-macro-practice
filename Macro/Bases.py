@@ -87,10 +87,9 @@ class ClickMixin(Protocol):
     Separated from click object to prevent diamond inherit.
     """
 
-    # TODO: decide if self.target need to be discarded or not.
-
     def __init__(self):
-        self.target = Pos()
+        self.target = Pos()  # runtime-set value.
+        self.hard_target = Pos()  # fixed, pre-set value.
         self.clickCount = 1
         self.clickDelay = 0.01
         self.randomOffset = 0
@@ -98,7 +97,7 @@ class ClickMixin(Protocol):
     @property
     def final_pos(self, target=None):
         if target is None:
-            target = self.target
+            target = self.hard_target
 
         if self.randomOffset:
             out = RandomOffset(target, self.randomOffset)
@@ -109,7 +108,7 @@ class ClickMixin(Protocol):
 
     def clickBase(self, target=None):
         if target is None:
-            target = self.target
+            target = self.hard_target
 
         for i in range(self.clickCount):
             pyautogui.click(self.final_pos(target))
@@ -119,13 +118,13 @@ class ClickMixin(Protocol):
                 stoppable_sleep(self.clickDelay)
 
     def serialize(self):
-        self.target = repr(self.target)
+        self.hard_target = repr(self.hard_target)
 
     def deserialize(self):
-        self.target = Pos.from_string(self.target)
+        self.hard_target = Pos.from_string(self.hard_target)
 
     def reset(self):
-        self.target = Pos()
+        self.target.set()
 
 
 class ImageMixin(Protocol):
