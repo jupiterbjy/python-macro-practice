@@ -3,7 +3,7 @@ from copy import deepcopy
 from collections import deque
 
 from Toolset import MemberLoader
-from Macro import Imaging, stoppable_sleep, DUMP
+from Macro import Imaging, stoppable_sleep
 from Macro.Bases import Base, ClickMixin, ScreenAreaMixin, ImageMixin, VariableMixin
 
 
@@ -39,12 +39,6 @@ class LoopStart(Base):
     def __init__(self):
         super().__init__()
 
-        self.name = ""
-        self.next = None
-
-    def action(self):
-        return True
-
 
 class LoopEnd(Base):
     """
@@ -54,9 +48,6 @@ class LoopEnd(Base):
 
     def __init__(self):
         super().__init__()
-
-        self.name = ""
-        self.next = None
         self.loopCount = 3
         self.loopTime = 0
         self.idx = None  # Convenient variable
@@ -80,7 +71,7 @@ class Wait(Base):
         self.delay = 0
 
     def action(self):
-        stoppable_sleep(self.delay)
+        stoppable_sleep(self.delay, self.env_var.event)
         return True
 
 
@@ -153,9 +144,9 @@ class ImageSearch(Base, ClickMixin, ImageMixin, ScreenAreaMixin):
             if match_point := self.SearchImage():
                 break
 
-            stoppable_sleep(self.loopDelay)
+            stoppable_sleep(self.loopDelay, self.env_var.event)
 
-        if DUMP:
+        if self.env_var.dump:
             self.DumpCaptured(bool(match_point))
 
         return match_point
@@ -206,7 +197,7 @@ class SearchOccurrence(Base, ClickMixin, ImageMixin, ScreenAreaMixin):
             self.targetImage, self.screenArea.region, self.precision, self.threshold
         )
 
-        if DUMP:
+        if self.env_var.dump:
             self.DumpCaptured(bool(self.matchCount))
 
     @property
@@ -346,6 +337,9 @@ def Deserializer(baked):
     return out
 
 
-blacklist = {"_", "Ex", "Abort", "deque", "Mixin"}
+# need to clean this mess..
+blacklist = {"Base", "Abort", "deque", "Mixin"}
 __all__ = MemberLoader.ListClass(__name__, blacklist=blacklist)
 class_dict = MemberLoader.ListClass(__name__, blacklist=blacklist, return_dict=True)
+print(__all__)
+print(class_dict)

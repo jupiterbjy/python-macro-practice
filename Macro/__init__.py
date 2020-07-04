@@ -3,19 +3,26 @@ from threading import Event
 from Macro import Imaging
 
 
-LOGGER = logging.getLogger()
-IMG_SAVER = Imaging.asc_save(__file__)
-DUMP = False
-EVENT = Event()
+class EnvVariables:
+    """
+    Pass this to base class.
+    """
+    file = __file__
+
+    def __init__(self):
+        self.logger = logging.getLogger()
+        self.img_saver = Imaging.asc_save(self.file)
+        self.dump = False
+        self.event = Event()
+        self.screen_area = Imaging.Area()
+
+    def check_event(self):
+        if self.event.is_set():
+            raise AbortException
 
 
 class AbortException(Exception):
     pass
-
-
-def check_event():
-    if EVENT.is_set():
-        raise AbortException
 
 
 class MethodIterator:
@@ -34,7 +41,7 @@ class MethodIterator:
         return current
 
 
-def stoppable_sleep(time: float, event=EVENT):
+def stoppable_sleep(time: float, event: Event):
     if event.wait(time):  # return True immediately when set().
         event.clear()
         raise AbortException  # Eject!
@@ -52,4 +59,3 @@ def SetNext(sequence):
                 i.next = sequence[idx + 1]
             except IndexError:
                 break
-

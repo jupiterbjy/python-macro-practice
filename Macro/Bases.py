@@ -2,11 +2,12 @@ import pyautogui
 from io import BytesIO
 from base64 import b64decode, b64encode
 from PIL import Image
-from Macro import IMG_SAVER, MethodIterator, check_event, stoppable_sleep
+from Macro import MethodIterator, stoppable_sleep, EnvVariables
 from Macro.Imaging import Pos, Area, RandomOffset
 
 
 class VariableMixin:
+    # just a placeholder.
     variables = {}
 
 
@@ -29,6 +30,8 @@ class Base(Protocol):
     Override action, reset, serialize and deserialize when necessary.
     """
 
+    env_var = EnvVariables()
+
     # https://stackoverflow.com/questions/30849383/
     # meaning-of-the-super-keyword-in-the-parent-class-python
 
@@ -47,7 +50,7 @@ class Base(Protocol):
 
     def run(self):
         # not sure if checking EVENT frequently is good design choice or not.
-        check_event()
+        self.env_var.check_event()
 
         if self.action():
 
@@ -81,11 +84,11 @@ class ScreenAreaMixin(Protocol):
     """
     Only adds screen info, for relative coordination.
     """
-    screen_area = Area()
+    env_var: EnvVariables
 
     @property
     def screenArea(self):
-        return self.screen_area
+        return self.env_var.screen_area
 
     def reset(self):
         self.screenArea.set()
@@ -94,11 +97,11 @@ class ScreenAreaMixin(Protocol):
 
     @classmethod
     def set_pos_area(cls, p1: Pos, p2: Pos):
-        cls.screen_area.from_pos(p1, p2)
+        cls.env_var.screen_area.from_pos(p1, p2)
 
     @classmethod
     def set_tuple_area(cls, x1, y1, x2, y2):
-        cls.screen_area.set(x1, y1, x2, y2)
+        cls.env_var.screen_area.set(x1, y1, x2, y2)
 
 
 class ClickMixin(Protocol):
@@ -106,6 +109,7 @@ class ClickMixin(Protocol):
     Super class for click operation.
     Separated from click object to prevent diamond inherit.
     """
+    env_var: EnvVariables
 
     def __init__(self):
         self.target = Pos()  # runtime-set value.
@@ -132,7 +136,7 @@ class ClickMixin(Protocol):
             print(f"Click: {self.final_pos}")
 
             if i != self.clickCount - 1:
-                stoppable_sleep(self.clickDelay)
+                stoppable_sleep(self.clickDelay, self.env_var.event)
 
     def serialize(self):
         self.hard_target = repr(self.hard_target)
@@ -148,6 +152,7 @@ class ImageMixin(Protocol):
     """
     mixin class of all Macro classes dealing with image.
     """
+    env_var: EnvVariables
 
     def __init__(self):
         super().__init__()
@@ -158,10 +163,10 @@ class ImageMixin(Protocol):
         self.precision = 0.85
 
     def DumpCaptured(self, name=None):
-        IMG_SAVER(self.capturedImage, str(name))
+        self.env_var.img_saver(self.capturedImage, str(name))
 
     def DumpTarget(self):
-        IMG_SAVER(self.targetImage, self.targetName)
+        self.env_var.img_saver(self.targetImage, self.targetName)
 
     def set_target_image(self, img):
         try:
