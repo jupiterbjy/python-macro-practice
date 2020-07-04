@@ -322,4 +322,4 @@ def getCaptureArea():
     if ABORT_SIGNALED:
         raise TypeError
 
-    return Area.fromPos(p1, p2)
+    return Area.from_pos(p1, p2)

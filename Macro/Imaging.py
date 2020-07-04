@@ -188,7 +188,7 @@ def scanOccurrence(target, area, precision=0.85, threshold=0.1):
 
         found.append(Pos(*pt))
         count += 1
-        cv2.rectangle(img, pt, (Pos(*pt) + img_wh)(), (0, 0, 255), 2)
+        cv2.rectangle(img, pt, tuple(Pos(*pt) + img_wh), (0, 0, 255), 2)
         # need to explicitly give cv2 tuple, not tuple-type.
 
     return count, img, found

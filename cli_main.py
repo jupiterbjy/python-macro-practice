@@ -33,7 +33,7 @@ class MacroCLI:
 
     @area.setter
     def area(self, *args):
-        self._area = Imaging.Area.fromPos(*args)
+        self._area = Imaging.Area.from_pos(*args)
 
     def clear_macro(self):
         self.loaded.clear()
