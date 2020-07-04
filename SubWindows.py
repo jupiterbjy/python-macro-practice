@@ -1,7 +1,6 @@
 from PySide2.QtCore import QRunnable, Slot, Signal
 from PySide2.QtWidgets import QMainWindow, QDialog, QWidget
 from PySide2.QtGui import QTextCursor
-from threading import Thread, Event
 import pyautogui
 import re
 
@@ -10,7 +9,7 @@ from Toolset import QtTools, TextTools
 from qtUI.Runner import Ui_Form
 from qtUI.aboutDialog import Ui_About
 from qtUI.debugWindow import Ui_DebugWindow
-from Macro import Elements
+from Macro import Elements, EnvVariables, Bases
 import Macro
 
 
@@ -41,8 +40,8 @@ class Worker(QRunnable):
         """
         try:
             self.fn(*self.args, **self.kwargs)
-        except Exception as exp:
-            raise from exp
+        except Exception:
+            raise
 
 
 class CaptureCoverage(QDialog):
@@ -76,8 +75,9 @@ class RunnerWindow(QWidget, Ui_Form):
         self.updateHistory(self.source)
 
     def injectGlobals(self):
-        Elements.ExScope.DUMP = self.dumpImageCheck.isChecked()
-        QtTools.LoggingEmitter.info(f"Image Dump: {Elements.ExScope.DUMP}")
+        env = Bases.Base.env_var
+        env.screen_area = self.areaInject()
+        env.dump = self.dumpImageCheck.isChecked()
 
         # making sure file is reset.
         for i in self.source:
@@ -95,9 +95,7 @@ class RunnerWindow(QWidget, Ui_Form):
         area = QtTools.getCaptureArea()
 
         self.runLine.setText(str(area))
-
-        for obj in self.source:
-            obj.setArea(*area)
+        return area
 
     def updateHistory(self, obj=None):
         try:
@@ -119,6 +117,51 @@ class RunnerWindow(QWidget, Ui_Form):
                 pass
         if obj:
             QtTools.AddToListWidget(obj, self.currentSeq)
+
+    def runSeq(self):
+
+        self.sequenceStarted = True
+
+        self.sequenceList.clear()
+        self.currentSeq.clear()
+        self.updateButtonState()
+
+        self.injectGlobals()
+
+        self.runLine.setText("Macro started.")
+
+        worker = Worker(self._sequenceProcess, self.source)
+        try:
+            worker.run()
+
+        except Exception as err:
+            # Assume no error has line-break.
+            QtTools.LoggingEmitter.critical(err)
+
+    def endSeq(self):
+        for i in self.source:
+            i.reset()
+
+        self.sequenceStarted = False
+        self.updateButtonState()
+        Elements.ABORT = False
+        QtTools.ABORT_SIGNALED = False
+
+    def stopSeq(self):
+        self.runLine.setText("Macro aborted.")
+
+        Elements.ABORT = True
+        QtTools.ABORT_SIGNALED = True
+        QtTools.AbortTimers()
+
+    def updateButtonState(self):
+
+        if self.sequenceStarted:
+            self.runButton.setDisabled(True)
+            self.stopButton.setEnabled(True)
+        else:
+            self.runButton.setEnabled(True)
+            self.stopButton.setDisabled(True)
 
     def _sequenceProcess(self, obj):
 
@@ -154,58 +197,6 @@ class RunnerWindow(QWidget, Ui_Form):
             self.updateHistory()
 
         self.endSeq()
-
-    def runSeq(self):
-
-        self.sequenceStarted = True
-
-        self.sequenceList.clear()
-        self.currentSeq.clear()
-        self.updateButtonState()
-
-        self.injectGlobals()
-        try:
-            self.areaInject()
-
-        except TypeError:
-            QtTools.LoggingEmitter.critical("Macro aborted.")
-            self.endSeq()
-            return
-
-        self.runLine.setText("Macro started.")
-
-        worker = Worker(self._sequenceProcess, self.source)
-        try:
-            worker.run()
-
-        except Exception as err:
-            # Assume no error has line-break.
-            QtTools.LoggingEmitter.critical(err)
-
-    def endSeq(self):
-        for i in self.source:
-            i.reset()
-
-        self.sequenceStarted = False
-        self.updateButtonState()
-        Elements.ExScope.ABORT = False
-        QtTools.ABORT_SIGNALED = False
-
-    def stopSeq(self):
-        self.runLine.setText("Macro aborted.")
-
-        Elements.ExScope.ABORT = True
-        QtTools.ABORT_SIGNALED = True
-        QtTools.AbortTimers()
-
-    def updateButtonState(self):
-
-        if self.sequenceStarted:
-            self.runButton.setDisabled(True)
-            self.stopButton.setEnabled(True)
-        else:
-            self.runButton.setEnabled(True)
-            self.stopButton.setDisabled(True)
 
 
 class AboutWindow(QMainWindow, Ui_About):

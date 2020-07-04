@@ -7,7 +7,7 @@ import json
 import Toolset
 from Toolset import QtTools, ObjectDispatch
 from qtUI.pymacro import Ui_MainWindow
-from Macro import Elements
+from Macro import Elements, SetNext
 
 
 class MainWindow(QMainWindow, Ui_MainWindow):
@@ -137,7 +137,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         """
         Prepares and Calls subWindow to run macro.
         """
-        Elements.SetNext(self.seqStorage)
+        SetNext(self.seqStorage)
 
         try:
             self.macroExecute.emit(self.seqStorage[0])

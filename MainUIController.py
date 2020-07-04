@@ -7,7 +7,7 @@ import os
 import Toolset
 from MainUI import MainWindow
 import SubWindows
-from Macro import Elements
+from Macro import Elements, Imaging
 from Toolset import QtTools
 
 
@@ -111,7 +111,7 @@ if __name__ == "__main__":
         LOGGER.info("Image dumping folder not found, creating new.")
         os.mkdir(Toolset.PathData.relative("history"))
 
-    Elements.IMG_SAVER = Elements.setSaver(Toolset.PathData.relative("history"))
+    Elements.IMG_SAVER = Imaging.asc_save(Toolset.PathData.relative("history"))
 
     app = QtWidgets.QApplication(sys.argv)
     controller = Controller()

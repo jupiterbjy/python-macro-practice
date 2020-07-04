@@ -1,6 +1,5 @@
 import os
 import sys
-import json
 
 
 def nameCaller(color=None, raw=False):

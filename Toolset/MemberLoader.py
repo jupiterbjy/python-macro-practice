@@ -1,5 +1,5 @@
 from sys import modules
-from inspect import getmembers,isclass, isfunction
+from inspect import getmembers, isclass, isfunction
 import re
 
 
