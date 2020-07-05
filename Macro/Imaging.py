@@ -112,7 +112,6 @@ class Area:
 def asc_save(base):
     """
     Save Image with ascending numeric names. Closure demonstration.
-    Refer docs of function save().
     :return: returns closure function save().
     """
     order = 0
@@ -120,6 +119,10 @@ def asc_save(base):
     base += '\\'
 
     def save(img, name=None):
+        """
+        Expects cv2 image format for :param img.
+        Saves Images in ascending order.
+        """
         nonlocal order, base
 
         print('Saving Image to:' + base)
@@ -142,9 +145,6 @@ def imageSearch(target, area, precision=0.85):
 
     template = cv2.cvtColor(array(target), cv2.COLOR_RGB2GRAY)
     img_wh = template.shape[::-1]
-
-    # pgui.locateOnScreen(target, minSearchTime=5, confidence=0.9)
-    # didn't know this existed, but can't customize it anyway.
 
     res = cv2.matchTemplate(img_gray, template, cv2.TM_CCOEFF_NORMED)
     min_val, max_val, min_loc, max_loc = cv2.minMaxLoc(res)

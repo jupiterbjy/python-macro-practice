@@ -54,7 +54,8 @@ def IsFrozen():
         return True
 
     file_dir = os.path.dirname(sys.argv[0])
-    # Fail-safe in terminal path showing relative path.
+
+    # Fail-safe
     try:
         os.chdir(file_dir)
     except OSError:

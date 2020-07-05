@@ -1,11 +1,13 @@
 from threading import Thread, Event
-from copy import deepcopy
+from copy import copy
 import json
 import queue
-from Macro import EVENT, AbortException, Imaging, SetNext, Elements
+from Macro import SetNext, Elements, Bases, get_working_area
 
 # Run only in cli mode, not for gui.
 # Will refactor UI to CLI once complete.
+
+test_loc = 'Sequence_Sample/discoveryI.json'
 
 
 def loadJson(location: str):
@@ -24,21 +26,23 @@ class MacroCLI:
         self.event = Event()
 
         self.started = False
-        self._area = None
-        self.thread_quene = queue.SimpleQueue()
+        self.area = None
+        self.kill_key = 'f2'
 
-    @property
-    def area(self):
-        return self._area
-
-    @area.setter
-    def area(self, *args):
-        self._area = Imaging.Area.from_pos(*args)
+        self.thread_queue = queue.SimpleQueue()
+        self.base = Bases.Base.env_var
+        self.base.event = self.event
 
     def clear_macro(self):
         self.loaded.clear()
 
+    def set_env_variable(self):
+        area = get_working_area(self.event, self.kill_key)
+        self.base.screen_area = area
+
     def load_macro(self, location=None):
+        self.clear_macro()
+
         if location is None:
             location = input()
 
@@ -51,6 +55,7 @@ class MacroCLI:
         except json.JSONDecodeError:
             print("└ Failed decoding JSON.")
         else:
+            # maybe I need to wrap this with another try-except
             deserialized = Elements.Deserializer(loaded)
             self.loaded = deserialized
 
@@ -66,8 +71,13 @@ class MacroCLI:
         self.event.set()
 
     def run_macro(self):
-        self.event = Event()
-        running = deepcopy(self.loaded)
+        if not self.loaded:
+            print("[W] No macros loaded.")
+            return
+
+        self.set_env_variable()
+
+        running = copy(self.loaded)
         SetNext(running)
         thread = Thread(target=self._runThread, args=[running])
         thread.start()
@@ -75,5 +85,5 @@ class MacroCLI:
     @staticmethod
     def _runThread(seq):
         head = seq[0]
-        for element in seq:  # really tempting to use abc..
+        for element in head:
             element.run()

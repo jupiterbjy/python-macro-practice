@@ -1,6 +1,8 @@
 import logging
 from threading import Event
 from Macro import Imaging
+import keyboard
+import pyautogui
 
 
 class EnvVariables:
@@ -45,6 +47,25 @@ def stoppable_sleep(time: float, event: Event):
     if event.wait(time):  # return True immediately when set().
         event.clear()
         raise AbortException  # Eject!
+
+
+def get_position(event: Event, kill_key='f2'):
+    # block method
+    # keyboard.wait(kill_key)
+
+    # non-block
+    while not keyboard.is_pressed(kill_key):
+        stoppable_sleep(0.05, event)
+
+    while keyboard.is_pressed(kill_key):
+        stoppable_sleep(0.05, event)
+
+    return Imaging.Pos(*pyautogui.position())
+
+
+def get_working_area(event: Event, kill_key='f2'):
+    return Imaging.Area.from_pos(get_position(event, kill_key),
+                                 get_position(event, kill_key))
 
 
 def SetNext(sequence):

@@ -36,7 +36,7 @@ class Base(Protocol):
     # meaning-of-the-super-keyword-in-the-parent-class-python
 
     def __init__(self):
-        super().__init__()  # Refer above link for this call
+        super(Base, self).__init__()  # Refer above link for this call
         self.name = ""
         self.next = None  # Assign next object here when running.
         self.onSuccess = None
@@ -112,6 +112,7 @@ class ClickMixin(Protocol):
     env_var: EnvVariables
 
     def __init__(self):
+        super(ClickMixin, self).__init__()
         self.target = Pos()  # runtime-set value.
         self.hard_target = Pos()  # fixed, pre-set value.
         self.clickCount = 1
@@ -155,7 +156,7 @@ class ImageMixin(Protocol):
     env_var: EnvVariables
 
     def __init__(self):
-        super().__init__()
+        super(ImageMixin, self).__init__()
 
         self._targetImage = None
         self.targetName = None
